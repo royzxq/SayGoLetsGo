@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your models here.
 class User(models.Model):
@@ -55,7 +56,7 @@ class Place(models.Model):
 
 
 class TimeSpan(models.Model):
-    travel = models.ForeignKey(TravelPlan)
+    travel = models.ForeignKey(TravelPlan, on_delete=models.CASCADE)
     start_time = models.DateTimeField("start_time")
     duration = models.DurationField("duration", null=True)
     activity_choice = (
