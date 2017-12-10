@@ -2,9 +2,52 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-
+from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 # Create your models here.
+
+
+class UserManger(BaseUserManager):
+    def create_user(self, username, firstname, lastname, email, birth, password=None, gender=None):
+        self.check_required_filled(username, firstname, lastname, email, birth)
+        user = self.model(email=self.normalize_email(email), username=username, firstname=firstname, lastname=lastname, birth=birth, gender=gender)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def check_required_filled(self, username, firstname, lastname, email, birth):
+        if not username:
+            raise ValueError("username required")
+        if not firstname or not lastname:
+            raise ValueError("first and last name required")
+        if not email:
+            raise ValueError("email required")
+        if not birth:
+            raise ValueError("birth required")
+
+
+class AbstractUser(AbstractBaseUser):
+    username = models.CharField("username", max_length=20, unique=True)
+    firstname = models.CharField("firstname", max_length=20, default="")
+    lastname = models.CharField("lastname", max_length=20, default="")
+    email = models.EmailField("email", max_length=40, unique=True)
+    password = models.CharField("password", max_length=20)
+    birth = models.DateField('birth')
+    gender_choices = (
+        ("Male", "Male"),
+        ("Female", "Female"),
+        ("Dont want to tell", "Dont want to tell")
+    )
+    gender = models.CharField("gender", choices=gender_choices, max_length=30, default="Male")
+    objects = UserManger()
+    USERNAME_FIELD = 'username'
+
+    def __str__(self):
+        return self.username
+
+    def get_email_name(self):
+        return self.email
+
+
 class User(models.Model):
     user_name = models.CharField("username", primary_key=True, max_length=20)
     birthday = models.DateField("birth")
