@@ -12,7 +12,6 @@ from .forms import RegisterForm
 class AbstractUserAdmin(BaseUserAdmin):
     form = RegisterForm
     add_form = RegisterForm
-
     list_display = ('username', 'firstname', 'lastname', 'email', 'birth', 'gender', )
     fieldsets = (
         (None, {'fields': ('username', 'email', 'password', 'firstname', 'lastname', 'birth', 'gender', )}),

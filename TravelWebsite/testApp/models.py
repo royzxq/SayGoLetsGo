@@ -70,11 +70,14 @@ class User(models.Model):
 
 class Group(models.Model):
     group_name = models.CharField("groupname", max_length=40)
-    group_manager = User
-    users = models.ManyToManyField(User)
+    # group_manager = models.ForeignKey(User, on_delete=models.SET_NULL)
+    users = models.ManyToManyField(AbstractUser)
 
     def __str__(self):
         return self.group_name
+
+    # def save(self, force_insert=False, force_update=False, using=None,
+    #          update_fields=None):
 
 
 class TravelPlan(models.Model):
@@ -89,6 +92,7 @@ class TravelPlan(models.Model):
 
 
 class Place(models.Model):
+    user = models.ForeignKey(AbstractUser, related_name='places', on_delete=models.CASCADE)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     location = models.CharField('location', max_length=100, null=True)
@@ -96,6 +100,9 @@ class Place(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super(Place, self).save(*args, **kwargs)
 
 
 class TimeSpan(models.Model):
