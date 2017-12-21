@@ -1,19 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import AbstractUser, Group, TravelPlan, Place, TimeSpan
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ('url', 'username', 'email', 'groups')
+from .models import Group, TravelPlan, Place, TimeSpan, WebUser
 
 
+# class WebUserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = WebUser
+#         fields = ('id', 'username', 'email', 'password', 'birth', 'gender')
 
-class ABUserSerializer(serializers.HyperlinkedModelSerializer):
-    places = serializers.HyperlinkedRelatedField(view_name='place-detial', queryset=Place.objects.all())
-    class Meta:
-        model = AbstractUser
-        fields = ('url', 'username', 'birth')
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -32,10 +26,11 @@ class TravelSerializer(serializers.Serializer):
 
 class PlaceSerializer(serializers.ModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
-    user = serializers.SlugRelatedField(queryset=AbstractUser.objects.all(), slug_field='username')
+    # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')
+    # user_serilize = WebUserSerializer
     class Meta:
         model = Place
-        fields = ('id', 'user', 'name', 'description', 'location')
+        fields = ('id', 'name', 'description', 'location')
 
 
 class TimeSpanSerializer(serializers.ModelSerializer):

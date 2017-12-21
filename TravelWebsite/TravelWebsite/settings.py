@@ -109,7 +109,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# AUTH_USER_MODEL = 'testApp.AbstractUser'
+# AUTH_USER_MODEL = 'testApp.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

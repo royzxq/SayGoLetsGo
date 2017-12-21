@@ -2,76 +2,71 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import User
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 
-class UserManger(BaseUserManager):
-    def create_user(self, username, firstname, lastname, email, birth, password=None, gender=None):
-        self.check_required_filled(username, firstname, lastname, email, birth)
-        user = self.model(email=self.normalize_email(email), username=username, firstname=firstname, lastname=lastname, birth=birth, gender=gender)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def check_required_filled(self, username, firstname, lastname, email, birth):
-        if not username:
-            raise ValueError("username required")
-        if not firstname or not lastname:
-            raise ValueError("first and last name required")
-        if not email:
-            raise ValueError("email required")
-        if not birth:
-            raise ValueError("birth required")
-
-
-class AbstractUser(AbstractBaseUser):
-    username = models.CharField("username", max_length=20, unique=True)
-    firstname = models.CharField("firstname", max_length=20, default="")
-    lastname = models.CharField("lastname", max_length=20, default="")
-    email = models.EmailField("email", max_length=40, unique=True)
-    password = models.CharField("password", max_length=20)
-    birth = models.DateField('birth')
+class WebUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    birth = models.DateField('birth', null=True)
     gender_choices = (
-        ("Male", "Male"),
-        ("Female", "Female"),
-        ("Dont want to tell", "Dont want to tell")
+            ("Male", "Male"),
+            ("Female", "Female"),
+            ("Dont want to tell", "Dont want to tell")
     )
-    gender = models.CharField("gender", choices=gender_choices, max_length=30, default="Male")
-    objects = UserManger()
-    USERNAME_FIELD = 'username'
+    gender = models.CharField("gender", choices=gender_choices, max_length=30, null=True)
+    photo = models.ImageField('photo', max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return self.username
+        return self.user.username
 
-    def get_email_name(self):
-        return self.email
+# @receiver(post_save, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         WebUser.objects.create(user=instance)
+#
+# @receiver(post_save, sender=User)
+# def save_user_profile(sender, instance, **kwargs):
+#     try:
+#         webuser = instance.webuser
+#     except:
+#         webuser = WebUser(user=instance)
 
 
-class User(models.Model):
-    user_name = models.CharField("username", primary_key=True, max_length=20)
-    birthday = models.DateField("birth")
-    register_time = models.DateField("regittime", auto_now_add=True)
-    first_name = models.CharField("firstname", max_length=20)
-    last_name = models.CharField("lastname", max_length=20)
-    gender_choices = (
-        ("Male", "Male"),
-        ("Female", "Female"),
-        ("Dont want to tell", "Dont want to tell")
-    )
-    gender = models.CharField("gender", choices=gender_choices, max_length=30)
-    photo = models.ImageField("photo", max_length=100, null=True, blank=True)
-    password = models.CharField("password", max_length=20)
-    email = models.EmailField("email", max_length=40)
 
-    def __str__(self):
-        return self.user_name
+
+# class User(models.Model):
+#     user_name = models.CharField("username", primary_key=True, max_length=20)
+#     birthday = models.DateField("birth")
+#     register_time = models.DateField("regittime", auto_now_add=True)
+#     first_name = models.CharField("firstname", max_length=20)
+#     last_name = models.CharField("lastname", max_length=20)
+#     gender_choices = (
+#         ("Male", "Male"),
+#         ("Female", "Female"),
+#         ("Dont want to tell", "Dont want to tell")
+#     )
+#     gender = models.CharField("gender", choices=gender_choices, max_length=30)
+#     photo = models.ImageField("photo", max_length=100, null=True, blank=True)
+#     password = models.CharField("password", max_length=20)
+#     email = models.EmailField("email", max_length=40)
+#
+#     def __str__(self):
+#         return self.user_name
+
+#
+# class UserGroup(models.Model):
+#     user = models.ForeignKey(AbstractUser)
+#     group = models.ForeignKey(Group)
 
 
 class Group(models.Model):
     group_name = models.CharField("groupname", max_length=40)
     # group_manager = models.ForeignKey(User, on_delete=models.SET_NULL)
-    users = models.ManyToManyField(AbstractUser)
+    users = models.ManyToManyField(User)
 
     def __str__(self):
         return self.group_name
@@ -92,7 +87,7 @@ class TravelPlan(models.Model):
 
 
 class Place(models.Model):
-    user = models.ForeignKey(AbstractUser, related_name='places', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     location = models.CharField('location', max_length=100, null=True)

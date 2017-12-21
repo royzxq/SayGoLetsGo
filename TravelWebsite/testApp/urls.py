@@ -1,7 +1,5 @@
 from django.urls import path
 from . import views
-from .models import AbstractUser
-from django.contrib.auth.models import User
 from django.conf.urls import url, include
 from rest_framework import routers, serializers, viewsets
 

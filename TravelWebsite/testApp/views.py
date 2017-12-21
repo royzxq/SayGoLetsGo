@@ -36,18 +36,10 @@ def show(request):
 def detail(request, id):
     return HttpResponse("THE ID IS %s" % id)
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-
-
-class ABUserViewSet(viewsets.ModelViewSet):
-    queryset = AbstractUser.objects.all()
-    serializer_class = ABUserSerializer
+#
+# class WebUserViewSet(viewsets.ModelViewSet):
+#     queryset = WebUser.objects.all()
+#     serializer_class = WebUserSerializer
 
 
 class PlaceViewSet(viewsets.ModelViewSet):
@@ -56,7 +48,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
     def perform_create(self, serializer):
-        serializer.save(username=self.request.data['username'])
+        serializer.save(user=self.request.user)
 
 
 class TimespanViewSet(viewsets.ModelViewSet):
