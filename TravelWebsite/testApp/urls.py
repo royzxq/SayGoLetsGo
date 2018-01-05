@@ -3,7 +3,6 @@ from . import views
 from django.conf.urls import url, include
 from rest_framework import routers, serializers, viewsets
 
-
 # class UserSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
 #         model = User
@@ -21,7 +20,8 @@ router = routers.DefaultRouter()
 # router.register(r'users', UserSerializer)
 router.register(r'places', views.PlaceViewSet)
 router.register(r'timespans', views.TimespanViewSet)
-
+router.register(r'groups', views.GroupViewSet)
+router.register(r'travels', views.TravelViewSet)
 
 urlpatterns = [
     # path('user/register', views.register),
