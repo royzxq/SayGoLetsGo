@@ -23,41 +23,7 @@ class WebUser(models.Model):
     def __str__(self):
         return self.user.username
 
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         WebUser.objects.create(user=instance)
-#
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     try:
-#         webuser = instance.webuser
-#     except:
-#         webuser = WebUser(user=instance)
 
-
-
-
-# class User(models.Model):
-#     user_name = models.CharField("username", primary_key=True, max_length=20)
-#     birthday = models.DateField("birth")
-#     register_time = models.DateField("regittime", auto_now_add=True)
-#     first_name = models.CharField("firstname", max_length=20)
-#     last_name = models.CharField("lastname", max_length=20)
-#     gender_choices = (
-#         ("Male", "Male"),
-#         ("Female", "Female"),
-#         ("Dont want to tell", "Dont want to tell")
-#     )
-#     gender = models.CharField("gender", choices=gender_choices, max_length=30)
-#     photo = models.ImageField("photo", max_length=100, null=True, blank=True)
-#     password = models.CharField("password", max_length=20)
-#     email = models.EmailField("email", max_length=40)
-#
-#     def __str__(self):
-#         return self.user_name
-
-#
 # class UserGroup(models.Model):
 #     user = models.ForeignKey(AbstractUser)
 #     group = models.ForeignKey(Group)
@@ -110,7 +76,7 @@ class TimeSpan(models.Model):
         ("Sight seeing", "Sight seeing")
     )
     activity = models.CharField("activity", choices=activity_choice, max_length=30)
-    note = models.CharField("note", max_length=200, null=True)
+    note = models.CharField("note", max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.start_time.isoformat() + " " + self.activity

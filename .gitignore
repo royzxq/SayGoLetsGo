@@ -104,3 +104,11 @@ venv.bak/
 .mypy_cache/
 
 .DS_Store
+
+# Dependency directories
+*/node_modules
+*/jspm_packages
+
+# Optional npm cache directory
+.npm
+

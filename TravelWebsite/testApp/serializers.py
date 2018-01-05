@@ -1,27 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, TimeSpan, WebUser
-
-
-# class WebUserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = WebUser
-#         fields = ('id', 'username', 'email', 'password', 'birth', 'gender')
-
+from .models import Group, TravelPlan, Place, TimeSpan
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    onwer = serializers.ReadOnlyField(source='owner.title')
+    # onwer = serializers.ReadOnlyField(source='owner.title')
+    # users = serializers.ManyH(User)
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'owner', )
+        fields = ('id', 'group_name', 'users', )
 
 
-class TravelSerializer(serializers.Serializer):
-    group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
+class TravelSerializer(serializers.ModelSerializer):
+    # group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
     class Meta:
         model = TravelPlan
-        fields = ('title', 'group', 'day', 'country')
+        fields = ('id', 'title', 'group', 'days', 'country')
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -34,7 +28,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 
 class TimeSpanSerializer(serializers.ModelSerializer):
-    travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
+    # travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
     class Meta:
         model = TimeSpan
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel')
+        fields = ('id', 'start_time', 'duration', 'activity', 'note')
