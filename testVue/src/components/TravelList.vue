@@ -8,9 +8,11 @@
 				</p>
 				<p> Days: {{travel.days}} </p>
 				<p> Country: {{travel.country}} </p>
+
 				</p>
 			</li>
 		</ul>
+		<router-link :to="{name: 'Travel'}"> Create travels</router-link>
 	</div>
 </template>
 

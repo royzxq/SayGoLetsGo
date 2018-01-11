@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import TravelList from './components/TravelList.vue'
 import PlaceList from './components/PlaceList.vue'
+import Travel from './components/Travel.vue'
+import Place from './components/Place.vue'
 import Router from 'vue-router'
 Vue.use(Router)
 import VueResources from 'vue-resource'
@@ -18,7 +20,17 @@ var router = new Router({
     path:'/places',
     name: 'Places',
     component: PlaceList
-  }
+  },
+  {
+    path:'/travel',
+    name:'Travel',
+    component: Travel
+  },
+  {
+    path:'/place',
+    name: 'Place',
+    component: Place
+  },
   ]
 })
 
