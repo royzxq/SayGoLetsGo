@@ -25,6 +25,8 @@ SECRET_KEY = 'fei$)^sl9m)g1=3mhs^7809+6d31r0%ins=$humq-99#fh3kol'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+REST_FRAMEWORK_TOKEN_EXPIRE_MINUTES = 1
+
 ALLOWED_HOSTS = []
 
 
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'webpack_loader',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -108,8 +111,18 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        #'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.TokenAuthentication',
+        'testApp.authentication.ExpiringTokenAuthentication',
+
     ]
+
 }
 
 # AUTH_USER_MODEL = 'testApp.User'
