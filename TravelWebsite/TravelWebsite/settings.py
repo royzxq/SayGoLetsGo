@@ -126,7 +126,8 @@ REST_FRAMEWORK = {
         #'rest_framework.authentication.TokenAuthentication',
         #'testApp.authentication.ExpiringTokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        'rest_framework.permissions.AllowAny'
     ]
 
 }

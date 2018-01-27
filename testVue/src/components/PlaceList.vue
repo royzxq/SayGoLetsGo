@@ -11,6 +11,7 @@
 				</p>
 			</li>
 		</ul>
+		<router-link :to="{name: 'Place'}"> Create Places</router-link>
 	</div>
 </template>
 
