@@ -29,8 +29,9 @@ from testApp.views import index
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^testApp/', include('testApp.urls')),
+    url(r'^test_app/', include('testApp.urls')),
     url(r'^$', index, name='index'),
     # url(r'^group/$', views.group_list),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]

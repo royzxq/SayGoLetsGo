@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'webpack_loader',
     'rest_framework.authtoken',
+    'oauth2_provider',
 ]
 
 MIDDLEWARE = [
@@ -107,6 +108,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+OAUTH2_PROVIDER = {
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'places': 'Access to your places'}
+}
+
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -119,7 +124,8 @@ REST_FRAMEWORK = {
         #'rest_framework.authentication.BasicAuthentication',
         #'rest_framework.authentication.SessionAuthentication',
         #'rest_framework.authentication.TokenAuthentication',
-        'testApp.authentication.ExpiringTokenAuthentication',
+        #'testApp.authentication.ExpiringTokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
 
     ]
 

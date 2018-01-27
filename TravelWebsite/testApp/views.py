@@ -18,7 +18,7 @@ import datetime
 from django.conf import settings
 # import pdb; pdb.set_trace()
 from rest_framework.authtoken.views import ObtainAuthToken
-
+from oauth2_provider.contrib.rest_framework import TokenHasScope
 # Create your views here.
 
 
@@ -89,9 +89,11 @@ def detail(request, id):
 class PlaceViewSet(viewsets.ModelViewSet):
     queryset = Place.objects.all()
     serializer_class = PlaceSerializer
-    #permission_classes = (permissions.IsAuthenticated,)
+    #permission_classes = (permissions.IsAuthenticated, TokenHasScope)
     #authentication_classes = (authentication.TokenAuthentication,)
     #authentication_classes = (authentication.SessionAuthentication,)
+
+    #required_scopes = ('places'),
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
