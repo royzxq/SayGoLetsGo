@@ -2,6 +2,7 @@
   <div id="travellist">
     <router-link :to="{name: 'Travels'}"> Travels</router-link>
     <router-link :to="{name: 'Places'}"> Places</router-link>
+    <router-link :to="{name: 'Timespans'}"> Timespans</router-link>
     <router-view></router-view>
     <!-- <travel-list  ></travel-list> -->
     <!-- <p>{{ message }}</p> -->
@@ -12,13 +13,15 @@
 import VueResources from 'vue-resource'
 import TravelList from './components/TravelList.vue'
 import PlaceList from './components/PlaceList.vue'
+import TimeSpanList from './components/TimeSpanList.vue'
 
 export default {
   name: 'App',
   // router,
   components: {
     TravelList,
-    PlaceList
+    PlaceList,
+    TimeSpanList
   }
 }
 </script>

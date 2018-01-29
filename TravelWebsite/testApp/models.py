@@ -53,7 +53,7 @@ class TravelPlan(models.Model):
 
 
 class Place(models.Model):
-    user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
+    user = models.ForeignKey(WebUser, related_name='places', on_delete=models.CASCADE)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     location = models.CharField('location', max_length=100, null=True)
