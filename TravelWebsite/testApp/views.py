@@ -116,3 +116,9 @@ class GroupViewSet(viewsets.ModelViewSet):
 class TravelViewSet(viewsets.ModelViewSet):
     queryset = TravelPlan.objects.all()
     serializer_class = TravelSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = WebUser.objects.all()
+    serializer_class = WebUserSerializer
+

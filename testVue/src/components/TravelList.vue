@@ -2,17 +2,16 @@
 	<div>
 		<ul>
 			<li v-for="travel in travels">
-				<p>
-				<p>
+
+				<p v-on:click="goToTravel(travel.id)">
 					Title:  {{travel.title}}
 				</p>
-				<p> Days: {{travel.days}} </p>
+				<!-- <p> Days: {{travel.days}} </p>
 				<p> Country: {{travel.country}} </p>
-
-				</p>
+ -->
 			</li>
 		</ul>
-		<router-link :to="{name: 'Travel'}"> Create travels</router-link>
+		<router-link :to="{name: 'TravelForm'}"> Create travels</router-link>
 	</div>
 </template>
 
@@ -35,6 +34,9 @@ export default {
 	      }, function(err){
 	        console.log(err.statusText);
 	      })
+	    },
+	    goToTravel: function(id){
+	    	this.$router.push({name:'Travel', params:{id}})
 	    }
 	},
 	mounted: function(){

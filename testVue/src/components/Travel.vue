@@ -1,48 +1,37 @@
 <template>
 	<div>
-	<input v-model="title" placeholder="travel title">
-	<input v-model="days" placeholder="travel days">
-	<input v-model="country" placeholder="travel country">
-	<input v-model="group" placeholder="travel group">
-	<button v-on:click="submit"> Submit</button>
+	<p>
+		Title:  {{travel.title}}
+	</p>
+	<p> Days: {{travel.days}} </p>
+	<p> Country: {{travel.country}} </p>
 	</div>
 </template>
 
 <script>
 var link = 'http://127.0.0.1:8000/testApp/travels/'
-var Travel = {
-	title: null,
-	days: null,
-	country: null,
-	group: null
-}
-
 export default {
 
   name: 'Travel',
-
-  data: function () {return {
-	    title: null,
-		days: null,
-		country: null,
-		group: null
-  	}
+  data () {
+    return {
+    	travel: null
+    }
   },
   methods:{
-  	submit: function(){
-  		var travel = {}
-  		travel.title = this.title
-  		travel.days = this.days
-  		travel.country = this.country
-  		travel.group = this.group
-  		Vue.http.headers.common['Content-Type'] = "application/json";
-  		this.$http.post(link, travel).then(function(response){
-	        console.log(response.data);
-	        this.$router.push('travels')
-	      }, function(err){
-	        console.log(err.statusText);
-	    })
-  	}
+      getTravel: function () {
+        var url = link + this.$route.params.id;
+        Vue.http.headers.common['content-type'] = 'json'
+        this.$http.get(url).then(function(response){
+          this.travel = response.data;
+          console.log(response.data);
+        }, function(err){
+          console.log(err.statusText);
+        })
+      }
+  },
+  mounted: function(){
+      this.getTravel();
   }
 }
 </script>

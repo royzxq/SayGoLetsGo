@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-
+from .models import WebUser
 #
 #
 # class RegisterForm(forms.ModelForm):
@@ -8,20 +8,20 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 #     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 #
 #     class Meta:
-#         model = AbstractUser
+#         model = WebUser
 #         fields = ('username', 'firstname', 'lastname', 'email', 'birth', 'gender', 'password')
 #
 #
 #     def clean_user(self):
 #         username = self.cleaned_data.get('username')
-#         qs = AbstractUser.objects.filter(username=username)
+#         qs = WebUser.objects.filter(username=username)
 #         if qs.exists():
 #             raise forms.ValidationError('username is taken')
 #         return username
 #
 #     def clean_email(self):
 #         email = self.cleaned_data.get('email')
-#         qs = AbstractUser.objects.filter(email=email)
+#         qs = WebUser.objects.filter(email=email)
 #         if qs.exists():
 #             raise forms.ValidationError("email is taken")
 #         return email

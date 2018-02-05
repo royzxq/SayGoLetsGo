@@ -25,6 +25,7 @@ router.register(r'places', views.PlaceViewSet)
 router.register(r'timespans', views.TimespanViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'travels', views.TravelViewSet)
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     # path('user/register', views.register),
