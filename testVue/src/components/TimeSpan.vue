@@ -9,7 +9,7 @@
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/testApp/timespans/'
+var link = 'http://127.0.0.1:8000/test_app/timespans/'
 export default {
 
   name: 'TimeSpan',

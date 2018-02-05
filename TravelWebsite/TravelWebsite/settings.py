@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework.authtoken',
     'oauth2_provider',
+    'filters',
 ]
 
 MIDDLEWARE = [
@@ -118,8 +119,8 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.AllowAny',
-        #'rest_framework.permissions.IsAuthenticatedOrReadOnly'
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        # 'rest_framework.permissions.IsAuthenticated',
         
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -128,7 +129,8 @@ REST_FRAMEWORK = {
         #'rest_framework.authentication.TokenAuthentication',
         #'testApp.authentication.ExpiringTokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
 
 }
 

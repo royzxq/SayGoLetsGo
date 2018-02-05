@@ -16,7 +16,7 @@
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/testapp/places/';
+var link = 'http://127.0.0.1:8000/test_app/places/';
 export default {
 
   name: 'PlaceList',
