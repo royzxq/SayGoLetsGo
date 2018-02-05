@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
 from django.shortcuts import render, render_to_response
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from .serializers import *
-from rest_framework import status
-from rest_framework import generics
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 from .permissions import IsOwnerOrReadOnly, IsGroupUser
@@ -16,9 +12,8 @@ from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 import datetime
 from django.conf import settings
-# import pdb; pdb.set_trace()
 from rest_framework.authtoken.views import ObtainAuthToken
-from oauth2_provider.contrib.rest_framework import TokenHasScope
+from filters.mixins import FiltersMixin
 # Create your views here.
 
 
@@ -108,10 +103,27 @@ class TimespanViewSet(viewsets.ModelViewSet):
     #     serializer.save(user=self.request.user)
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+    filter_backends = (filters.OrderingFilter, )
+    ordering_fields = ('group_name', )
+    ordering = ('group_name', )
 
+    filter_mappings = {
+        'group_name': 'group_name',
+    }
+
+    # def get_queryset(self):
+    #     query_params = self.request.query_params
+    #     url_params = self.kwargs
+    #
+    #     queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+    #     db_filters = queryset_filters['db_filters']
+    #     db_excludes = queryset_filters['db_excludes']
+    #
+    #     queryset = Group.objects.all()
+    #     return queryset.filter(**db_filters).exclude(**db_excludes)
 
 class TravelViewSet(viewsets.ModelViewSet):
     queryset = TravelPlan.objects.all()
