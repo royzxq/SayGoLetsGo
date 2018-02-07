@@ -9,7 +9,7 @@
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/testApp/travels/'
+var link = 'http://127.0.0.1:8000/test_app/travels/'
 export default {
 
   name: 'Travel',
@@ -20,7 +20,7 @@ export default {
   },
   methods:{
       getTravel: function () {
-        var url = link + this.$route.params.id;
+        var url = link + this.$route.params.id + '/';
         Vue.http.headers.common['content-type'] = 'json'
         this.$http.get(url).then(function(response){
           this.travel = response.data;

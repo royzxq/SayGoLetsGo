@@ -8,7 +8,7 @@ import Travel from './components/Travel.vue'
 import Place from './components/Place.vue'
 import Timespan from './components/Timespan.vue'
 import TimespanForm from './components/TimespanForm.vue'
-
+import login from './components/login.vue'
 import Router from 'vue-router'
 Vue.use(Router)
 import VueResources from 'vue-resource'
@@ -56,15 +56,21 @@ var router = new Router({
     name: 'Timespan',
     component: Timespan
   },
+  {
+    path: 'login',
+    name: 'login',
+    component: login
+  }
   ]
 })
 
 
 // Vue.component(App)
+
 new Vue({
   el: '#app',
   router,
-  components: {App}, 
+  components: {App},
   data: {
     message: "default"
   }

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/testApp/places/'
+var link = 'http://127.0.0.1:8000/test_app/places/'
 
 export default {
 
@@ -27,6 +27,7 @@ export default {
   		place.description = this.description
   		place.location = this.location
   		Vue.http.headers.common['Content-Type'] = "application/json";
+  		Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
   		this.$http.post(link, place).then(function(response){
 	        console.log(response.data);
 	        this.$router.push('places')

@@ -28,10 +28,12 @@ export default {
 	},
 	methods:{
 	    getTravels: function () {
+	      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
 	      this.$http.get(link).then(function(response){
 	        this.travels = response.data;
 	        console.log(response.data);
 	      }, function(err){
+	        this.travels = null
 	        console.log(err.statusText);
 	      })
 	    },
