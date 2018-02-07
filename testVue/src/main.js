@@ -66,10 +66,11 @@ var router = new Router({
 
 
 // Vue.component(App)
+
 new Vue({
   el: '#app',
   router,
-  components: {App}, 
+  components: {App},
   data: {
     message: "default"
   }

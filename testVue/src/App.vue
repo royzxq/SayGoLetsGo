@@ -1,5 +1,5 @@
 <template>
-  <div id="travellist">
+  <div id="app">
     <router-link :to="{name: 'Travels'}"> Travels</router-link>
     <router-link :to="{name: 'Places'}"> Places</router-link>
     <router-link :to="{name: 'Timespans'}"> Timespans</router-link>
