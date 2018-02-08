@@ -35,12 +35,14 @@ export default {
   		travel.days = this.days
   		travel.country = this.country
   		travel.group = this.group
-  		Vue.http.headers.common['Content-Type'] = "application/json";
+  		Vue.http.headers.common['Content-Type'] = "application/json"
+      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
+
   		this.$http.post(link, travel).then(function(response){
 	        console.log(response.data);
 	        this.$router.push('travels')
 	      }, function(err){
-	        console.log(err.statusText);
+	        console.log(err.statusText)
 	    })
   	}
   }

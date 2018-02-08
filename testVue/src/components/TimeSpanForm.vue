@@ -33,6 +33,7 @@ export default {
   		timespan.activity = this.activity
   		timespan.travel = this.travel
   		Vue.http.headers.common['Content-Type'] = "application/json";
+  		Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
   		this.$http.post(link, timespan).then(function(response){
 	        console.log(response.data);
 	        this.$router.push('timespans')

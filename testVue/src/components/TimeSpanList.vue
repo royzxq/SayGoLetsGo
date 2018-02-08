@@ -6,7 +6,7 @@
 				<p>
 					Activity:  {{timespan.activity}}
 				</p>
-				<p> Travel: {{timespan.travel}} </p> 
+				<p> Travel: {{timespan.travel}} </p>
 				<!-- to do: get travel name instead of travel id -->
 				</div>
 			</li>
@@ -27,10 +27,12 @@ export default {
 	},
 	methods:{
 	    getTimespans: function () {
+	      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
 	      this.$http.get(link).then(function(response){
 	        this.timespans = response.data;
 	        console.log(response.data);
 	      }, function(err){
+	        this.timespans = null
 	        console.log(err.statusText);
 	      })
 	    },
