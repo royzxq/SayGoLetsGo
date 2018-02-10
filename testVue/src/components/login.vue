@@ -1,17 +1,23 @@
 <template>
-	<div>
+  <div>
+	<div v-if="is_logged_in()">
 		<p> Username  </p>
 		<input v-model="username" placeholder="Username">
 		<p> Password </p>
 		<input v-model="password" placeholder="Password">
-		<button v-on:click="login"> Login</button><button v-on:click="logout"> Logout</button>
+    <br>
+		<button v-on:click="login"> Login</button>
 	</div>
+  <div v-else>
+      <p> Already logged in </p>
+      <router-link :to="{name: '/'}"> Home</router-link>
+  </div>
+  <button v-on:click="logout"> Logout</button>
+  </div>
 </template>
 
 <script>
 var link = "http://127.0.0.1:8000/o/token/"
-var clientID = '1DpyNljw31M1XFOjGUVFnxGaq8Fd3KoQQKsSqyVW'
-var clientSec = '6TPMoAGyRjcRWcMNeb8LgBiZZk4DNFxYDPmgsl2lHQNEWGew81m3aSEJAaZNiacxY8t5q7eRF9rWAgFSYaoq9XbINTh2A528DMj9vfZppxYlRwxiURhIgXam6njZ2INd'
 
 function ShowTheObject(obj){
   var des = "";
@@ -20,10 +26,10 @@ function ShowTheObject(obj){
      }
   alert(des)
 }
-
+import {generate_token_request, logout, is_logged_in} from '../utils/auth.js'
 export default {
 
-  name: 'login',
+  name: 'Login',
 
   data () {
     return {
@@ -33,22 +39,28 @@ export default {
   },
   methods: {
     login: function () {
-      var tokenRequester = {}
-      tokenRequester.username = this.username
-      tokenRequester.password = this.password
-      tokenRequester.username = 'testUser2'
-      tokenRequester.password = 'k4H33TMgyeCMXk3q'
-      tokenRequester.grant_type = 'password'
-      tokenRequester.client_id = clientID
-      tokenRequester.client_secret = clientSec
-      //Vue.http.headers.common['Content-Type'] = 'application/json';
-      Vue.http.headers.common['Content-Type'] = "application/x-www-form-urlencoded"
-      this.$http.post(link, tokenRequester, { emulateJSON : true}).then(
+      // auth.login_user(this.username, this.password).then(
+      //   function (response) {
+      //     console.log(response.data)
+      //     // ShowTheObject(response.data)
+      //     localStorage.setItem('tWeb_access_token', response.data.access_token)
+      //     localStorage.setItem('tWeb_username', tokenRequester.username)
+      //     // this.$router.push('/')
+      //   }  
+      // ).catch(function(err){
+      //     console.log(err.statusText)
+      //     alert('err: ' + err.statusText)
+      // })
+      var tokenRequester = generate_token_request(this.username, this.password)
+      this.$http.post(link, tokenRequester, { emulateJSON : true, headers: {
+        'Content-Type': "application/x-www-form-urlencoded"
+      }}).then(
         function (response) {
           console.log(response.data)
           ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
+          // this.$router.push('/')
         },
         function (err) {
           console.log(err.statusText)
@@ -57,9 +69,11 @@ export default {
       )
     },
     logout: function () {
-      localStorage.setItem('tWeb_access_token', '')
-      localStorage.setItem('tWeb_username', '')
-      Vue.http.headers.common['Authorization'] = ''
+      logout()
+      this.$router.push({name: 'login'})
+    },
+    is_logged_in: function(){
+      return is_logged_in();
     }
   }
 }
