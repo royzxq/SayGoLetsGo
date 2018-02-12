@@ -9,7 +9,9 @@
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/test_app/travels/'
+
+import {getTravel} from '../utils/requests'
+
 export default {
 
   name: 'Travel',
@@ -20,18 +22,28 @@ export default {
   },
   methods:{
       getTravel: function () {
-        var url = link + this.$route.params.id + '/';
-        Vue.http.headers.common['content-type'] = 'json'
-        this.$http.get(url).then(function(response){
-          this.travel = response.data;
-          console.log(response.data);
-        }, function(err){
-          console.log(err.statusText);
+        // var url = link + this.$route.params.id + '/';
+        // Vue.http.headers.common['content-type'] = 'json'
+        // this.$http.get(url).then(function(response){
+        //   this.travel = response.data;
+        //   console.log(response.data);
+        // }, function(err){
+        //   console.log(err.statusText);
+        // })
+        getTravel(this.$route.params.id).then(response => {
+          this.travel = response.data
+        }).catch(err => {
+          alert(err.response)
         })
       }
   },
   mounted: function(){
       this.getTravel();
+  },
+  computed: {
+    empty: function(){
+      return this.travel === null;
+    }
   }
 }
 </script>

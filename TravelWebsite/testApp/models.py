@@ -33,6 +33,8 @@ class Group(models.Model):
     group_name = models.CharField("groupname", max_length=40)
     # group_manager = models.ForeignKey(User, on_delete=models.SET_NULL)
     users = models.ManyToManyField(User)
+    manager_id = models.IntegerField("manager_id", default=-1)
+    is_public = models.BooleanField('is_public', default=False)
 
     def __str__(self):
         return self.group_name
@@ -56,6 +58,8 @@ class Place(models.Model):
     user = models.ForeignKey(WebUser, related_name='places', on_delete=models.CASCADE)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
+    country = models.CharField('country', max_length=100, default="")
+    city = models.CharField('city', max_length=100, default="")
     location = models.CharField('location', max_length=100, null=True)
     picture = models.ImageField('picture', max_length=100, null=True, blank=True)
 
@@ -66,10 +70,12 @@ class Place(models.Model):
         super(Place, self).save(*args, **kwargs)
 
 
-class TimeSpan(models.Model):
+class Activity(models.Model):
     travel = models.ForeignKey(TravelPlan, on_delete=models.CASCADE)
+    ## OPTIONAL RELY ON THE PLACE
+    place = models.ForeignKey(Place, related_name='place', default=None, blank=True, null=True, on_delete=models.SET_DEFAULT)
     start_time = models.DateTimeField("start_time")
-    duration = models.DurationField("duration", null=True)
+    duration = models.DurationField("duration", null=True, blank=True)
     activity_choice = (
         ("Traffic", "Traffic"),
         ("Meal", "Meal"),
@@ -77,10 +83,19 @@ class TimeSpan(models.Model):
     )
     activity = models.CharField("activity", choices=activity_choice, max_length=30)
     note = models.CharField("note", max_length=200, null=True, blank=True)
+    expense = models.FloatField('expense', default=0.0)
 
     def __str__(self):
         return self.start_time.isoformat() + " " + self.activity
 
+
+class Expense(models.Model):
+    user = models.ForeignKey(WebUser, on_delete=models.CASCADE)
+    expense = models.FloatField("expense", default=0.0)
+    expense_activity = models.ForeignKey(Activity, related_name='expense_activity', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.user.username + " paid " + str(self.expense)
 
 # class DayPlan(models.Model):
 #     travel_plan = models.ForeignKey(TravelPlan)

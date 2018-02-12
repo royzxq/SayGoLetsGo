@@ -1,6 +1,6 @@
 <template>
   <div>
-	<div v-if="is_logged_in()">
+	<div v-if="!is_logged">
 		<p> Username  </p>
 		<input v-model="username" placeholder="Username">
 		<p> Password </p>
@@ -17,6 +17,8 @@
 </template>
 
 <script>
+
+
 var link = "http://127.0.0.1:8000/o/token/"
 
 function ShowTheObject(obj){
@@ -39,18 +41,6 @@ export default {
   },
   methods: {
     login: function () {
-      // auth.login_user(this.username, this.password).then(
-      //   function (response) {
-      //     console.log(response.data)
-      //     // ShowTheObject(response.data)
-      //     localStorage.setItem('tWeb_access_token', response.data.access_token)
-      //     localStorage.setItem('tWeb_username', tokenRequester.username)
-      //     // this.$router.push('/')
-      //   }  
-      // ).catch(function(err){
-      //     console.log(err.statusText)
-      //     alert('err: ' + err.statusText)
-      // })
       var tokenRequester = generate_token_request(this.username, this.password)
       this.$http.post(link, tokenRequester, { emulateJSON : true, headers: {
         'Content-Type': "application/x-www-form-urlencoded"
@@ -60,20 +50,34 @@ export default {
           ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
-          // this.$router.push('/')
+          this.$router.push({name: 'Travels'})
         },
         function (err) {
           console.log(err.statusText)
           alert('err: ' + err.statusText)
         }
       )
+      // login_user(this.username, this.password).then(response => {
+      //   ShowTheObject(response.data);
+      //   localStorage.setItem('tWeb_access_token', response.data.access_token)
+      //   localStorage.setItem('tWeb_username', tokenRequester.username)
+      //   this.$router.push({name: 'Travels'})
+      // }).catch(error => {
+      //     console.log(error)
+      //     alert('err: ' + error)
+      // })
     },
     logout: function () {
       logout()
-      this.$router.push({name: 'login'})
-    },
-    is_logged_in: function(){
-      return is_logged_in();
+      this.$router.push({name: 'Travels'})
+    }
+    
+  },
+  computed: {
+    is_logged: function(){
+      let ret = is_logged_in();
+      console.log('logged in is ' + ret)
+      return ret
     }
   }
 }

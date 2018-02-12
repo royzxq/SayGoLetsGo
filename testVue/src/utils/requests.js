@@ -11,7 +11,7 @@ function getTravelList(){
     var header = {
         'Authorization' : 'Bearer ' + localStorage.getItem('tWeb_access_token')
     }
-    return axios.get(url, {headers: header}).then(response => response.data).catch(error => error);
+    return axios.get(url, {headers: header});
 }
 
 function getTravel(id){
@@ -19,5 +19,5 @@ function getTravel(id){
     var header = {
         'Authorization' : 'Bearer ' + localStorage.getItem('tWeb_access_token')
     }
-    return axios.get(url, {headers: header}).then(response => response.data).catch(error => error);
+    return axios.get(url, {headers: header});
 }

@@ -94,9 +94,12 @@ class PlaceViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TimespanViewSet(viewsets.ModelViewSet):
-    queryset = TimeSpan.objects.all()
-    serializer_class = TimeSpanSerializer
+
+
+
+class ActivityViewSet(viewsets.ModelViewSet):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
     permissions_classes = (permissions.IsAuthenticatedOrReadOnly, IsGroupUser)
     #
     # def perform_create(self, serializer):
@@ -111,7 +114,7 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     ordering = ('group_name', )
 
     filter_mappings = {
-        'group_name': 'group_name',
+        'group_name': 'group_name'
     }
 
     # def get_queryset(self):
