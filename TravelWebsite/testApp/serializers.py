@@ -22,10 +22,11 @@ class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')
     # users = serializers.ManyH(User)
     # travel = serializers.SlugRelatedField(many=False, read_only=True, slug_field='title')
-    users = UserSerializer(many=True, read_only=True)
+    # users = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Group
         fields = ('id', 'group_name', 'users', 'manager_id')
+
 
 
 class TravelSerializer(serializers.ModelSerializer):

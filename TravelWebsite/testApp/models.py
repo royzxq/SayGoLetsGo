@@ -55,7 +55,7 @@ class TravelPlan(models.Model):
 
 
 class Place(models.Model):
-    user = models.ForeignKey(WebUser, related_name='places', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     country = models.CharField('country', max_length=100, default="")
@@ -90,7 +90,7 @@ class Activity(models.Model):
 
 
 class Expense(models.Model):
-    user = models.ForeignKey(WebUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     expense = models.FloatField("expense", default=0.0)
     expense_activity = models.ForeignKey(Activity, related_name='expense_activity', on_delete=models.CASCADE)
 
