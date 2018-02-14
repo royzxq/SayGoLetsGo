@@ -11,10 +11,10 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    webuser = ProfileSerializer(many=False, read_only=False)
+    profile = ProfileSerializer(many=False, read_only=False)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'webuser')
+        fields = ('id', 'username', 'email', 'profile')
 
 class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')

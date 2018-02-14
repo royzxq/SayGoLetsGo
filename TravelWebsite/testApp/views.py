@@ -165,7 +165,7 @@ class TravelViewSet(FiltersMixin, viewsets.ModelViewSet):
         'title' : 'title',
         'country': 'country',
         'group': 'group'
-    }
+    }\
 
 
 
