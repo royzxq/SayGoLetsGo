@@ -1,38 +1,36 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, Activity, WebUser
+from .models import Group, TravelPlan, Place, Activity, Profile
 
+class ProfileSerializer(serializers.ModelSerializer):
+    # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
+    # user = UserSerializer(many=False, read_only=False)
+    class Meta:
+        model = Profile
+        fields = ('birth', 'gender')
 
 
 class UserSerializer(serializers.ModelSerializer):
+    webuser = ProfileSerializer(many=False, read_only=False)
     class Meta:
         model = User
-        fields = ('username', 'email')
-
-
-class WebUserSerializer(serializers.ModelSerializer):
-    # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
-    user = UserSerializer(many=False, read_only=False)
-    class Meta:
-        model = WebUser
-        fields = ('id', 'user', 'birth')
-
+        fields = ('id', 'username', 'email', 'webuser')
 
 class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')
     # users = serializers.ManyH(User)
-    # travel = serializers.SlugRelatedField(many=False, read_only=True, slug_field='title')
+    # travel = serializers.RelatedField(many=False, read_only=True, source='travel.title')
     # users = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'users', 'manager_id')
+        fields = ('id', 'group_name', 'users', 'manager_id', 'is_public', )
 
 
 
 class TravelSerializer(serializers.ModelSerializer):
     # group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
-    # group = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
-    group = GroupSerializer(many=False, read_only=True)
+    group = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
+    # group = GroupSerializer(many=False, read_only=True)
     # group_name = group.group_name
     # group_name = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
     class Meta:
@@ -54,4 +52,4 @@ class ActivitySerializer(serializers.ModelSerializer):
     travel = TravelSerializer(many=False, read_only=True)
     class Meta:
         model = Activity
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel')
+        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'expense', )

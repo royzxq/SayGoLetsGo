@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 # Create your models here.
 
-class WebUser(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth = models.DateField('birth', null=True)
     gender_choices = (
@@ -24,10 +24,6 @@ class WebUser(models.Model):
         return self.user.username
 
 
-# class UserGroup(models.Model):
-#     user = models.ForeignKey(AbstractUser)
-#     group = models.ForeignKey(Group)
-
 
 class Group(models.Model):
     group_name = models.CharField("groupname", max_length=40)
@@ -39,8 +35,6 @@ class Group(models.Model):
     def __str__(self):
         return self.group_name
 
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
 
 
 class TravelPlan(models.Model):
@@ -83,7 +77,6 @@ class Activity(models.Model):
     )
     activity = models.CharField("activity", choices=activity_choice, max_length=30)
     note = models.CharField("note", max_length=200, null=True, blank=True)
-    expense = models.FloatField('expense', default=0.0)
 
     def __str__(self):
         return self.start_time.isoformat() + " " + self.activity
@@ -97,24 +90,5 @@ class Expense(models.Model):
     def __str__(self):
         return self.user.user.username + " paid " + str(self.expense)
 
-# class DayPlan(models.Model):
-#     travel_plan = models.ForeignKey(TravelPlan)
-#     date = models.DateField("date")
-#     modified_time = models.DateTimeField("modifiedtime", auto_now=True)
-#     city = models.CharField("city", max_length=20)
-#     breakfast = models.CharField("breakfast", max_length=100)
-#     lunch = models.CharField("lunch", max_length=100)
-#     dinner = models.CharField('dinner', max_length=100)
-#     places = models.CharField('locations', max_length=200, default="[]") # change this array to the JSonField
-#
-#     def addPlace(self, place):
-#         places = self.getPlaces()
-#         places.append(place.id)
-#         self.places = json.dumps(places)
-#
-#     def getPlaces(self):
-#         return json.loads(self.places)
-#
-#     def __str__(self):
-#         return self.city + " " + self.date.isoformat()
+
 
