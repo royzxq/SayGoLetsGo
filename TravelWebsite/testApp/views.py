@@ -94,9 +94,12 @@ class PlaceViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TimespanViewSet(viewsets.ModelViewSet):
-    queryset = TimeSpan.objects.all()
-    serializer_class = TimeSpanSerializer
+
+
+
+class ActivityViewSet(viewsets.ModelViewSet):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
     permissions_classes = (permissions.IsAuthenticatedOrReadOnly, IsGroupUser)
     #
     # def perform_create(self, serializer):
@@ -104,26 +107,39 @@ class TimespanViewSet(viewsets.ModelViewSet):
 
 
 class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
-    queryset = Group.objects.all()
+    # queryset = Group.objects.all()
     serializer_class = GroupSerializer
     filter_backends = (filters.OrderingFilter, )
-    ordering_fields = ('group_name', )
-    ordering = ('group_name', )
+    ordering_fields = ('group_name', 'manager_id')
+    ordering = ('group_name', 'manager_id')
 
     filter_mappings = {
         'group_name': 'group_name',
+        'manager_id': 'manager_id',
     }
 
-    # def get_queryset(self):
-    #     query_params = self.request.query_params
-    #     url_params = self.kwargs
-    #
-    #     queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
-    #     db_filters = queryset_filters['db_filters']
-    #     db_excludes = queryset_filters['db_excludes']
-    #
-    #     queryset = Group.objects.all()
-    #     return queryset.filter(**db_filters).exclude(**db_excludes)
+    # def create(self, request, *args, **kwargs):
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_anonymous:
+            serializer.save(manager_id=self.request.user.id)
+        else:
+            # super(GroupViewSet, self).perform_create(serializers)
+            serializer.save()
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
+
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
+
+        if not self.request.user.is_anonymous:
+            queryset = User.objects.get(id=self.request.user.id).group_set.all()
+        else:
+            queryset = Group.objects.all()
+        return queryset.filter(**db_filters).exclude(**db_excludes)
 
 class TravelViewSet(viewsets.ModelViewSet):
     queryset = TravelPlan.objects.all()

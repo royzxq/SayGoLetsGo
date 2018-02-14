@@ -22,8 +22,8 @@ from rest_framework.authtoken import views as rest_framework_views
 router = routers.DefaultRouter()
 # router.register(r'users', UserSerializer)
 router.register(r'places', views.PlaceViewSet)
-router.register(r'timespans', views.TimespanViewSet)
-router.register(r'groups', views.GroupViewSet)
+router.register(r'activities', views.ActivityViewSet)
+router.register(r'groups', views.GroupViewSet, base_name='groups')
 router.register(r'travels', views.TravelViewSet)
 router.register(r'users', views.UserViewSet)
 

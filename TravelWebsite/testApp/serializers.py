@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, TimeSpan, WebUser
+from .models import Group, TravelPlan, Place, Activity, WebUser
 
 
 
@@ -22,10 +22,11 @@ class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')
     # users = serializers.ManyH(User)
     # travel = serializers.SlugRelatedField(many=False, read_only=True, slug_field='title')
-    users = UserSerializer(many=True, read_only=True)
+    # users = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'users',)
+        fields = ('id', 'group_name', 'users', 'manager_id')
+
 
 
 class TravelSerializer(serializers.ModelSerializer):
@@ -48,9 +49,9 @@ class PlaceSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'location', 'user')
 
 
-class TimeSpanSerializer(serializers.ModelSerializer):
+class ActivitySerializer(serializers.ModelSerializer):
     # travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
     travel = TravelSerializer(many=False, read_only=True)
     class Meta:
-        model = TimeSpan
+        model = Activity
         fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel')
