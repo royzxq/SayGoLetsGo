@@ -13,7 +13,11 @@
       <router-link :to="{name: '/'}"> Home</router-link>
   </div>
   <button v-on:click="logout"> Logout</button>
+
+  <router-link :to="{name: 'UserForm'}"> Create User</router-link>
   </div>
+  
+
 </template>
 
 <script>
@@ -28,7 +32,7 @@ function ShowTheObject(obj){
      }
   alert(des)
 }
-import {generate_token_request, logout, is_logged_in} from '../utils/auth.js'
+import {generate_token_request, logout, is_logged_in, login_user} from '../utils/auth.js'
 export default {
 
   name: 'Login',
@@ -50,7 +54,7 @@ export default {
           ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
-          this.$router.push({name: 'Travels'})
+          this.$router.push({name: 'UserView'})
         },
         function (err) {
           console.log(err.statusText)

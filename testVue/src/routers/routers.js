@@ -9,7 +9,10 @@ import Place from '../components/Place.vue'
 import Timespan from '../components/Timespan.vue'
 import TimespanForm from '../components/TimespanForm.vue'
 import Login from '../components/login.vue'
-
+import UserForm from '../components/UserForm.vue'
+import UserView from '../components/UserView.vue'
+import TravelView from '../components/UserViewTravel.vue'
+import UserInfo from '../components/UserInfo.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -43,7 +46,19 @@ export default new Router({
             path:'/timespan/:id', name: 'Timespan', component: Timespan
         },
         {
-            path: 'login', name: 'login', component: Login
+            path: '/login', name: 'login', component: Login
+        },
+        {
+            path: '/createuser', name: 'UserForm', component: UserForm
+        },
+        {
+            path: '/index', name: 'UserView', component: UserView
+        },
+        {
+            path: '/travel_view', name: 'TravelView', component: TravelView
+        },
+        {
+            path: '/user_info', name: 'UserInfo', component: UserInfo
         }
     ]
 })

@@ -11,7 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(many=False, read_only=False)
+    profile = ProfileSerializer(many=False, read_only=True)
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'profile')
@@ -20,10 +20,11 @@ class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')
     # users = serializers.ManyH(User)
     # travel = serializers.RelatedField(many=False, read_only=True, source='travel.title')
+    travelplan = serializers.SlugRelatedField(slug_field="title", queryset=TravelPlan.objects.all())
     # users = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'users', 'manager_id', 'is_public', )
+        fields = ('id', 'group_name', 'users', 'manager_id', 'is_public', 'travelplan')
 
 
 

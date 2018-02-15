@@ -180,5 +180,6 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'username': 'username',
         'email': 'email',
     }
+    permission_classes = (permissions.AllowAny, )
 
 
