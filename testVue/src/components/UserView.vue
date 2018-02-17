@@ -8,7 +8,7 @@
 				<div >
 				<router-view></router-view>
 				</div> -->
-                <router-link :to="{name: 'TravelView', params:{group: group}}">
+                <router-link :to="{name: 'TravelView', params:{group_id: group.id}}">
                 <div> Group_name: {{group.group_name}} </div>
                 <div v-if="group.travelplan!==null"> Travel Name: {{group.travelplan}}</div>
                 <div v-else>No travel Created</div>

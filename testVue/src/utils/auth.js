@@ -53,7 +53,7 @@ export function is_logged_in(){
 export function requireAuth(to, from, next){
     if(!is_logged_in()){
         next({
-            path: '/',
+            path: '/login',
             query: {redirect: to.fullPath}
         });
     }else {

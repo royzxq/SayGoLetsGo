@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, Activity, Profile
+from .models import Group, TravelPlan, Place, Activity, Profile, Expense
 
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
@@ -24,8 +24,13 @@ class GroupSerializer(serializers.ModelSerializer):
     # users = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'users', 'manager_id', 'is_public', 'travelplan')
+        fields = ('id', 'group_name', 'is_public', 'travelplan')
 
+
+class GroupDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id', 'group_name', 'manager_id', 'users', 'is_public', 'travelplan')
 
 
 class TravelSerializer(serializers.ModelSerializer):
@@ -45,12 +50,28 @@ class PlaceSerializer(serializers.ModelSerializer):
     # user = UserSerializer(many=False, read_only=True)
     class Meta:
         model = Place
-        fields = ('id', 'name', 'description', 'location', 'user')
+        fields = ('id', 'name', 'description', 'location', 'country', 'city')
 
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Expense
+        fields = ('user', 'expense', 'expense_activity')
+
+
+class ActivityPlaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        fields = ('id', 'name')
 
 class ActivitySerializer(serializers.ModelSerializer):
     # travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
-    travel = TravelSerializer(many=False, read_only=True)
+    # travel = TravelSerializer(many=False, read_only=True)
+    travel = serializers.SlugRelatedField(many=False, read_only=True, slug_field='title')
+    # place = serializers.SlugRelatedField(many=False, read_only=True, slug_field='name')
+    place = ActivityPlaceSerializer(many=False, read_only=True)
+    expense_activity = ExpenseSerializer(many=True, read_only=True)
+    # expenses = serializers.SlugRelatedField(queryset=Expense.objects.all(), slug_field='expense')
     class Meta:
         model = Activity
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'expense', )
+        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', 'expense_activity')

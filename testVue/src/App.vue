@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <router-link :to="{name: 'Travels'}"> Travels</router-link>
-    <router-link :to="{name: 'Places'}"> Places</router-link>
-    <router-link :to="{name: 'Timespans'}"> Timespans</router-link>
-    <router-link :to="{name: 'login'}"> login</router-link>
+    <div v-if="is_logged()">
+      <button v-on:click="logout">Log out</button>
+    </div>
+    <div v-else>
+      <router-link :to="{name: 'UserForm'}">Sign on</router-link>
+      <router-link :to="{name: 'login'}"> Log in</router-link>
+    </div>
     <router-view></router-view>
     <!-- <travel-list  ></travel-list> -->
     <!-- <p>{{ message }}</p> -->
@@ -11,20 +14,24 @@
 </template>
 
 <script>
-import VueResources from 'vue-resource'
-import TravelList from './components/TravelList.vue'
-import PlaceList from './components/PlaceList.vue'
-import TimeSpanList from './components/TimeSpanList.vue'
-import login from './components/login.vue'
+import {is_logged_in, logout} from './utils/auth'
+// import VueResources from 'vue-resource'
+// import TravelList from './components/TravelList.vue'
+// import PlaceList from './components/PlaceList.vue'
+// import TimeSpanList from './components/TimeSpanList.vue'
+// import login from './components/login.vue'
 
 export default {
   name: 'App',
   // router,
-  components: {
-    TravelList,
-    PlaceList,
-    TimeSpanList,
-    login
+  methods:{
+    is_logged: function(){
+      return is_logged_in();
+    },
+    logout: function(){
+      logout();
+      this.$router.push('/login')
+    }
   }
 }
 </script>

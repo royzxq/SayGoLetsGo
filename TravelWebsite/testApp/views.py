@@ -94,6 +94,7 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
         'user': 'user',
         'country': 'country',
         'city': 'city',
+        'travels': 'travels',
     }
 
     def perform_create(self, serializer):
@@ -108,8 +109,8 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     serializer_class = ActivitySerializer
     permissions_classes = (permissions.IsAuthenticatedOrReadOnly, IsGroupUser)
     filter_backends = (filters.OrderingFilter, )
-    ordering_fields = ('travel', )
-    ordering = ('travel', )
+    ordering_fields = ('start_time', 'travel', )
+    ordering = ('start_time','travel', )
 
     filter_mappings = {
         'travel': 'travel',
@@ -130,6 +131,11 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         'travel': "travelplan",
 
     }
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = GroupDetailSerializer(instance)
+        return Response(serializer.data)
 
     # def create(self, request, *args, **kwargs):
 
@@ -183,3 +189,6 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny, )
 
 
+class ExpenseViewSet(viewsets.ModelViewSet):
+    queryset = Expense.objects.all()
+    serializer_class = ExpenseSerializer

@@ -7,14 +7,15 @@
 		<input v-model="password" placeholder="Password">
     <br>
 		<button v-on:click="login"> Login</button>
+    <router-link :to="{name: 'UserForm'}"> Create User</router-link>
 	</div>
   <div v-else>
       <p> Already logged in </p>
-      <router-link :to="{name: '/'}"> Home</router-link>
+      <router-link :to="{name: 'UserView'}"> Home</router-link>
   </div>
   <button v-on:click="logout"> Logout</button>
 
-  <router-link :to="{name: 'UserForm'}"> Create User</router-link>
+  
   </div>
   
 
@@ -73,7 +74,7 @@ export default {
     },
     logout: function () {
       logout()
-      this.$router.push({name: 'Travels'})
+      this.$router.push('/index')
     }
     
   },

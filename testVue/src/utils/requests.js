@@ -56,7 +56,7 @@ function getGroups(opts=null){
 }
 
 export function getGroup(id){
-    const url = BASE_URL + 'travels' + id + '/'
+    const url = BASE_URL + 'groups/' + id + '/'
     return getRequest(url)
 }
 
@@ -72,3 +72,17 @@ export function getUserId(id){
     return getRequest(url)
 }
 
+// activity request
+export function getActivities(opts=null){
+    let url = BASE_URL + 'activities/'
+    if (opts!=null){
+        url = addURLParams(url, opts)
+    }
+    return getRequest(url)
+}
+
+// place request 
+export function getPlace(id){
+    let url = BASE_URL + 'places/' + id + '/'
+    return getRequest(url)
+}

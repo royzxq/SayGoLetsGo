@@ -50,6 +50,7 @@ class TravelPlan(models.Model):
 
 class Place(models.Model):
     user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
+    travels = models.ManyToManyField(TravelPlan)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     country = models.CharField('country', max_length=100, default="")
@@ -79,7 +80,7 @@ class Activity(models.Model):
     note = models.CharField("note", max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.start_time.isoformat() + " " + self.activity
+        return self.travel.title + " " + self.activity
 
 
 class Expense(models.Model):
@@ -88,7 +89,7 @@ class Expense(models.Model):
     expense_activity = models.ForeignKey(Activity, related_name='expense_activity', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.user.username + " paid " + str(self.expense)
+        return self.user.username + " paid " + str(self.expense)
 
 
 

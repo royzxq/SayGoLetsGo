@@ -1,5 +1,6 @@
 <template>
 	<div>
+    <button v-on:click="goBack">Go Back</button>
 	<p>
 		Username:  {{user.username}}
 	</p>
@@ -29,6 +30,9 @@ export default {
         }).catch(err => {
           alert(err.response)
         })
+      },
+      goBack: function(){
+          this.$router.go(-1);
       }
   },
   mounted: function(){

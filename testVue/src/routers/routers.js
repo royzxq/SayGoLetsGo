@@ -15,6 +15,9 @@ import TravelView from '../components/UserViewTravel.vue'
 import UserInfo from '../components/UserInfo.vue'
 Vue.use(Router)
 
+
+import {requireAuth} from '../utils/auth'
+
 export default new Router({
     mode: 'history', 
     routes:[
@@ -33,9 +36,7 @@ export default new Router({
         {
             path:'/places', name: 'Places', component: PlaceList
         },
-        {
-            path:'/places/:id', name: 'Place', component: Place
-        },
+        
         {
             path:'/timespans', name: 'Timespans', component: TimeSpanList
         },
@@ -52,13 +53,19 @@ export default new Router({
             path: '/createuser', name: 'UserForm', component: UserForm
         },
         {
-            path: '/index', name: 'UserView', component: UserView
+            path: '/index', name: 'UserView', component: UserView,
+            beforeEnter: requireAuth
         },
         {
-            path: '/travel_view', name: 'TravelView', component: TravelView
+            path: '/travel_view/', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
+            children: [
+                {
+                    path:'/places/:id', name: 'Place', component: Place
+                }
+            ]
         },
         {
-            path: '/user_info', name: 'UserInfo', component: UserInfo
+            path: '/user_info', name: 'UserInfo', component: UserInfo, beforeEnter: requireAuth
         }
     ]
 })
