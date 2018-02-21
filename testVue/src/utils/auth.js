@@ -16,8 +16,9 @@ export function login_user(username, password){
     tokenRequester.grant_type = 'password'
     tokenRequester.client_id = clientID
     tokenRequester.client_secret = clientSec
-    axios.defaults.headers.common['Content-Type'] = "application/x-www-form-urlencoded"
-    // let data = JSON.stringify(tokenRequester)
+    axios.defaults.headers.common['Content-Type'] = "application/json"
+    // axios.defaults.headers.common['Content-Type'] = "application/x-www-form-urlencoded"
+    let data = JSON.stringify(tokenRequester)
     return axios.post(AUTH_URL, tokenRequester, {emulateJSON : true});    
 }
 
@@ -37,8 +38,10 @@ export function logout(){
     console.log('logout')
     localStorage.setItem('tWeb_access_token', '')
     localStorage.setItem('tWeb_username','')
+    localStorage.setItem('tWeb_userId', '')
     localStorage.removeItem('tWeb_access_token')
     localStorage.removeItem('tWeb_username')
+    localStorage.removeItem('tWeb_userId')
 }
 
 export function is_logged_in(){
@@ -52,7 +55,7 @@ export function is_logged_in(){
 export function requireAuth(to, from, next){
     if(!is_logged_in()){
         next({
-            path: '/',
+            path: '/login',
             query: {redirect: to.fullPath}
         });
     }else {

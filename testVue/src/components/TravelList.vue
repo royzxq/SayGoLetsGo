@@ -19,20 +19,22 @@ var link = 'http://127.0.0.1:8000/test_app/travels/'
 var data = {
 	travels: null
 }
-import {getTravelList} from '../utils/requests';
+import {getTravelList, } from '../utils/requests';
 
 export default {
 	name: 'TravelList',
 	data: function(){
 		return {
-			travels: null,
-			showing: null,
+			travels: [],
+			showing: [],
+			groups: []
 		}
 	},
 	methods:{
 	    getTravels: function () {
 			getTravelList().then(response => {
-				this.travels = response.data;
+				this.travels = response.data.results;
+				// console.log(response.data.results);
 				this.showing = Array(this.travels.length).fill(false)
 				console.log(this.showing)
 			}).catch(error => {

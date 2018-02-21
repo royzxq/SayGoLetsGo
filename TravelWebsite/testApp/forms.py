@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import WebUser
+from .models import Profile
 #
 #
 # class RegisterForm(forms.ModelForm):
