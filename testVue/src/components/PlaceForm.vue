@@ -1,39 +1,48 @@
 <template>
 	<div>
 	<input v-model="name" placeholder="place name">
+	<input v-model="country" placeholder="country">
+	<input v-model="city" placeholder="city">
 	<input v-model="description" placeholder="place description">
 	<input v-model="location" placeholder="place location">
+	<input type="checkbox" id="is_public" v-model="is_public">
+	<label for="is_public">Is Public?</label>
 	<button v-on:click="submit"> Submit</button>
 	</div>
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/test_app/places/'
-
+import {createPlace} from '../utils/requests'
 export default {
-
   name: 'PlaceForm',
-
   data: function () {return {
 	    name: null,
 		description: null,
-		location: null
+		location: null,
+		country: null,
+		city: null,
+		is_public: true
   	}
   },
   methods:{
   	submit: function(){
-  		var place = {}
-  		place.name = this.name
-  		place.description = this.description
-  		place.location = this.location
-  		Vue.http.headers.common['Content-Type'] = "application/json";
-  		Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
-  		this.$http.post(link, place).then(function(response){
-	        console.log(response.data);
-	        this.$router.push('places')
-	      }, function(err){
-	        console.log(err.statusText);
-	    })
+		if (localStorage.getItem('tWeb_userId') !== null){
+			var place = {}
+			place.name = this.name
+			place.description = this.description
+			place.location = this.location
+			place.country = this.country
+			place.city = this.city
+			place.user = localStorage.getItem('tWeb_userId')
+			place.is_public = this.is_public
+			createPlace(place).then(response => {
+				console.log(response.data)
+				this.$router.push('/index')
+			}).catch(error => {
+				console.log('created places failed')
+				console.log(error)
+			})
+		}
   	}
   }
 }

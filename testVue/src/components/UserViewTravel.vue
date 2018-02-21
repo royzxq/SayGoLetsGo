@@ -23,11 +23,14 @@
                     <p v-if="activity.expense_activity.length !== 0">
                         <ul>
                             <li v-for="expense in activity.expense_activity">
+                                User {{expense.user}} paid 
                                 Expense: {{expense.expense}}
                             </li>
                         </ul>
                     </p>
                 </li>
+                <br>
+                <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
                 <router-view></router-view>
             </ul>
         </div>
@@ -43,6 +46,7 @@
                     </router-link>
                 </li>
             </ul>
+            <button type="submit"> Add Users</button>
         </div>
         <!-- <router-view></router-view> -->
 	</div>

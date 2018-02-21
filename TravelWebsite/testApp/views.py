@@ -97,8 +97,8 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
         'travels': 'travels',
     }
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
 
 
 
@@ -115,7 +115,9 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     filter_mappings = {
         'travel': 'travel',
     }
-
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = ActivityCreateSerializer
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
 class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     # queryset = Group.objects.all()
@@ -129,7 +131,6 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         'manager_id': 'manager_id',
         'is_public': 'is_public',
         'travel': "travelplan",
-
     }
 
     def retrieve(self, request, *args, **kwargs):
@@ -137,7 +138,14 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         serializer = GroupDetailSerializer(instance)
         return Response(serializer.data)
 
-    # def create(self, request, *args, **kwargs):
+
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = GroupCreateSerializer
+        print("user is " + str(self.request.user))
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
+
+    def get_serializer_context(self):
+        return {'manager_id': self.request.user}
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
@@ -159,6 +167,7 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         else:
             queryset = Group.objects.all()
         return queryset.filter(**db_filters).exclude(**db_excludes)
+    # permission_classes = (permissions.AllowAny, )
 
 
 class TravelViewSet(FiltersMixin, viewsets.ModelViewSet):
@@ -171,7 +180,12 @@ class TravelViewSet(FiltersMixin, viewsets.ModelViewSet):
         'title' : 'title',
         'country': 'country',
         'group': 'group'
-    }\
+    }
+    # permission_classes = (permissions.AllowAny, )
+
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = TravelCreateSerializer
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
 
 
@@ -186,7 +200,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'username': 'username',
         'email': 'email',
     }
-    permission_classes = (permissions.AllowAny, )
+    # permission_classes = (permissions.AllowAny, )
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):

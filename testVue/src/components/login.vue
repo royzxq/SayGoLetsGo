@@ -34,6 +34,8 @@ function ShowTheObject(obj){
   alert(des)
 }
 import {generate_token_request, logout, is_logged_in, login_user} from '../utils/auth.js'
+import {getUsers} from '../utils/requests'
+
 export default {
 
   name: 'Login',
@@ -51,11 +53,23 @@ export default {
         'Content-Type': "application/x-www-form-urlencoded"
       }}).then(
         function (response) {
-          console.log(response.data)
+          console.log(response)
           ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
-          this.$router.push({name: 'UserView'})
+          var user = {
+            username: tokenRequester.username
+          }
+          getUsers(user).then(response => {
+            console.log(response.data)
+            var user = response.data.results[0]
+            // var id = user.id
+            localStorage.setItem('tWeb_userId', user.id)
+            this.$router.push({name: 'UserView'})
+          }).catch(error => {
+            console.log("get user failed")
+            console.log(error)
+          })
         },
         function (err) {
           console.log(err.statusText)

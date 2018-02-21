@@ -38,8 +38,10 @@ export function logout(){
     console.log('logout')
     localStorage.setItem('tWeb_access_token', '')
     localStorage.setItem('tWeb_username','')
+    localStorage.setItem('tWeb_userId', '')
     localStorage.removeItem('tWeb_access_token')
     localStorage.removeItem('tWeb_username')
+    localStorage.removeItem('tWeb_userId')
 }
 
 export function is_logged_in(){

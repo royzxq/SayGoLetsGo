@@ -24,21 +24,25 @@ function getRequest(url){
     return axios.get(url, {headers: header});
 }
 
-function postRequest(url, data){
-    var header = {
-        'Authorization' : 'Bearer ' + localStorage.getItem('tWeb_access_token')
-    }
-    return axios.post(url, data);
-}
-
-// Travel requests
-function getTravelList(opts=null){
-    let url = BASE_URL + 'travels/'
+function getAppRequest(suffix, opts=null){
+    let url = BASE_URL + suffix
     // console.log("params is " + opts)
     if (opts!==null){
         url = addURLParams(url, opts)
     }
     return getRequest(url);
+}
+
+function postRequest(url, data){
+    var header = {
+        'Authorization' : 'Bearer ' + localStorage.getItem('tWeb_access_token')
+    }
+    return axios.post(url, data, {headers: header});
+}
+
+// Travel requests
+function getTravelList(opts=null){
+    return getAppRequest('travels/', opts);
 } 
 
 function getTravel (id){
@@ -46,13 +50,14 @@ function getTravel (id){
     return getRequest(url);
 }
 
+export function createTravel(data){
+    const url = BASE_URL + 'travels/'
+    return postRequest(url, data)
+}
+
 // Group requests
 function getGroups(opts=null){
-    let url = BASE_URL + "groups/"
-    if (opts!=null){
-        url = addURLParams(url, opts)
-    }
-    return getRequest(url);
+    return getAppRequest('groups/', opts);
 }
 
 export function getGroup(id){
@@ -60,10 +65,14 @@ export function getGroup(id){
     return getRequest(url)
 }
 
+export function createGroup(data){
+    const url = BASE_URL + 'groups/'
+    return postRequest(url, data)
+}
+
 // user request 
 function createUser(data){
     let url = BASE_URL + 'users/'
-    // axios.defaults.headers.common['Content-Type'] = "application/json"
     return postRequest(url, data)
 }
 
@@ -72,17 +81,27 @@ export function getUserId(id){
     return getRequest(url)
 }
 
+export function getUsers(opts=null){
+    return getAppRequest('users/', opts);
+}
+
 // activity request
 export function getActivities(opts=null){
+    return getAppRequest('activities/', opts);
+}
+
+export function createActivity(data){
     let url = BASE_URL + 'activities/'
-    if (opts!=null){
-        url = addURLParams(url, opts)
-    }
-    return getRequest(url)
+    return postRequest(url, data)
 }
 
 // place request 
 export function getPlace(id){
     let url = BASE_URL + 'places/' + id + '/'
     return getRequest(url)
+}
+
+export function createPlace(data){
+    let url = BASE_URL + 'places/'
+    return postRequest(url, data)
 }

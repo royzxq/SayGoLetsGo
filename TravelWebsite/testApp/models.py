@@ -38,7 +38,7 @@ class Group(models.Model):
 
 
 class TravelPlan(models.Model):
-    group = models.OneToOneField(Group, on_delete=models.CASCADE,)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, )
     title = models.CharField("title", max_length=40, default="")
     country = models.CharField("country", max_length=20)
     days = models.IntegerField("days", default=1)
@@ -57,6 +57,7 @@ class Place(models.Model):
     city = models.CharField('city', max_length=100, default="")
     location = models.CharField('location', max_length=100, null=True)
     picture = models.ImageField('picture', max_length=100, null=True, blank=True)
+    is_public = models.BooleanField('is_public', default=True)
 
     def __str__(self):
         return self.name
