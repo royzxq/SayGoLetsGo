@@ -26,22 +26,30 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ('id', 'group_name', 'is_public', 'travelplan', )
 
+
 class GroupCreateSerializer(serializers.ModelSerializer):
 
-    # def create(self, validated_data):
-    #     print("Create group " + str(validated_data))
-    #     print("get context is " + str(self.context['manager_id']))
-    #     group = Group.objects.create(
-    #         group_name=validated_data['group_name']
-    #     )
+    def create(self, validated_data):
+        print("Create group " + str(validated_data))
+        # print("get context is " + str(self.context['manager_id']))
+        group = Group.objects.create(
+            group_name=validated_data['group_name'],
+            # users=validated_data['users'],
+            manager_id=validated_data['manager_id'],
+            is_public=validated_data['is_public']
+        )
+        group.users.add(validated_data['users'])
+        return group
+
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'is_public', 'manager_id', )
+        fields = ('id', 'group_name', 'is_public', )
+
 
 class GroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ('id', 'group_name', 'manager_id', 'users', 'is_public')
+        fields = ('id', 'group_name', 'manager_id', 'is_public', 'users')
 
 
 class TravelSerializer(serializers.ModelSerializer):
@@ -81,6 +89,7 @@ class ActivityPlaceSerializer(serializers.ModelSerializer):
         model = Place
         fields = ('id', 'name')
 
+
 class ActivitySerializer(serializers.ModelSerializer):
     # travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
     # travel = TravelSerializer(many=False, read_only=True)
@@ -92,6 +101,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', 'expense_activity')
+
 
 class ActivityCreateSerializer(serializers.ModelSerializer):
     class Meta:

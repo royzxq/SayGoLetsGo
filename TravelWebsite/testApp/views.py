@@ -138,21 +138,13 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         serializer = GroupDetailSerializer(instance)
         return Response(serializer.data)
 
-
     def create(self, request, *args, **kwargs):
         self.serializer_class = GroupCreateSerializer
-        print("user is " + str(self.request.user))
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
-
-    def get_serializer_context(self):
-        return {'manager_id': self.request.user}
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(manager_id=self.request.user.id)
-        else:
-            # super(GroupViewSet, self).perform_create(serializers)
-            serializer.save()
+            serializer.save(manager_id=self.request.user.id, users=self.request.user.id)
 
     def get_queryset(self):
         query_params = self.request.query_params

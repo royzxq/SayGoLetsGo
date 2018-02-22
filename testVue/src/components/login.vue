@@ -60,16 +60,7 @@ export default {
           var user = {
             username: tokenRequester.username
           }
-          getUsers(user).then(response => {
-            console.log(response.data)
-            var user = response.data.results[0]
-            // var id = user.id
-            localStorage.setItem('tWeb_userId', user.id)
-            this.$router.push({name: 'UserView'})
-          }).catch(error => {
-            console.log("get user failed")
-            console.log(error)
-          })
+          this.$router.push({name: 'UserView'})
         },
         function (err) {
           console.log(err.statusText)

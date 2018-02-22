@@ -24,7 +24,6 @@ class Profile(models.Model):
         return self.user.username
 
 
-
 class Group(models.Model):
     group_name = models.CharField("groupname", max_length=40)
     # group_manager = models.ForeignKey(User, on_delete=models.SET_NULL)

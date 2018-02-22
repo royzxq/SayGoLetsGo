@@ -41,32 +41,11 @@ export default {
   },
   methods:{
   	submit: function(){
-			if(localStorage.getItem('tWeb_userId') === null){
-				var name = localStorage.getItem('tWeb_username')
-				var param = {
-					username: name
-				}
-				getUsers(param).then(response => {
-					 var user = response.data.results[0]
-					 this.user_id = user.id
-					 localStorage.setItem("tWeb_userId", this.user_id)
-					 this.createTravelsImpl()
-				}).catch(error => {
-					console.log("get user failed")
-				})
-			}
-			else{
-				this.user_id = localStorage.getItem('tWeb_userId')
-				this.createTravelsImpl()
-			}
+			this.createTravelsImpl()
 		},
 		createTravelsImpl: function(){
 			var group = {
 				group_name : this.group_name,
-				manager_id : this.user_id,
-				users: [
-					this.user_id
-				],
 				is_public: this.is_public
 			}
 			console.log(group)
