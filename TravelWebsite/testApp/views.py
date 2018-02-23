@@ -198,3 +198,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_anonymous:
+            serializer.save(user=self.request.user.id)

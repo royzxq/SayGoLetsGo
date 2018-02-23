@@ -30,33 +30,10 @@
 
 
 import {getTravelList, getGroups} from '../utils/requests';
-
+import {mapGetters} from 'vuex'
 export default {
 	name: 'UserView',
-	data: function(){
-		return {
-			travels: [],
-			groups: [],
-		}
-	},
 	methods:{
-	    getGroups: function () {
-			getGroups().then(response => {
-				this.groups = response.data.results;
-				// console.log(response.data.results);
-			}).catch(error => {
-				this.reset()
-				console.log(error)
-				alert(error)
-				this.$router.push({name: 'login'})
-			})
-        },
-        goToGroup: function(id){
-            
-        },
-		reset: function(){
-			this.groups = []
-		},
 		createTravel: function(){
 			this.$router.push({name: 'TravelForm'})
 		},
@@ -65,12 +42,15 @@ export default {
 		}
 	},
 	mounted: function(){
-    	this.getGroups();
+		this.$store.dispatch('groupTravel/fetchGroups')
     },
     computed:{
         username: function(){
             return localStorage.getItem('tWeb_username')
-        }
+		},
+		...mapGetters({
+			groups: 'groupTravel/getGroups',
+		}),
     }
 }
 </script>

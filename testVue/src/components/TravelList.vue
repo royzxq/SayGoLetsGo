@@ -19,7 +19,7 @@ var link = 'http://127.0.0.1:8000/test_app/travels/'
 var data = {
 	travels: null
 }
-import {getTravelList, } from '../utils/requests';
+import {getTravels, } from '../utils/requests';
 
 export default {
 	name: 'TravelList',
@@ -32,7 +32,7 @@ export default {
 	},
 	methods:{
 	    getTravels: function () {
-			getTravelList().then(response => {
+			getTravels().then(response => {
 				this.travels = response.data.results;
 				// console.log(response.data.results);
 				this.showing = Array(this.travels.length).fill(false)

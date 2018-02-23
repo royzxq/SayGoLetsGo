@@ -18,18 +18,13 @@
 <script>
 import {getUsers, createGroup, createTravel} from '../utils/requests'
 
-var Travel = {
-	title: null,
-	days: null,
-	country: null,
-	group: null
-}
 
 export default {
 
   name: 'TravelForm',
 
-  data: function () {return {
+  data: function () {
+	  return {
 			title: null,
 			days: null,
 			country: null,
@@ -48,29 +43,16 @@ export default {
 				group_name : this.group_name,
 				is_public: this.is_public
 			}
-			console.log(group)
-			createGroup(group).then(response=>{
-				console.log(response.data)
-				this.group_id = response.data.id
-				var travel = {
-					title: this.title,
-					days: this.days,
-					country: this.country,
-					group: this.group_id
-				}
-				console.log("travel is ")
-				console.log(travel)
-				createTravel(travel).then(response=>{
-					console.log(response.data)
-					this.$route.push('/index')
-				}).catch(error => {
-					console.log("create travel failed")
-					console.log(error)
-				})
-			}).catch(error => {
-				console.log("create Group failed")
-				console.log(error.response)
-			})
+			var travel = {
+				title: this.title,
+				days: this.days,
+				country: this.country
+			}
+			var payload = {}
+			payload.group = group
+			payload.travel = travel
+			this.$store.dispatch('groupTravel/createGroupAndTravel', payload)
+			this.$route.push('/index')
 		}
   }
 }

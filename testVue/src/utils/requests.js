@@ -3,7 +3,7 @@ import axios from 'axios'
 const BASE_URL = 'http://127.0.0.1:8000/test_app/'
 // const TEST_APP_URL= 'test_app/'
 
-export {getTravel, getTravelList, getGroups, createUser}
+export {getTravel, getGroups, createUser}
 
 function addURLParams(url, opts){
     url += '?'
@@ -41,7 +41,7 @@ function postRequest(url, data){
 }
 
 // Travel requests
-function getTravelList(opts=null){
+export function getTravels(opts=null){
     return getAppRequest('travels/', opts);
 } 
 
@@ -103,5 +103,11 @@ export function getPlace(id){
 
 export function createPlace(data){
     let url = BASE_URL + 'places/'
+    return postRequest(url, data)
+}
+
+// expense request
+export function createExpense(data){
+    let url = BASE_URL + 'expenese/'
     return postRequest(url, data)
 }

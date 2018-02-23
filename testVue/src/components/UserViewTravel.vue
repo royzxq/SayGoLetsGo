@@ -11,14 +11,14 @@
 
             <span>Activities</span>
             <ul>
-                <li v-for="activity in activities">
+                <li v-for="(activity,idx) in activities">
                     <p>Activity: {{activity.activity}}</p>
                     <p>Start time: {{ activity.start_time }} </p>
                     <p v-if="activity.place!==null">
-                        <router-link :to="{name:'Place', params:{id: activity.place.id}}">Check Place</router-link>
-                        Place: {{ activity.place.name }}
-                        
-
+                        <span v-on:click="checkPlace(activity.place.id)"> 
+                        <router-link :to="{name:'Place'}" >Check Place</router-link>
+                            Place: {{ activity.place.name }}
+                        </span>
                     </p>
                     <p v-if="activity.expense_activity.length !== 0">
                         <ul>
@@ -28,6 +28,10 @@
                             </li>
                         </ul>
                     </p>
+                    <button v-on:click="toggleExpenseShow(idx)">Add Expense</button>
+                    <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
+                    <!-- <router-view></router-view> -->
+                    <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
                 <br>
                 <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
@@ -54,8 +58,9 @@
 
 <script>
 
-import {getTravelList, getGroup, getActivities} from '../utils/requests'
-
+import {getTravels, getGroup, getActivities} from '../utils/requests'
+import ExpenseForm from '../components/ExpenseForm.vue'
+import {mapGetters} from 'vuex'
 export default {
 
   name: 'TravelView',
@@ -63,8 +68,12 @@ export default {
     return {
         travel: null,
         group: null,
-        activities: null
+        activities: null,
+        expense_show: []
     }
+  },
+  components: {
+      ExpenseForm
   },
   methods:{
       getGroupTravel: function () {
@@ -74,13 +83,14 @@ export default {
         }
         getGroup(this.$route.params.group_id).then(response => {
             this.group = response.data
-            getTravelList(param).then(response => {
+            getTravels(param).then(response => {
                 this.travel = response.data.results[0];
                 var param = {
                     travel : this.travel.id
                 }
                 getActivities(param).then(response => {
                     this.activities = response.data.results
+                    this.expense_show = Array(this.activities.length).fill(false)
                     console.log(response.data.results)
                 }).catch(error => {
                     console.log("get activity failed " + this.travel.id + error);
@@ -88,35 +98,31 @@ export default {
                 })
             }).catch(error => {
                 console.log("get travel failed")
-                alert(error.response)
+                alert(error)
             })
         }).catch(error => {
             console.log("get group failed" + this.$route.params.group_id);
-            alert(error.response)
+            alert(error)
         })
 
         // getTravelList(param).then(response => {
         //     // console.log(response.data.results)
         //   this.travel = response.data.results[0]
-        // }).catch(err => {
+        // }).catch(err => {    
         //   alert(err.response)
         // })
       },
-    //   getActivities: function (){
-    //       var param = {
-    //           travel : this.travel.id
-    //       }
-    //       getActivities(param).then(response => {
-    //           this.activities = response.data.results
-    //           console.log(response.data.results)
-    //       }).catch(error => {
-    //           console.log("get activity failed" + this.travel.id);
-    //           alert(error.response)
-    //       })
-    //   },
+      toggleExpenseShow: function(idx){
+          var value = !this.expense_show[idx]
+          this.$set(this.expense_show, idx, value)
+          console.log(this.expense_show)
+      },
       goBack: function(){
         //   alert("go back");
           this.$router.go(-1);
+      },
+      checkPlace: function(id) {
+          this.$store.dispatch('place/setId', id)
       }
   },
   mounted: function(){
