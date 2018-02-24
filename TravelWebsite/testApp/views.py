@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
-from .permissions import IsOwnerOrReadOnly, IsGroupUser
+from .permissions import IsOwnerOrReadOnly, IsGroupUser, IsPost
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 import datetime
@@ -192,7 +192,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'username': 'username',
         'email': 'email',
     }
-    # permission_classes = (permissions.AllowAny, )
+    permission_classes = (IsPost,)
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):

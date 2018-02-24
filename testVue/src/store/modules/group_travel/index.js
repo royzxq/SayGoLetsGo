@@ -79,33 +79,31 @@ const actions = {
         })
     },
     createGroupAndTravel: (context, payload) => { 
-        createGroup(payload.group).then(response => {
-            console.log("create the group");
-            console.log(response.data)
-            context.commit('setId', response.data.id)
-            context.commit("setGroup", response.data)
-            payload.travel.group = response.data.id
-            createTravel(payload.travel).then(response => {
-                console.log("create the travel");
-                console.log(response.data);
-                context.commit('setTravel', response.data)
-            }).catch(error => {
-                console.log("create the travel failed ")
-                // context.commit("deleteGroup")
+        return createGroup(payload.group).then(response => {
+                console.log("create the group");
+                console.log(response.data)
+                context.commit('setId', response.data.id)
+                context.commit("setGroup", response.data)
+                payload.travel.group = response.data.id
+                return createTravel(payload.travel).then(response => {
+                    console.log("create the travel");
+                    console.log(response.data);
+                    context.commit('setTravel', response.data)
+                })
+            }).then(response => {
+                console.log("all done")
+                return response
             })
-        }).catch(error => {
-            console.log("create the group failed ")
-            // context.commit("deleteGroup")
-        })
+        
     },
     setId: (context, id) => {
         context.commit('setId', id)
-        getGroup(state.id).then(response => {
+        getGroup(state.group_id).then(response => {
             console.log("fetch the group");
             console.log(response.data)
             context.commit("setGroup", response.data)
         }).catch(error => {
-            console.log("fetch the group failed " + state.id)
+            console.log("fetch the group failed " + state.group_id)
             context.commit("deleteGroup")
         })
         var param = {

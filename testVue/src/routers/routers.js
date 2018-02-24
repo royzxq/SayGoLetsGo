@@ -16,6 +16,7 @@ import TravelView from '../components/UserViewTravel.vue'
 import UserInfo from '../components/UserInfo.vue'
 import ActivityForm from '../components/ActivityForm.vue'
 import ExpenseForm from '../components/ExpenseForm.vue'
+import Checkout from '@/components/Checkout.vue'
 Vue.use(Router)
 
 
@@ -72,6 +73,9 @@ export default new Router({
                 },
                 {
                     path: 'expense', name: 'Expense', component: ExpenseForm
+                },
+                {
+                    path: 'checkout', name: 'Checkout', component: Checkout  
                 }
             ]
         },

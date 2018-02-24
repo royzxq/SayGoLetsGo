@@ -2,21 +2,21 @@
 	<div>
         <h2>Your groups</h2>
         <h3>Username: 
-			<router-link :to="{name: 'UserInfo', params: {username: username} }">
+			<div v-on:click="checkUser(username)">
+			<router-link :to="{name: 'UserInfo' }">
 			{{username}}
 			</router-link>
+			</div>
 		</h3>
 		<ul>
 			<li v-for="(group, idx) in groups">
-				<!-- <router-link :to="{name: 'Travel', params: {id: travel.id}}" v-on:click="goToTravel(idx)">	Title:  {{travel.title}} </router-link>
-				<div >
-				<router-view></router-view>
-				</div> -->
-                <router-link :to="{name: 'TravelView', params:{group_id: group.id}}">
+				<div v-on:click="checkGroupTravel(group.id)">
+                <router-link :to="{name: 'TravelView'}">
                 <div> Group_name: {{group.group_name}} </div>
                 <div v-if="group.travelplan!==null"> Travel Name: {{group.travelplan}}</div>
                 <div v-else>No travel Created</div>
                 </router-link>
+				</div>
 			</li>
 		</ul>
 		<button v-on:click="createTravel()"> Creat Travel and Group </button>
@@ -39,6 +39,15 @@ export default {
 		},
 		createPlace: function(){
 			this.$router.push({name: 'PlaceForm'})
+		},
+		checkUser: function(username){
+			var user = {
+				username: username
+			}
+			this.$store.dispatch('user/fetchLocalUser', user);
+		},
+		checkGroupTravel: function(group_id) {
+			this.$store.dispatch('groupTravel/setId', group_id)
 		}
 	},
 	mounted: function(){
@@ -50,6 +59,7 @@ export default {
 		},
 		...mapGetters({
 			groups: 'groupTravel/getGroups',
+			user_id: 'user/getId'
 		}),
     }
 }

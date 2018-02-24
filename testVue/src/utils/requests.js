@@ -108,6 +108,6 @@ export function createPlace(data){
 
 // expense request
 export function createExpense(data){
-    let url = BASE_URL + 'expenese/'
+    let url = BASE_URL + 'expenses/'
     return postRequest(url, data)
 }

@@ -8,8 +8,9 @@
             <p> Days: {{travel.days}} </p>
             <p> Country: {{travel.country}} </p>
             <br>
-
+            <br>
             <span>Activities</span>
+            <button v-on:click="getActivities()">Show Activities</button>
             <ul>
                 <li v-for="(activity,idx) in activities">
                     <p>Activity: {{activity.activity}}</p>
@@ -34,7 +35,10 @@
                     <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
                 <br>
+                
                 <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
+                <br>
+                <br>
                 <router-view></router-view>
             </ul>
         </div>
@@ -45,20 +49,23 @@
             <ul>
                 
                 <li v-for="user in group.users">
-                    <router-link :to="{name: 'UserInfo', params: {id: user}}" >
+                    <span v-on:click="checkUser(user)" >
+                    <router-link :to="{name: 'UserInfo'}" >
                         User:  {{user}}
                     </router-link>
+                    </span>
                 </li>
             </ul>
             <button type="submit"> Add Users</button>
+            <router-link :to="{name:'Checkout'}">Calculate Overall Expense</router-link>
+            <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
         </div>
-        <!-- <router-view></router-view> -->
 	</div>
 </template>
 
 <script>
 
-import {getTravels, getGroup, getActivities} from '../utils/requests'
+import {getTravels, getGroup, getActivities, getTravel} from '../utils/requests'
 import ExpenseForm from '../components/ExpenseForm.vue'
 import {mapGetters} from 'vuex'
 export default {
@@ -66,9 +73,6 @@ export default {
   name: 'TravelView',
   data () {
     return {
-        travel: null,
-        group: null,
-        activities: null,
         expense_show: []
     }
   },
@@ -76,42 +80,6 @@ export default {
       ExpenseForm
   },
   methods:{
-      getGroupTravel: function () {
-        // this.group = this.$route.params.group 
-        var param = {
-            group: this.$route.params.group_id
-        }
-        getGroup(this.$route.params.group_id).then(response => {
-            this.group = response.data
-            getTravels(param).then(response => {
-                this.travel = response.data.results[0];
-                var param = {
-                    travel : this.travel.id
-                }
-                getActivities(param).then(response => {
-                    this.activities = response.data.results
-                    this.expense_show = Array(this.activities.length).fill(false)
-                    console.log(response.data.results)
-                }).catch(error => {
-                    console.log("get activity failed " + this.travel.id + error);
-                    alert(error.response)
-                })
-            }).catch(error => {
-                console.log("get travel failed")
-                alert(error)
-            })
-        }).catch(error => {
-            console.log("get group failed" + this.$route.params.group_id);
-            alert(error)
-        })
-
-        // getTravelList(param).then(response => {
-        //     // console.log(response.data.results)
-        //   this.travel = response.data.results[0]
-        // }).catch(err => {    
-        //   alert(err.response)
-        // })
-      },
       toggleExpenseShow: function(idx){
           var value = !this.expense_show[idx]
           this.$set(this.expense_show, idx, value)
@@ -123,15 +91,47 @@ export default {
       },
       checkPlace: function(id) {
           this.$store.dispatch('place/setId', id)
+      },
+      checkUser: function(id){
+          this.$store.dispatch('user/setId', id)
+      },
+      getActivities: function(){
+          var travel_info = {
+              travel: this.travel.id
+          }
+          this.$store.dispatch('activity/fetchActivities', travel_info)
+      },
+      calculateExpense: function(){
+        var expense_list = []
+        let expense_sum = 0
+        console.log(this.activities)
+        for (let activity of this.activities){
+          for(let expense of activity.expense_activity){
+            console.log(expense)
+            expense_sum += expense.expense
+          }
+          
+        }
+        let expense_avg = expense_sum / this.activities.length
+        console.log(expense_avg)
       }
   },
   mounted: function(){
-      this.getGroupTravel();
+    //   var travel = {
+    //       travel: this.travel.id
+    //   }
+    //   this.$store.dispatch('activity/fetchActivities', travel)
+      this.expense_show = Array(100).fill(false)
   },
   computed: {
     empty: function(){
       return this.travel === null;
-    }
+    },
+    ...mapGetters({
+        travel: 'groupTravel/getTravel',
+        group: 'groupTravel/getGroup',
+        activities: 'activity/getActivities'
+    })
   }
 }
 </script>

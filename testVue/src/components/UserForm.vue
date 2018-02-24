@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import {createUser} from '../utils/requests'
 
 export default {
   name: 'UserForm',
@@ -27,13 +26,13 @@ export default {
         user.password = this.password
         user.email = this.email
         user.profile = this.profile
-  		createUser(user).then(response => {
-              console.log("create user success " + response.data);
-              this.$router.push({name:'login'})
-          }).catch(error => {
-              console.log("create user failed" + error);
-              alert(error);
-          })
+        var vue_inst = this
+        this.$store.dispatch('user/createUser', user).then(reposne => {
+            vue_inst.$router.push({name:'login'})
+        }).catch(error => {
+            console.log("create user failed" + error);
+            alert(error);
+        })
   	}
   }
 }

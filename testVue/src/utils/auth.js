@@ -11,15 +11,18 @@ export function login_user(username, password){
     var tokenRequester = {}
     tokenRequester.username = username
     tokenRequester.password = password
-    tokenRequester.username = 'testUser1'
-    tokenRequester.password = 'E2VCt7UxZXhE8h9r'
+    tokenRequester.username = 'testUser2'
+    tokenRequester.password = 'k4H33TMgyeCMXk3q'
     tokenRequester.grant_type = 'password'
     tokenRequester.client_id = clientID
     tokenRequester.client_secret = clientSec
-    axios.defaults.headers.common['Content-Type'] = "application/json"
+    var headers = {
+        'Content-Type': "application/x-www-form-urlencoded"
+    }
+    // axios.defaults.headers.common['Content-Type'] = "application/json"
     // axios.defaults.headers.common['Content-Type'] = "application/x-www-form-urlencoded"
-    let data = JSON.stringify(tokenRequester)
-    return axios.post(AUTH_URL, tokenRequester, {emulateJSON : true});    
+    // let data = JSON.stringify(tokenRequester)
+    return axios.post(AUTH_URL, tokenRequester, {headers: headers});    
 }
 
 export function generate_token_request(username, password){
