@@ -33,8 +33,8 @@ function ShowTheObject(obj){
      }
   alert(des)
 }
-import {generate_token_request, logout, is_logged_in, login_user} from '../utils/auth.js'
-import {getUsers} from '../utils/requests'
+import {generate_token_request, logout, is_logged_in, login_user} from '@/utils/auth.js'
+import {getUsers} from '@/utils/requests'
 
 export default {
 
@@ -60,16 +60,7 @@ export default {
           var user = {
             username: tokenRequester.username
           }
-          getUsers(user).then(response => {
-            console.log(response.data)
-            var user = response.data.results[0]
-            // var id = user.id
-            localStorage.setItem('tWeb_userId', user.id)
-            this.$router.push({name: 'UserView'})
-          }).catch(error => {
-            console.log("get user failed")
-            console.log(error)
-          })
+          this.$router.push({name: 'UserView'})
         },
         function (err) {
           console.log(err.statusText)
@@ -80,7 +71,7 @@ export default {
       //   ShowTheObject(response.data);
       //   localStorage.setItem('tWeb_access_token', response.data.access_token)
       //   localStorage.setItem('tWeb_username', tokenRequester.username)
-      //   this.$router.push({name: 'Travels'})
+      //   this.$router.push('/index')
       // }).catch(error => {
       //     console.log(error)
       //     alert('err: ' + error)
@@ -88,6 +79,7 @@ export default {
     },
     logout: function () {
       logout()
+      this.$store.dispatch('user/deleteUser')
       this.$router.push('/index')
     }
     

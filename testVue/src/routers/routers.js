@@ -15,6 +15,8 @@ import UserView from '../components/UserView.vue'
 import TravelView from '../components/UserViewTravel.vue'
 import UserInfo from '../components/UserInfo.vue'
 import ActivityForm from '../components/ActivityForm.vue'
+import ExpenseForm from '../components/ExpenseForm.vue'
+import Checkout from '@/components/Checkout.vue'
 Vue.use(Router)
 
 
@@ -67,7 +69,13 @@ export default new Router({
             path: '/travel_view/', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
             children: [
                 {
-                    path:'/places/:id', name: 'Place', component: Place
+                    path:'places', name: 'Place', component: Place
+                },
+                {
+                    path: 'expense', name: 'Expense', component: ExpenseForm
+                },
+                {
+                    path: 'checkout', name: 'Checkout', component: Checkout  
                 }
             ]
         },
