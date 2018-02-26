@@ -201,4 +201,10 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(user=self.request.user.id)
+            serializer.save(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = ExpenseCreateSerializer
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
+
+    permission_classes = (permissions.AllowAny, )

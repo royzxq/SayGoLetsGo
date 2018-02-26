@@ -29,7 +29,7 @@
                             </li>
                         </ul>
                     </p>
-                    <button v-on:click="toggleExpenseShow(idx)">Add Expense</button>
+                    <button v-on:click="toggleExpenseShow(idx, activity.id)">Add Expense</button>
                     <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
                     <!-- <router-view></router-view> -->
                     <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
@@ -57,7 +57,9 @@
                 </li>
             </ul>
             <button type="submit"> Add Users</button>
+            <div v-on:click="calculateExpense">
             <router-link :to="{name:'Checkout'}">Calculate Overall Expense</router-link>
+            </div>
             <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
         </div>
 	</div>
@@ -80,10 +82,11 @@ export default {
       ExpenseForm
   },
   methods:{
-      toggleExpenseShow: function(idx){
+      toggleExpenseShow: function(idx, activity){
           var value = !this.expense_show[idx]
           this.$set(this.expense_show, idx, value)
           console.log(this.expense_show)
+          this.$store.dispatch('expense/setActivity', activity)
       },
       goBack: function(){
         //   alert("go back");
@@ -102,18 +105,10 @@ export default {
           this.$store.dispatch('activity/fetchActivities', travel_info)
       },
       calculateExpense: function(){
-        var expense_list = []
-        let expense_sum = 0
-        console.log(this.activities)
-        for (let activity of this.activities){
-          for(let expense of activity.expense_activity){
-            console.log(expense)
-            expense_sum += expense.expense
-          }
-          
-        }
-        let expense_avg = expense_sum / this.activities.length
-        console.log(expense_avg)
+          var payload = {}
+          payload.users = this.group.users
+          payload.activities = this.activities
+          this.$store.dispatch('expense/calculateUserpay', payload)
       }
   },
   mounted: function(){

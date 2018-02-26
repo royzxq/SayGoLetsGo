@@ -78,6 +78,22 @@ class PlaceSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public')
 
 
+class ExpenseCreateSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        expense = Expense.objects.create(
+            expense_activity=validated_data['expense_activity'],
+            user=validated_data['user'],
+            expense=validated_data['expense'],
+        )
+        print(str(validated_data))
+        return expense
+
+    class Meta:
+        model = Expense
+        fields = ('expense', 'expense_activity')
+
+
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
