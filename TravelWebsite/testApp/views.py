@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
-from .permissions import IsOwnerOrReadOnly, IsGroupUser
+from .permissions import IsOwnerOrReadOnly, IsGroupUser, GroupUserReadOnly, GroupUserRW, IsGroupCreator
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 import datetime
@@ -157,7 +157,6 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         query_params = self.request.query_params
         url_params = self.kwargs
-
         queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
         db_filters = queryset_filters['db_filters']
         db_excludes = queryset_filters['db_excludes']
@@ -166,8 +165,14 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
             queryset = User.objects.get(id=self.request.user.id).group_set.all()
         else:
             queryset = Group.objects.all()
-        return queryset.filter(**db_filters).exclude(**db_excludes)
-    # permission_classes = (permissions.AllowAny, )
+
+        queryset = queryset.filter(**db_filters).exclude(**db_excludes)
+        for obj in queryset:
+            self.check_object_permissions(self.request, obj)
+        return queryset
+
+    #permission_classes = (permissions.AllowAny, )
+    permission_classes = (GroupUserReadOnly, )
 
 
 class TravelViewSet(FiltersMixin, viewsets.ModelViewSet):
@@ -181,7 +186,7 @@ class TravelViewSet(FiltersMixin, viewsets.ModelViewSet):
         'country': 'country',
         'group': 'group'
     }
-    # permission_classes = (permissions.AllowAny, )
+    permission_classes = (permissions.AllowAny, )
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = TravelCreateSerializer

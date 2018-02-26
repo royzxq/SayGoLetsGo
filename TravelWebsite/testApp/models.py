@@ -94,3 +94,7 @@ class Expense(models.Model):
 
 
 
+def getGroup(obj):
+    objType = type(obj)
+    if objType is Group:
+        return obj
