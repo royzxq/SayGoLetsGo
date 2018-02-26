@@ -40,6 +40,7 @@ class GroupUserRW(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
            return False
+        return True
     def has_object_permission(self, request, view, obj):
         group = getGroup(obj)
         if request.user in group.users.all():
@@ -50,6 +51,7 @@ class IsGroupCreator(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
            return False
+        return True
     def has_object_permission(self, request, view, obj):
         group = getGroup(obj)
         if request.user.id == group.manager_id:
