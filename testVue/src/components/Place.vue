@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="place !== null">
 <span> Name: {{place.name}}</span>
 <span> Country: {{place.country}} </span>
 <span> City: {{place.city}}</span>
@@ -8,29 +8,17 @@
 </template>
 
 <script>
-import {getPlace} from '../utils/requests' 
+import {mapGetters} from 'vuex'
+
 export default {
 
   name: 'Place',
-
-  data () {
-    return {
-      place: null
-    }
-  },
-  methods:{
-    getPlace: function(){
-      getPlace(this.$route.params.id).then(response => {
-        this.place = response.data;
-      }).catch(error => {
-        console.log("get place failed " + this.$route.params.id);
-        console.log(error)
-        // alert(error.response)
-      })
-    }
+  computed: {
+    ...mapGetters({
+      place: 'place/getPlace'
+    }),
   },
   mounted: function(){
-    this.getPlace();
   }
 }
 </script>

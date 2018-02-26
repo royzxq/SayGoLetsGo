@@ -8,6 +8,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
 from .permissions import IsOwnerOrReadOnly, IsGroupUser, GroupUserReadOnly, GroupUserRW, IsGroupCreator
+from .permissions import IsOwnerOrReadOnly, IsGroupUser, IsPost
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 import datetime
@@ -27,7 +28,7 @@ class ObtainExpiringAuthToken(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         token, created = Token.objects.get_or_create(user=serializer.validated_data['user'])
-        timezone = token.created.tzinfo;
+        timezone = token.created.tzinfo
         now = datetime.datetime.now()
         now = now.replace(tzinfo=timezone)
         expiration = now-datetime.timedelta(minutes=EXPIRE_MINUTES)
@@ -138,21 +139,13 @@ class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         serializer = GroupDetailSerializer(instance)
         return Response(serializer.data)
 
-
     def create(self, request, *args, **kwargs):
         self.serializer_class = GroupCreateSerializer
-        print("user is " + str(self.request.user))
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
-
-    def get_serializer_context(self):
-        return {'manager_id': self.request.user}
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(manager_id=self.request.user.id)
-        else:
-            # super(GroupViewSet, self).perform_create(serializers)
-            serializer.save()
+            serializer.save(manager_id=self.request.user.id, users=self.request.user.id)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -205,9 +198,13 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'username': 'username',
         'email': 'email',
     }
-    # permission_classes = (permissions.AllowAny, )
+    permission_classes = (IsPost,)
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_anonymous:
+            serializer.save(user=self.request.user.id)
