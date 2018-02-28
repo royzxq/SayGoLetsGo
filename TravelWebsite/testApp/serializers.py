@@ -47,59 +47,6 @@ class TravelGroupListSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'is_public', 'country', 'days')
 
 
-class GroupSerializer(serializers.ModelSerializer):
-    # onwer = serializers.ReadOnlyField(source='owner.title')
-    # users = serializers.ManyH(User)
-    # travel = serializers.RelatedField(many=False, read_only=True, source='travel.title')
-    travelplan = serializers.SlugRelatedField(slug_field="title", queryset=TravelPlan.objects.all())
-    # users = UserSerializer(many=True, read_only=True)
-    class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'is_public', 'travelplan', )
-
-
-class GroupCreateSerializer(serializers.ModelSerializer):
-
-    def create(self, validated_data):
-        print("Create group " + str(validated_data))
-        # print("get context is " + str(self.context['manager_id']))
-        group = Group.objects.create(
-            group_name=validated_data['group_name'],
-            # users=validated_data['users'],
-            manager_id=validated_data['manager_id'],
-            is_public=validated_data['is_public']
-        )
-        group.users.add(validated_data['users'])
-        return group
-
-    class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'is_public', )
-
-
-class GroupDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'manager_id', 'is_public', 'users')
-
-
-class TravelSerializer(serializers.ModelSerializer):
-    # group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
-    group = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
-    # group = GroupSerializer(many=False, read_only=True)
-    # group_name = group.group_name
-    # group_name = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
-    class Meta:
-        model = TravelPlan
-        fields = ('id', 'title', 'group', 'days', 'country', )
-
-
-class TravelCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TravelPlan
-        fields = ('id', 'title', 'group', 'days', 'country', )
-
-
 class PlaceSerializer(serializers.ModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
     # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')

@@ -1,6 +1,5 @@
 import vue from 'vue'
 import Router from 'vue-router'
-import TravelList from '../components/TravelList.vue'
 import PlaceList from '../components/PlaceList.vue'
 import PlaceForm from '../components/PlaceForm.vue'
 import TimeSpanList from '../components/TimeSpanList.vue'
@@ -27,12 +26,6 @@ export default new Router({
     routes:[
         {
             path:'/', redirect: "/index"
-        },
-        {
-            path:'/travels', name: 'Travels', component: TravelList,
-            children: [
-                {path: ':id', name: 'Travel', component: Travel}
-            ]
         },
         {
             path:'/travels/create', name:'TravelForm', component: TravelForm

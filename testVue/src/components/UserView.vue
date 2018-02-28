@@ -29,7 +29,6 @@
 <script>
 
 
-import {getTravelList, getGroups} from '../utils/requests';
 import {mapGetters} from 'vuex'
 export default {
 	name: 'UserView',

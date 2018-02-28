@@ -22,9 +22,6 @@ export default {
 			title: null,
 			days: null,
 			country: null,
-			group_name: null,
-			group_id: null,
-			user_id: null,
 			is_public: false
   	}
   },
@@ -33,15 +30,6 @@ export default {
 			this.createTravelsImpl()
 		},
 	createTravelsImpl: function(){
-		var group = {
-			group_name : this.group_name,
-			is_public: this.is_public
-		}
-		var travel = {
-			title: this.title,
-			days: this.days,
-			country: this.country
-    }
     var travelgroup = {
       title: this.title,
 			days: this.days,

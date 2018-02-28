@@ -40,36 +40,6 @@ function postRequest(url, data){
     return axios.post(url, data, {headers: header});
 }
 
-// Travel requests
-export function getTravels(opts=null){
-    return getAppRequest('travels/', opts);
-} 
-
-function getTravel (id){
-    const url = BASE_URL + 'travels/' + id + '/'
-    return getRequest(url);
-}
-
-export function createTravel(data){
-    const url = BASE_URL + 'travels/'
-    return postRequest(url, data)
-}
-
-// Group requests
-function getGroups(opts=null){
-    return getAppRequest('groups/', opts);
-}
-
-export function getGroup(id){
-    const url = BASE_URL + 'groups/' + id + '/'
-    return getRequest(url)
-}
-
-export function createGroup(data){
-    const url = BASE_URL + 'groups/'
-    return postRequest(url, data)
-}
-
 // TravelGroup requests
 export function getTravelGroups(opts=null){
   return getAppRequest('travelgroups/', opts)

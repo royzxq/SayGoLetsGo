@@ -67,7 +67,6 @@
 
 <script>
 
-import {getTravels, getGroup, getActivities, getTravel} from '../utils/requests'
 import ExpenseForm from '../components/ExpenseForm.vue'
 import {mapGetters} from 'vuex'
 export default {
