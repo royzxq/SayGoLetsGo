@@ -1,12 +1,12 @@
 <template>
 	<div>
         <button v-on:click="goBack">Go Back</button>
-        <div v-if="travel!==null">
+        <div v-if="travelgroup!==null">
             <p>
-                Title:  {{travel.title}}
+                Title:  {{travelgroup.title}}
             </p>
-            <p> Days: {{travel.days}} </p>
-            <p> Country: {{travel.country}} </p>
+            <p> Days: {{travelgroup.days}} </p>
+            <p> Country: {{travelgroup.country}} </p>
             <br>
             <br>
             <span>Activities</span>
@@ -29,14 +29,14 @@
                             </li>
                         </ul>
                     </p>
-                    <button v-on:click="toggleExpenseShow(idx)">Add Expense</button>
+                    <button v-on:click="toggleExpenseShow(idx, activity.id)">Add Expense</button>
                     <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
                     <!-- <router-view></router-view> -->
                     <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
                 <br>
                 
-                <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
+                <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
                 <br>
                 <br>
                 <router-view></router-view>
@@ -48,7 +48,7 @@
         <div>
             <ul>
                 
-                <li v-for="user in group.users">
+                <li v-for="user in travelgroup.users">
                     <span v-on:click="checkUser(user)" >
                     <router-link :to="{name: 'UserInfo'}" >
                         User:  {{user}}
@@ -57,7 +57,9 @@
                 </li>
             </ul>
             <button type="submit"> Add Users</button>
+            <div v-on:click="calculateExpense">
             <router-link :to="{name:'Checkout'}">Calculate Overall Expense</router-link>
+            </div>
             <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
         </div>
 	</div>
@@ -65,7 +67,6 @@
 
 <script>
 
-import {getTravels, getGroup, getActivities, getTravel} from '../utils/requests'
 import ExpenseForm from '../components/ExpenseForm.vue'
 import {mapGetters} from 'vuex'
 export default {
@@ -80,10 +81,11 @@ export default {
       ExpenseForm
   },
   methods:{
-      toggleExpenseShow: function(idx){
+      toggleExpenseShow: function(idx, activity){
           var value = !this.expense_show[idx]
           this.$set(this.expense_show, idx, value)
           console.log(this.expense_show)
+          this.$store.dispatch('expense/setActivity', activity)
       },
       goBack: function(){
         //   alert("go back");
@@ -97,30 +99,21 @@ export default {
       },
       getActivities: function(){
           var travel_info = {
-              travel: this.travel.id
+              travel: this.travelgroup.id
           }
           this.$store.dispatch('activity/fetchActivities', travel_info)
       },
       calculateExpense: function(){
-        var expense_list = []
-        let expense_sum = 0
-        console.log(this.activities)
-        for (let activity of this.activities){
-          for(let expense of activity.expense_activity){
-            console.log(expense)
-            expense_sum += expense.expense
-          }
-          
-        }
-        let expense_avg = expense_sum / this.activities.length
-        console.log(expense_avg)
+          var payload = {}
+          payload.users = this.travelgroup.users
+          payload.activities = this.activities
+          this.$store.dispatch('expense/calculateUserpay', payload)
       }
   },
   mounted: function(){
-    //   var travel = {
-    //       travel: this.travel.id
-    //   }
-    //   this.$store.dispatch('activity/fetchActivities', travel)
+      if (travelgroup !== null){
+        this.$store.dispatch('activity/fetchActivities', travelgroup.id)
+      }
       this.expense_show = Array(100).fill(false)
   },
   computed: {
@@ -130,6 +123,7 @@ export default {
     ...mapGetters({
         travel: 'groupTravel/getTravel',
         group: 'groupTravel/getGroup',
+        travelgroup: 'groupTravel/getTravelGroup',
         activities: 'activity/getActivities'
     })
   }

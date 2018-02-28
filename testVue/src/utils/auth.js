@@ -1,8 +1,8 @@
 import axios from 'axios'
 // import Router from 'vue-router'
 
-const clientID = '1DpyNljw31M1XFOjGUVFnxGaq8Fd3KoQQKsSqyVW'
-const clientSec = '6TPMoAGyRjcRWcMNeb8LgBiZZk4DNFxYDPmgsl2lHQNEWGew81m3aSEJAaZNiacxY8t5q7eRF9rWAgFSYaoq9XbINTh2A528DMj9vfZppxYlRwxiURhIgXam6njZ2INd'
+const clientID = 'L1KWHKPZtp91Yl33Zrhcb2iYHi6ql5jZgtQbbhRx'
+const clientSec = 'ipD7CW7hMMeTeTNKCCgNOU2UiqZdji4TceCVisEyiJpQFn0QcwjK99dygDvUvI9HR10Aq74HcqvWSKtR0Pq83NmvAIBBCgE364q7IFJZUEY0bztrv07VS0D0ObkFWkTU'
 const AUTH_URL = 'http://127.0.0.1:8000/o/token/'
 
 // export {login_user}

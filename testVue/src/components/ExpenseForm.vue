@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="show">
 	<input v-model="expense" placeholder="What is the activity">
 	<button v-on:click="submit"> Submit</button>
 	</div>
@@ -7,30 +7,37 @@
 
 <script>
 import {createExpense} from '../utils/requests'
+import {printResponse} from "@/utils/helper"
 export default {
   name: 'ExpenseForm',
   data: function () {return {
-        expense: 0.0
+        expense: 0.0,
+        show: true,
   	}
   },
-  props: [
-      'activity_id'
-  ],
-//   props: ['travel_id'],
   methods:{
   	submit: function(){
         var obj = {}
         obj.expense = this.expense
-        obj.expense_activity = activity_id
-        createExpense(obj).then(response => {
-            console.log(response.data)
-            // this.$router.push('/index')
+        this.$store.dispatch('expense/createExpense', obj).then(()=>{
+          this.show = false;
         }).catch(error => {
-            console.log('created expense failed')
-            console.log(error)
+          printResponse("create expense failed", error)
         })
+        // createExpense(obj).then(response => {
+        //     console.log(response.data)
+        //     // this.$router.push('/index')
+        // }).catch(error => {
+        //     console.log('created expense failed')
+        //     console.log(error)
+        // })
 		
   	}
+  },
+  mounted: {
+    show () {
+      return true;
+    }
   }
 }
 </script>
