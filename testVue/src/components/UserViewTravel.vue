@@ -1,12 +1,12 @@
 <template>
 	<div>
         <button v-on:click="goBack">Go Back</button>
-        <div v-if="travel!==null">
+        <div v-if="travelgroup!==null">
             <p>
-                Title:  {{travel.title}}
+                Title:  {{travelgroup.title}}
             </p>
-            <p> Days: {{travel.days}} </p>
-            <p> Country: {{travel.country}} </p>
+            <p> Days: {{travelgroup.days}} </p>
+            <p> Country: {{travelgroup.country}} </p>
             <br>
             <br>
             <span>Activities</span>
@@ -36,7 +36,7 @@
                 </li>
                 <br>
                 
-                <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
+                <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
                 <br>
                 <br>
                 <router-view></router-view>
@@ -48,7 +48,7 @@
         <div>
             <ul>
                 
-                <li v-for="user in group.users">
+                <li v-for="user in travelgroup.users">
                     <span v-on:click="checkUser(user)" >
                     <router-link :to="{name: 'UserInfo'}" >
                         User:  {{user}}
@@ -100,22 +100,21 @@ export default {
       },
       getActivities: function(){
           var travel_info = {
-              travel: this.travel.id
+              travel: this.travelgroup.id
           }
           this.$store.dispatch('activity/fetchActivities', travel_info)
       },
       calculateExpense: function(){
           var payload = {}
-          payload.users = this.group.users
+          payload.users = this.travelgroup.users
           payload.activities = this.activities
           this.$store.dispatch('expense/calculateUserpay', payload)
       }
   },
   mounted: function(){
-    //   var travel = {
-    //       travel: this.travel.id
-    //   }
-    //   this.$store.dispatch('activity/fetchActivities', travel)
+      if (travelgroup !== null){
+        this.$store.dispatch('activity/fetchActivities', travelgroup.id)
+      }
       this.expense_show = Array(100).fill(false)
   },
   computed: {
@@ -125,6 +124,7 @@ export default {
     ...mapGetters({
         travel: 'groupTravel/getTravel',
         group: 'groupTravel/getGroup',
+        travelgroup: 'groupTravel/getTravelGroup',
         activities: 'activity/getActivities'
     })
   }

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, Activity, Profile, Expense
+from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
@@ -15,6 +15,37 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'profile')
+
+
+class TravelGroupDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fields = ('id', 'title', 'users', 'is_public', 'country', 'days', 'manager_id', 'modified_time')
+
+
+class TravelGroupCreateSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        travelgroup = TravelGroup.objects.create(
+            title=validated_data['title'],
+            manager_id=validated_data['manager_id'],
+            is_public=validated_data['is_public'],
+            country=validated_data['country'],
+            days=validated_data['days']
+        )
+        travelgroup.users.add(validated_data['manager_id'])
+        return travelgroup
+
+    class Meta:
+        model = TravelGroup
+        fields = ('title', 'is_public', 'country', 'days')
+
+
+class TravelGroupListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fields = ('id', 'title', 'is_public', 'country', 'days')
+
 
 class GroupSerializer(serializers.ModelSerializer):
     # onwer = serializers.ReadOnlyField(source='owner.title')

@@ -119,6 +119,47 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
         self.serializer_class = ActivityCreateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
+
+class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
+    serializer_class = TravelGroupListSerializer # default is to get the list
+    filter_backends = (filters.OrderingFilter, )
+    ordering_fields = ('is_public', 'title', 'manager_id',)
+    ordering = ('is_public', 'title', 'manager_id', )
+
+    filter_mappings = {
+        'title': 'title',
+        'manager_id': 'manager_id',
+        'is_public': 'is_public',
+    }
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = TravelGroupDetailSerializer(instance)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = TravelGroupCreateSerializer
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_anonymous:
+            serializer.save(manager_id=self.request.user.id)
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
+
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
+
+        if not self.request.user.is_anonymous and not query_params.dict():
+            queryset = User.objects.get(id=self.request.user.id).travelgroup_set.all()
+        else:
+            queryset = TravelGroup.objects.all()
+        return queryset.filter(**db_filters).exclude(**db_excludes)
+
+
 class GroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     # queryset = Group.objects.all()
     serializer_class = GroupSerializer

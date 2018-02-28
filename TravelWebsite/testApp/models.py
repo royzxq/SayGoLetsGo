@@ -35,6 +35,18 @@ class Group(models.Model):
         return self.group_name
 
 
+class TravelGroup(models.Model):
+    title = models.CharField("title", max_length=40, default="")
+    users = models.ManyToManyField(User)
+    manager_id = models.IntegerField("manager_id", default=-1)
+    is_public = models.BooleanField('is_public', default=False)
+    country = models.CharField("country", max_length=20)
+    days = models.IntegerField("days", default=1)
+    modified_time = models.DateTimeField("modifiedtime", auto_now=True)
+
+    def __str__(self):
+        return self.title
+
 
 class TravelPlan(models.Model):
     group = models.OneToOneField(Group, on_delete=models.CASCADE, )
@@ -49,12 +61,12 @@ class TravelPlan(models.Model):
 
 class Place(models.Model):
     user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
-    travels = models.ManyToManyField(TravelPlan)
+    travels = models.ManyToManyField(TravelGroup, blank=True)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     country = models.CharField('country', max_length=100, default="")
     city = models.CharField('city', max_length=100, default="")
-    location = models.CharField('location', max_length=100, null=True)
+    location = models.CharField('location', max_length=100, null=True, blank=True)
     picture = models.ImageField('picture', max_length=100, null=True, blank=True)
     is_public = models.BooleanField('is_public', default=True)
 
@@ -66,7 +78,7 @@ class Place(models.Model):
 
 
 class Activity(models.Model):
-    travel = models.ForeignKey(TravelPlan, on_delete=models.CASCADE)
+    travel = models.ForeignKey(TravelGroup, on_delete=models.CASCADE)
     ## OPTIONAL RELY ON THE PLACE
     place = models.ForeignKey(Place, related_name='place', default=None, blank=True, null=True, on_delete=models.SET_DEFAULT)
     start_time = models.DateTimeField("start_time")

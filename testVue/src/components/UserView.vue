@@ -9,12 +9,12 @@
 			</div>
 		</h3>
 		<ul>
-			<li v-for="(group, idx) in groups">
-				<div v-on:click="checkGroupTravel(group.id)">
+			<li v-for="(travelGroup, idx) in travelGroups">
+				<div v-on:click="checkGroupTravel(travelGroup.id)">
                 <router-link :to="{name: 'TravelView'}">
-                <div> Group_name: {{group.group_name}} </div>
-                <div v-if="group.travelplan!==null"> Travel Name: {{group.travelplan}}</div>
-                <div v-else>No travel Created</div>
+                <div> Title: {{travelGroup.title}} </div>
+                <div> Travel Days: {{travelGroup.days}}</div>
+                <div> Is Public: {{travelGroup.is_public}}</div>
                 </router-link>
 				</div>
 			</li>
@@ -51,14 +51,14 @@ export default {
 		}
 	},
 	mounted: function(){
-		this.$store.dispatch('groupTravel/fetchGroups')
+		this.$store.dispatch('groupTravel/fetchTravelGroups')
     },
     computed:{
         username: function(){
             return localStorage.getItem('tWeb_username')
 		},
 		...mapGetters({
-			groups: 'groupTravel/getGroups',
+			travelGroups: 'groupTravel/getTravelGroups',
 			user_id: 'user/getId'
 		}),
     }

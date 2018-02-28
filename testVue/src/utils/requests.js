@@ -70,6 +70,21 @@ export function createGroup(data){
     return postRequest(url, data)
 }
 
+// TravelGroup requests
+export function getTravelGroups(opts=null){
+  return getAppRequest('travelgroups/', opts)
+}
+
+export function getTravelGroup(id){
+  const url = BASE_URL + 'travelgroups/' + id + '/'
+    return getRequest(url)
+}
+
+export function createTravelGroup(data){
+  const url = BASE_URL + 'travelgroups/'
+  return postRequest(url, data)
+}
+
 // user request 
 function createUser(data){
     let url = BASE_URL + 'users/'

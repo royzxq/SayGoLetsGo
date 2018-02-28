@@ -5,9 +5,6 @@
 	<input v-model="days" placeholder="travel days">
 	<input v-model="country" placeholder="travel country">
 	<br>
-	<h3> Group Info </h3>
-	<!-- <input v-model="group" placeholder="travel group"> -->
-	<input v-model="group_name" placeholder="Group name">
 	<input type="checkbox" id="is_public" v-model="is_public">
 	<label for="is_public">Is Public?</label>
 
@@ -44,12 +41,16 @@ export default {
 			title: this.title,
 			days: this.days,
 			country: this.country
-		}
-		var payload = {}
-		payload.group = group
-		payload.travel = travel
+    }
+    var travelgroup = {
+      title: this.title,
+			days: this.days,
+      country: this.country,
+      is_public: this.is_public,
+    }
+		
 		var vue_instance = this
-		this.$store.dispatch('groupTravel/createGroupAndTravel', payload).then(
+		this.$store.dispatch('groupTravel/createTravelGroup', travelgroup).then(
 			function(){
 				vue_instance.$router.push('/index')
 			}

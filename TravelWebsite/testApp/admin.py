@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from .models import Group, TravelPlan, Place, Activity, Profile, Expense
+from .models import *
 
 # Register your models here.
 from django.conf import settings
@@ -44,4 +44,5 @@ admin.site.register(TravelPlan)
 admin.site.register(Place)
 admin.site.register(Activity)
 admin.site.register(Expense)
+admin.site.register(TravelGroup)
 # admin.site.register(AbstractUser, AbstractUserAdmin)

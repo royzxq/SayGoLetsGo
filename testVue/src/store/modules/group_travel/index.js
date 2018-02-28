@@ -1,21 +1,25 @@
 
 
-import {getGroups, getGroup, createGroup, getTravel, getTravels, createTravel,} from '../../../utils/requests'
-
+import {getGroups, getGroup, createGroup, getTravel, getTravels, createTravel, getTravelGroup, getTravelGroups, createTravelGroup} from '../../../utils/requests'
+import {printResponse} from '@/utils/helper'
 const state = {
     group: null,
-    group_id: null,
+    id: null,
     groups: [],
     travel: null,
     travels: [],
+    travel_groups: [],
+    travel_group: null,
 }
 
 const getters = {
     getGroup: (state) => state.group,
     getGroups: state => state.groups,
-    getId: state => state.group_id,
+    getId: state => state.id,
     getTravel: state => state.travel,
-    getTravels: state => state.travels
+    getTravels: state => state.travels,
+    getTravelGroup: state=> state.travel_group,
+    getTravelGroups: state => state.travel_groups
 }
 
 const mutations = {
@@ -36,7 +40,7 @@ const mutations = {
         state.groups = []
     },
     setId: (state, id) => {
-        state.group_id = id
+        state.id = id
     },
     setTravel: (state, payload) => {
         console.log("set travel")
@@ -51,7 +55,13 @@ const mutations = {
     },
     deleteTravels: state => {
         state.travels = []
-    }
+    },
+    setTravelGroup: (state, payload) => {
+      state.travel_group = payload
+    },
+    setTravelGroups: (state, payload) => {
+      state.travel_groups = payload
+    },
 }
 
 const actions = {
@@ -59,7 +69,7 @@ const actions = {
         if (payload !== null){
             context.commit('setId', payload.id)
         }
-        if ( state.place !== null && state.id === state.place.id){
+        if ( state.group !== null && state.id === state.group.id){
             return ;
         }
         getGroup(state.id).then(response => {
@@ -77,6 +87,24 @@ const actions = {
         }).catch(error => {
             console.log("fetch the groups failed ")
         })
+    },
+    fetchTravelGroups: (context, payload=null) => {
+      return getTravelGroups(payload).then(response => {
+        printResponse("fetchTravelGroups ", response.data.results)
+        context.commit('setTravelGroups', response.data.results)
+      })
+    },
+    fetchTravelGroup: (context, payload) => {
+      return getTravelGroup(payload.id).then(response => {
+        printResponse("fetchTravelGroup", response.data)
+        context.commit('setTravelGroup', response.data)
+      })
+    },
+    createTravelGroup: (context, payload) => {
+      return createTravelGroup(payload).then(response => {
+        printResponse("createTravelGroup", response.data)
+        context.commit('setTravelGroup', response.data)
+      })
     },
     createGroupAndTravel: (context, payload) => { 
         return createGroup(payload.group).then(response => {
@@ -98,23 +126,22 @@ const actions = {
     },
     setId: (context, id) => {
         context.commit('setId', id)
-        getGroup(state.group_id).then(response => {
-            console.log("fetch the group");
-            console.log(response.data)
-            context.commit("setGroup", response.data)
+        getTravelGroup(state.id).then(response => {
+            printResponse("getTravelGroup", response.data)
+            context.commit("setTravelGroup", response.data)
         }).catch(error => {
-            console.log("fetch the group failed " + state.group_id)
-            context.commit("deleteGroup")
+            console.log("getTravelGroup failed " + state.id)
+            // context.commit("deleteGroup")
         })
-        var param = {
-            group : id
-        }
-        getTravels(param).then(response => {
-            console.log("fetch the travel");
-            context.commit("setTravel", response.data.results[0])
-        }).catch(error => {
-            console.log("fetch the travel failed")
-        })
+        // var param = {
+        //     group : id
+        // }
+        // getTravels(param).then(response => {
+        //     console.log("fetch the travel");
+        //     context.commit("setTravel", response.data.results[0])
+        // }).catch(error => {
+        //     console.log("fetch the travel failed")
+        // })
     },
     fetchTravels: (context, payload=null) => {
         getTravels(payload).then(reponse => {

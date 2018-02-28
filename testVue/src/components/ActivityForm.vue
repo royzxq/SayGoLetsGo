@@ -15,12 +15,12 @@ import {createActivity} from '../utils/requests'
 export default {
   name: 'ActivityForm',
   data: function () {return {
-        activity: null,
-        start_date: null,
-		start_time: null,
-		duration: null,
-		note: null,
-        place_id: null
+      activity: null,
+      start_date: null,
+		  start_time: null,
+		  duration: null,
+		  note: null,
+      place_id: null
         
   	}
   },
