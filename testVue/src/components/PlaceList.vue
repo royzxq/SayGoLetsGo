@@ -11,36 +11,30 @@
 				</p>
 			</li>
 		</ul>
-		<router-link :to="{name: 'Place'}"> Create Places</router-link>
 	</div>
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/test_app/places/';
+import {mapGetters} from "vuex"
 export default {
 
   name: 'PlaceList',
 
   data () {
     return {
-    	places: null
     }
   },
-  	methods:{
-	    getPlaces: function () {
-	      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
-	      this.$http.get(link).then(function(response){
-	        this.places = response.data;
-	        console.log(response.data);
-	      }, function(err){
-	        this.places = null
-	        console.log(err.statusText);
-	      })
-	    }
+  methods:{
+	    
 	},
 	mounted: function(){
-    	this.getPlaces();
-	}
+    this.$store.dispatch('place/fetchPlaces')
+  },
+  computed: {
+    ...mapGetters({
+      places: 'place/getPlaces'
+    })
+  }
 }
 </script>
 

@@ -1,22 +1,22 @@
 
 
-import {getPlace, createPlace} from '../../../utils/requests'
-
+import {getPlace, createPlace, getPlaces} from '@/utils/requests'
+import {printResponse} from '@/utils/helper'
 const state = {
     place: null,
     id: null,
-    // places: []
+    places: []
 }
 
 const getters = {
     getPlace: (state) => state.place,
-    getId: state => state.id
+    getId: state => state.id,
+    getPlaces: state => state.places,
 }
 
 const mutations = {
     setPlace: (state, payload) => {
-        console.log("add place")
-        console.log(payload)
+        printResponse("add place", payload)
         state.id = payload.id
         state.place = payload
     },
@@ -26,6 +26,9 @@ const mutations = {
     },
     setId: (state, id) => {
         state.id = id
+    },
+    setPlaces: (state, payload) => {
+      state.places = payload
     }
     
 }
@@ -39,8 +42,7 @@ const actions = {
             return ;
         }
         getPlace(state.id).then(response => {
-            console.log("fetch the place");
-            console.log(response.data)
+            printResponse("getPlace", response.data)
             context.commit("setPlace", response.data)
         }).catch(error => {
             console.log("fetch the place failed " + state.id)
@@ -48,26 +50,29 @@ const actions = {
         })
     },
     createPlace: (context, payload) => {
-        createPlace(payload.place).then(response => {
-            console.log("create the place");
-            console.log(response.data)
-            context.commit('setId', response.data.id)
+        return createPlace(payload.place).then(response => {
+            printResponse("createPlace", response.data)
             context.commit("setPlace", response.data)
-        }).catch(error => {
-            console.log("create the place failed ")
-            context.commit("deletePlace")
         })
     },
     setId: (context, id) => {
         context.commit('setId', id)
-        getPlace(state.id).then(response => {
-            console.log("fetch the place");
-            console.log(response.data)
+        getPlace(state.id).then(response => {            
+            printResponse("getPlace", response.data)
             context.commit("setPlace", response.data)
         }).catch(error => {
             console.log("fetch the place failed " + state.id)
             context.commit("deletePlace")
         })
+    },
+    fetchPlaces: (context, payload=null) => {
+      getPlaces(payload).then(response => {
+        printResponse("fetchPlaces", response.data.results)
+        context.commit('setPlaces', response.data.results)
+      }).catch(error => {
+        console.log("fetchPlaces failed " + payload)
+        console.log(error)
+      })
     }
 }
 

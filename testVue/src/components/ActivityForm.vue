@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import {createActivity} from '../utils/requests'
 export default {
   name: 'ActivityForm',
   data: function () {return {
@@ -35,14 +34,13 @@ export default {
         obj.note = this.note
         obj.travel = this.$route.params.travel
         obj.place_id = this.place_id
-        createActivity(obj).then(response => {
-            console.log(response.data)
-            this.$router.push('/index')
+        var vue_instance = this
+        this.$store.dispatch('activity/createActivity', obj).then(()=>{
+          this.$router.push('/index')
         }).catch(error => {
             console.log('created places failed')
             console.log(error)
         })
-		
   	}
   }
 }

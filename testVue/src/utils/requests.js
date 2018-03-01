@@ -91,6 +91,10 @@ export function createPlace(data){
     return postRequest(url, data)
 }
 
+export function getPlaces(opts=null){
+  return getAppRequest('places/', opts);
+}
+
 // expense request
 export function createExpense(data){
     let url = BASE_URL + 'expenses/'

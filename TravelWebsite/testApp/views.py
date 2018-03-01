@@ -15,6 +15,8 @@ from django.conf import settings
 from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
+
 # Create your views here.
 
 
@@ -97,11 +99,22 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
         'travels': 'travels',
     }
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user.id)
 
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
 
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
 
+        if not self.request.user.is_anonymous and not query_params.dict():
+            queryset = Place.objects.filter(Q(user=self.request.user.id) | Q(is_public=True))
+        else:
+            queryset = Place.objects.all()
+        return queryset.filter(**db_filters).exclude(**db_excludes)
 
 
 class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
