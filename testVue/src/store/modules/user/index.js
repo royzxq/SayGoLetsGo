@@ -1,7 +1,7 @@
 
 
-import {createUser, getUserId, getUsers} from '@/utils/requests'
-import {printResponse} from '@/utils/helper'
+import {createUser, getUserId, getUsers, updateUser, partialUpdateUser, deleteUser} from '@/utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 const state = {
     user: null,
     users: [],
@@ -27,11 +27,8 @@ const mutations = {
         state.user = payload
     },
     deleteUser: (state) => {
-        state.user = null
-        state.id = null
         state.local_id = null
         state.local_user = null
-        state.users = []
     },
     setId: (state, id) => {
         state.id = id
@@ -119,9 +116,24 @@ const actions = {
             printResponse("get users failed", error)
         })
     },
-    deleteUser: (context) => {
+    deleteUser: (context, id) => {
+      return deleteUser(id).then(response => {
         context.commit('deleteUser')
-    }
+      })
+    },
+    updateUser: (context, payload) => {
+      var target = ['id', 'username', 'email', 'profile']
+      if (checkField(target, payload)){
+        return updateUser(payload).then(response => {
+          context.commit('setLocalUser', response.data)
+        })
+      }
+      else{
+        return partialUpdateUser(payload).then(response => {
+          context.commit('setLocalUser', response.data)
+        })
+      }
+    },
 }
 
 export default {

@@ -11,7 +11,7 @@
 		<ul>
 			<li v-for="(travelGroup, idx) in travelGroups">
 				<div v-on:click="checkGroupTravel(travelGroup.id)">
-                <router-link :to="{name: 'TravelView'}">
+                <router-link :to="{name: 'TravelView', params:{id : travelGroup.id}} ">
                 <div> Title: {{travelGroup.title}} </div>
                 <div> Travel Days: {{travelGroup.days}}</div>
                 <div> Is Public: {{travelGroup.is_public}}</div>
@@ -46,7 +46,7 @@ export default {
 			this.$store.dispatch('user/fetchLocalUser', user);
 		},
 		checkGroupTravel: function(group_id) {
-			this.$store.dispatch('groupTravel/setId', group_id)
+			// this.$store.dispatch('groupTravel/setId', group_id)
 		}
 	},
 	mounted: function(){

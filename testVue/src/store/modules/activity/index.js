@@ -1,7 +1,7 @@
 
 
-import {getActivities, createActivity} from '@/utils/requests'
-import {printResponse} from '@/utils/helper'
+import {getActivities, createActivity, updateActivity, partialUpdateActivity, deleteActivity} from '@/utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 
 const state = {
     activity: null,
@@ -58,6 +58,24 @@ const actions = {
             context.commit("deleteActivity")
         })
     },
+    updateActivity: (context, payload) =>{
+      var target = ['id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place']
+      if(checkField(target, payload)){
+        return updateActivity(payload).then(response => {
+          context.commit('setActivity', response.data)
+        })
+      }
+      else{
+        return partialUpdateActivity(payload).then(response => {
+          context.commit('setActivity', response.data)
+        })
+      }
+    },
+    deleteActivity: (context, id) => {
+      return deleteActivity(id).then(response => {
+        context.commit('deleleActivity')
+      })
+    }
 }
 
 export default {

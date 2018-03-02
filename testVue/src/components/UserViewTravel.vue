@@ -10,7 +10,6 @@
             <br>
             <br>
             <span>Activities</span>
-            <button v-on:click="getActivities()">Show Activities</button>
             <ul>
                 <li v-for="(activity,idx) in activities">
                     <p>Activity: {{activity.activity}}</p>
@@ -69,6 +68,7 @@
 
 import ExpenseForm from '../components/ExpenseForm.vue'
 import {mapGetters} from 'vuex'
+import {printResponse} from '@/utils/helper'
 export default {
 
   name: 'TravelView',
@@ -115,9 +115,16 @@ export default {
       }
   },
   mounted: function(){
-      if (travelgroup !== null){
-        this.$store.dispatch('activity/fetchActivities', travelgroup.id)
+    this.$store.dispatch('groupTravel/fetchTravelGroup', {id: this.$route.params.id}).then(
+      ()=>{
+
       }
+    ).catch(error => {
+      printResponse("fetch the travel failed", error);
+    })
+    
+    this.$store.dispatch('activity/fetchActivities', {travel: this.$route.params.id})
+    
       this.expense_show = Array(100).fill(false)
   },
   computed: {
@@ -125,8 +132,6 @@ export default {
       return this.travel === null;
     },
     ...mapGetters({
-        travel: 'groupTravel/getTravel',
-        group: 'groupTravel/getGroup',
         travelgroup: 'groupTravel/getTravelGroup',
         activities: 'activity/getActivities'
     })

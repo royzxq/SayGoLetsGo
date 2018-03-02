@@ -1,7 +1,7 @@
 
 
-import { getTravelGroup, getTravelGroups, createTravelGroup} from '../../../utils/requests'
-import {printResponse} from '@/utils/helper'
+import { getTravelGroup, getTravelGroups, createTravelGroup, updateTravelGroup, partialUpdateTravelGroup, deleteTravelGroup} from '../../../utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 const state = {
     id: null,
     travel_groups: [],
@@ -64,6 +64,24 @@ const actions = {
             // context.commit("deleteGroup")
         })
     },
+    updateTravelGroup: (context, payload) => {
+      var target = ['title', 'is_public', 'country', 'days']
+      if(checkField(target, payload)){
+        return updateTravelGroup(payload).then(response => {
+          context.commit('setTravelGroup', response.data)
+        })
+      }
+      else{
+        return partialUpdateTravelGroup(payload).then(response => {
+          context.commit('setTravelGroup', response.data)
+        })
+      }
+    },
+    deleteTravelGroup: (context, id) => {
+      return deleteTravelGroup(id).then(response => {
+        context.commit('deleteTravelGroup')
+      })
+    }
 }
 
 export default {

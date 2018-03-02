@@ -1,7 +1,7 @@
 
 
-import {getPlace, createPlace, getPlaces} from '@/utils/requests'
-import {printResponse} from '@/utils/helper'
+import {getPlace, createPlace, getPlaces, updatePlace, partialUpdatePlace, deletePlace} from '@/utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 const state = {
     place: null,
     id: null,
@@ -73,7 +73,25 @@ const actions = {
         console.log("fetchPlaces failed " + payload)
         console.log(error)
       })
-    }
+    },
+    updatePlace: (context, payload) => {
+      var target = ['id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public']
+      if(checkField(target, payload)){
+        return updatePlace(payload).then(response => {
+          context.commit('setPlace', response.data)
+        })
+      }
+      else{
+        return partialUpdatePlace(payload).then(response => {
+          context.commit('setPlace', response.data)
+        })
+      }
+    },
+    deletePlace: (context, id) => {
+      return deletePlace(id).then(response => {
+        context.commit('deletePlace')
+      })
+    },
 }
 
 export default {

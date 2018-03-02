@@ -43,7 +43,7 @@ export default new Router({
             beforeEnter: requireAuth
         },
         {
-            path: '/travel_view/', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
+            path: '/travel_view/:id', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
             children: [
                 {
                     path:'places', name: 'Place', component: Place
@@ -53,14 +53,15 @@ export default new Router({
                 },
                 {
                     path: 'checkout', name: 'Checkout', component: Checkout  
+                },
+                {
+                  path: '/activity/create', name:'ActivityForm', component: ActivityForm
                 }
             ]
         },
         {
             path: '/user_info', name: 'UserInfo', component: UserInfo, beforeEnter: requireAuth
         },
-        {
-            path: 'activity/create', name:'ActivityForm', component: ActivityForm
-        }
+        
     ]
 })
