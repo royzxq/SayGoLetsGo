@@ -54,7 +54,7 @@ export default {
       }}).then(
         function (response) {
           console.log(response)
-          ShowTheObject(response.data)
+          // ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
           var user = {

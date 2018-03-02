@@ -1,7 +1,7 @@
 
 
-import {getActivities, createActivity} from '@/utils/requests'
-import {printResponse} from '@/utils/helper'
+import {getActivities, createActivity, updateActivity, partialUpdateActivity, deleteActivity} from '@/utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 
 const state = {
     activity: null,
@@ -49,7 +49,7 @@ const actions = {
         })
     },
     createActivity: (context, payload) => {
-        createActivity(payload.activity).then(response => {
+        createActivity(payload).then(response => {
             printResponse("create the activity", response.data)
             context.commit('setId', response.data.id)
             context.commit("setActivity", response.data)
@@ -58,6 +58,24 @@ const actions = {
             context.commit("deleteActivity")
         })
     },
+    updateActivity: (context, payload) =>{
+      var target = ['id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place']
+      if(checkField(target, payload)){
+        return updateActivity(payload).then(response => {
+          context.commit('setActivity', response.data)
+        })
+      }
+      else{
+        return partialUpdateActivity(payload).then(response => {
+          context.commit('setActivity', response.data)
+        })
+      }
+    },
+    deleteActivity: (context, id) => {
+      return deleteActivity(id).then(response => {
+        context.commit('deleleActivity')
+      })
+    }
 }
 
 export default {

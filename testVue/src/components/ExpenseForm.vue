@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import {createExpense} from '../utils/requests'
 import {printResponse} from "@/utils/helper"
 export default {
   name: 'ExpenseForm',
@@ -20,18 +19,11 @@ export default {
         var obj = {}
         obj.expense = this.expense
         this.$store.dispatch('expense/createExpense', obj).then(()=>{
-          this.show = false;
+          this.$emit('submit')
+          this.$router.go(-1)
         }).catch(error => {
           printResponse("create expense failed", error)
         })
-        // createExpense(obj).then(response => {
-        //     console.log(response.data)
-        //     // this.$router.push('/index')
-        // }).catch(error => {
-        //     console.log('created expense failed')
-        //     console.log(error)
-        // })
-		
   	}
   },
   mounted: {

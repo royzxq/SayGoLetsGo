@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import {createPlace} from '../utils/requests'
 export default {
   name: 'PlaceForm',
   data: function () {return {
@@ -33,15 +32,13 @@ export default {
 			place.location = this.location
 			place.country = this.country
 			place.city = this.city
-			place.user = localStorage.getItem('tWeb_userId')
-			place.is_public = this.is_public
-			createPlace(place).then(response => {
-				console.log(response.data)
-				this.$router.push('/index')
-			}).catch(error => {
-				console.log('created places failed')
-				console.log(error)
-			})
+      place.is_public = this.is_public
+      var vue_instance = this
+      this.$store.dispatch('createPlace', place).then(() => {
+        vue_instance.$router.push('/index')
+      }).catch(error => {
+        console.log(error)
+      })
 		}
   	}
   }

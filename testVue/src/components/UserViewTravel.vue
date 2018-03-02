@@ -10,7 +10,6 @@
             <br>
             <br>
             <span>Activities</span>
-            <button v-on:click="getActivities()">Show Activities</button>
             <ul>
                 <li v-for="(activity,idx) in activities">
                     <p>Activity: {{activity.activity}}</p>
@@ -29,12 +28,12 @@
                             </li>
                         </ul>
                     </p>
-                    <button v-on:click="toggleExpenseShow(idx, activity.id)">Add Expense</button>
+                    <button v-on:click="toggleExpenseShow(idx, activity.id)" v-on:submit="expense_submit(idx)">Add Expense</button>
                     <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
                     <!-- <router-view></router-view> -->
                     <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
-                <br>
+                <br>  
                 
                 <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
                 <br>
@@ -69,6 +68,7 @@
 
 import ExpenseForm from '../components/ExpenseForm.vue'
 import {mapGetters} from 'vuex'
+import {printResponse} from '@/utils/helper'
 export default {
 
   name: 'TravelView',
@@ -108,12 +108,23 @@ export default {
           payload.users = this.travelgroup.users
           payload.activities = this.activities
           this.$store.dispatch('expense/calculateUserpay', payload)
+      },
+      expense_submit: function(idx){
+        var value = !this.expense_show[idx]
+        this.$set(this.expense_show, idx, value)
       }
   },
   mounted: function(){
-      if (travelgroup !== null){
-        this.$store.dispatch('activity/fetchActivities', travelgroup.id)
+    this.$store.dispatch('groupTravel/fetchTravelGroup', {id: this.$route.params.id}).then(
+      ()=>{
+
       }
+    ).catch(error => {
+      printResponse("fetch the travel failed", error);
+    })
+    
+    this.$store.dispatch('activity/fetchActivities', {travel: this.$route.params.id})
+    
       this.expense_show = Array(100).fill(false)
   },
   computed: {
@@ -121,8 +132,6 @@ export default {
       return this.travel === null;
     },
     ...mapGetters({
-        travel: 'groupTravel/getTravel',
-        group: 'groupTravel/getGroup',
         travelgroup: 'groupTravel/getTravelGroup',
         activities: 'activity/getActivities'
     })

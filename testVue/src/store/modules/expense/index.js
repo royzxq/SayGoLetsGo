@@ -1,7 +1,7 @@
 
 
-import {createExpense} from '@/utils/requests'
-import {printResponse} from '@/utils/helper'
+import {createExpense, updateExpense, partialUpdateExpense, deleteExpense} from '@/utils/requests'
+import {printResponse, checkField} from '@/utils/helper'
 
 const state = {
     expense: null,
@@ -71,6 +71,24 @@ const actions = {
       }
       context.commit('setUserpay', user_payment)
 
+    },
+    updateExpense: (context, payload) => {
+      var target = ['user', 'expense', 'expense_activity']
+      if(checkField(target, payload)){
+        return updateExpense(payload).then(response => {
+          context.commit('setExpense', response.data)
+        })
+      }
+      else{
+        return partialUpdateExpense(payload).then(response => {
+          context.commit('setExpense', response.data)
+        })
+      }
+    },
+    deleteExpense: (context, id) => {
+      return deleteExpense(id).then( response => {
+        context.commit('deleteExpense')
+      })
     },
 }
 
