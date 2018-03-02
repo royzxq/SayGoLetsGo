@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Group, TravelPlan, Place, Activity, Profile, Expense
+from .models import *
 
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
@@ -16,49 +16,35 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'profile')
 
-class GroupSerializer(serializers.ModelSerializer):
-    # onwer = serializers.ReadOnlyField(source='owner.title')
-    # users = serializers.ManyH(User)
-    # travel = serializers.RelatedField(many=False, read_only=True, source='travel.title')
-    travelplan = serializers.SlugRelatedField(slug_field="title", queryset=TravelPlan.objects.all())
-    # users = UserSerializer(many=True, read_only=True)
+
+class TravelGroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'is_public', 'travelplan', )
+        model = TravelGroup
+        fields = ('id', 'title', 'users', 'is_public', 'country', 'days', 'manager_id', 'modified_time')
 
-class GroupCreateSerializer(serializers.ModelSerializer):
 
-    # def create(self, validated_data):
-    #     print("Create group " + str(validated_data))
-    #     print("get context is " + str(self.context['manager_id']))
-    #     group = Group.objects.create(
-    #         group_name=validated_data['group_name']
-    #     )
+class TravelGroupCreateSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        travelgroup = TravelGroup.objects.create(
+            title=validated_data['title'],
+            manager_id=validated_data['manager_id'],
+            is_public=validated_data['is_public'],
+            country=validated_data['country'],
+            days=validated_data['days']
+        )
+        travelgroup.users.add(validated_data['manager_id'])
+        return travelgroup
+
     class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'is_public', 'manager_id', )
+        model = TravelGroup
+        fields = ('title', 'is_public', 'country', 'days')
 
-class GroupDetailSerializer(serializers.ModelSerializer):
+
+class TravelGroupListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
-        fields = ('id', 'group_name', 'manager_id', 'users', 'is_public')
-
-
-class TravelSerializer(serializers.ModelSerializer):
-    # group = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all())
-    group = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
-    # group = GroupSerializer(many=False, read_only=True)
-    # group_name = group.group_name
-    # group_name = serializers.SlugRelatedField(many=False, read_only=True, slug_field='group_name')
-    class Meta:
-        model = TravelPlan
-        fields = ('id', 'title', 'group', 'days', 'country', )
-
-
-class TravelCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TravelPlan
-        fields = ('id', 'title', 'group', 'days', 'country', )
+        model = TravelGroup
+        fields = ('id', 'title', 'is_public', 'country', 'days')
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -68,6 +54,22 @@ class PlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
         fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public')
+
+
+class ExpenseCreateSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        expense = Expense.objects.create(
+            expense_activity=validated_data['expense_activity'],
+            user=validated_data['user'],
+            expense=validated_data['expense'],
+        )
+        print(str(validated_data))
+        return expense
+
+    class Meta:
+        model = Expense
+        fields = ('expense', 'expense_activity')
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -81,6 +83,7 @@ class ActivityPlaceSerializer(serializers.ModelSerializer):
         model = Place
         fields = ('id', 'name')
 
+
 class ActivitySerializer(serializers.ModelSerializer):
     # travel = serializers.PrimaryKeyRelatedField(queryset=TravelPlan.objects.all())
     # travel = TravelSerializer(many=False, read_only=True)
@@ -92,6 +95,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
         fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', 'expense_activity')
+
 
 class ActivityCreateSerializer(serializers.ModelSerializer):
     class Meta:

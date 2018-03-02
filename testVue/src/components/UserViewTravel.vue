@@ -1,24 +1,24 @@
 <template>
 	<div>
         <button v-on:click="goBack">Go Back</button>
-        <div v-if="travel!==null">
+        <div v-if="travelgroup!==null">
             <p>
-                Title:  {{travel.title}}
+                Title:  {{travelgroup.title}}
             </p>
-            <p> Days: {{travel.days}} </p>
-            <p> Country: {{travel.country}} </p>
+            <p> Days: {{travelgroup.days}} </p>
+            <p> Country: {{travelgroup.country}} </p>
             <br>
-
+            <br>
             <span>Activities</span>
             <ul>
-                <li v-for="activity in activities">
+                <li v-for="(activity,idx) in activities">
                     <p>Activity: {{activity.activity}}</p>
                     <p>Start time: {{ activity.start_time }} </p>
                     <p v-if="activity.place!==null">
-                        <router-link :to="{name:'Place', params:{id: activity.place.id}}">Check Place</router-link>
-                        Place: {{ activity.place.name }}
-                        
-
+                        <span v-on:click="checkPlace(activity.place.id)"> 
+                        <router-link :to="{name:'Place'}" >Check Place</router-link>
+                            Place: {{ activity.place.name }}
+                        </span>
                     </p>
                     <p v-if="activity.expense_activity.length !== 0">
                         <ul>
@@ -28,9 +28,16 @@
                             </li>
                         </ul>
                     </p>
+                    <button v-on:click="toggleExpenseShow(idx, activity.id)" v-on:submit="expense_submit(idx)">Add Expense</button>
+                    <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
+                    <!-- <router-view></router-view> -->
+                    <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
+                <br>  
+                
+                <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
                 <br>
-                <router-link :to="{name:'ActivityForm', params: {travel: travel.id}}">Add Activity</router-link>
+                <br>
                 <router-view></router-view>
             </ul>
         </div>
@@ -40,92 +47,94 @@
         <div>
             <ul>
                 
-                <li v-for="user in group.users">
-                    <router-link :to="{name: 'UserInfo', params: {id: user}}" >
+                <li v-for="user in travelgroup.users">
+                    <span v-on:click="checkUser(user)" >
+                    <router-link :to="{name: 'UserInfo'}" >
                         User:  {{user}}
                     </router-link>
+                    </span>
                 </li>
             </ul>
             <button type="submit"> Add Users</button>
+            <div v-on:click="calculateExpense">
+            <router-link :to="{name:'Checkout'}">Calculate Overall Expense</router-link>
+            </div>
+            <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
         </div>
-        <!-- <router-view></router-view> -->
 	</div>
 </template>
 
 <script>
 
-import {getTravelList, getGroup, getActivities} from '../utils/requests'
-
+import ExpenseForm from '../components/ExpenseForm.vue'
+import {mapGetters} from 'vuex'
+import {printResponse} from '@/utils/helper'
 export default {
 
   name: 'TravelView',
   data () {
     return {
-        travel: null,
-        group: null,
-        activities: null
+        expense_show: []
     }
   },
+  components: {
+      ExpenseForm
+  },
   methods:{
-      getGroupTravel: function () {
-        // this.group = this.$route.params.group 
-        var param = {
-            group: this.$route.params.group_id
-        }
-        getGroup(this.$route.params.group_id).then(response => {
-            this.group = response.data
-            getTravelList(param).then(response => {
-                this.travel = response.data.results[0];
-                var param = {
-                    travel : this.travel.id
-                }
-                getActivities(param).then(response => {
-                    this.activities = response.data.results
-                    console.log(response.data.results)
-                }).catch(error => {
-                    console.log("get activity failed " + this.travel.id + error);
-                    alert(error.response)
-                })
-            }).catch(error => {
-                console.log("get travel failed")
-                alert(error.response)
-            })
-        }).catch(error => {
-            console.log("get group failed" + this.$route.params.group_id);
-            alert(error.response)
-        })
-
-        // getTravelList(param).then(response => {
-        //     // console.log(response.data.results)
-        //   this.travel = response.data.results[0]
-        // }).catch(err => {
-        //   alert(err.response)
-        // })
+      toggleExpenseShow: function(idx, activity){
+          var value = !this.expense_show[idx]
+          this.$set(this.expense_show, idx, value)
+          console.log(this.expense_show)
+          this.$store.dispatch('expense/setActivity', activity)
       },
-    //   getActivities: function (){
-    //       var param = {
-    //           travel : this.travel.id
-    //       }
-    //       getActivities(param).then(response => {
-    //           this.activities = response.data.results
-    //           console.log(response.data.results)
-    //       }).catch(error => {
-    //           console.log("get activity failed" + this.travel.id);
-    //           alert(error.response)
-    //       })
-    //   },
       goBack: function(){
         //   alert("go back");
           this.$router.go(-1);
+      },
+      checkPlace: function(id) {
+          this.$store.dispatch('place/setId', id)
+      },
+      checkUser: function(id){
+          this.$store.dispatch('user/setId', id)
+      },
+      getActivities: function(){
+          var travel_info = {
+              travel: this.travelgroup.id
+          }
+          this.$store.dispatch('activity/fetchActivities', travel_info)
+      },
+      calculateExpense: function(){
+          var payload = {}
+          payload.users = this.travelgroup.users
+          payload.activities = this.activities
+          this.$store.dispatch('expense/calculateUserpay', payload)
+      },
+      expense_submit: function(idx){
+        var value = !this.expense_show[idx]
+        this.$set(this.expense_show, idx, value)
       }
   },
   mounted: function(){
-      this.getGroupTravel();
+    this.$store.dispatch('groupTravel/fetchTravelGroup', {id: this.$route.params.id}).then(
+      ()=>{
+
+      }
+    ).catch(error => {
+      printResponse("fetch the travel failed", error);
+    })
+    
+    this.$store.dispatch('activity/fetchActivities', {travel: this.$route.params.id})
+    
+      this.expense_show = Array(100).fill(false)
   },
   computed: {
     empty: function(){
       return this.travel === null;
-    }
+    },
+    ...mapGetters({
+        travelgroup: 'groupTravel/getTravelGroup',
+        activities: 'activity/getActivities'
+    })
   }
 }
 </script>
