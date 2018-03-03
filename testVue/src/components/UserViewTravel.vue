@@ -2,42 +2,29 @@
 	<div>
         <button v-on:click="goBack">Go Back</button>
         <div v-if="travelgroup!==null">
-            <p>
-                Title:  {{travelgroup.title}}
-            </p>
-            <p> Days: {{travelgroup.days}} </p>
-            <p> Country: {{travelgroup.country}} </p>
+          <div @click="show_submit()">
+          <label> Title: </label>
+          <editable :content="travelgroup.title" @update="travelgroup.title=$event" />
+          <label> Days: </label>
+          <editable :content="travelgroup.days" @update="travelgroup.days=$event" />
+          <label> Country: </label>
+          <editable :content="travelgroup.country" @update="travelgroup.country=$event" />
+          <div v-if="travel_submit_show">
+            <button @click="submit()">Submit change</button>
+          </div>
+          </div>
             <br>
             <br>
             <span>Activities</span>
             <ul>
                 <li v-for="(activity,idx) in activities">
-                    <p>Activity: {{activity.activity}}</p>
-                    <p>Start time: {{ activity.start_time }} </p>
-                    <p v-if="activity.place!==null">
-                        <span v-on:click="checkPlace(activity.place.id)"> 
-                        <router-link :to="{name:'Place'}" >Check Place</router-link>
-                            Place: {{ activity.place.name }}
-                        </span>
-                    </p>
-                    <p v-if="activity.expense_activity.length !== 0">
-                        <ul>
-                            <li v-for="expense in activity.expense_activity">
-                                User {{expense.user}} paid 
-                                Expense: {{expense.expense}}
-                            </li>
-                        </ul>
-                    </p>
+                    <activity v-bind:activity="activity" @checkPlace="checkPlace($event)" />
                     <button v-on:click="toggleExpenseShow(idx, activity.id)" v-on:submit="expense_submit(idx)">Add Expense</button>
-                    <!-- <router-link :to="{name: 'Expense', params:{activity_id: activity.id}}">Add Expense</router-link> -->
-                    <!-- <router-view></router-view> -->
                     <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
                 <br>  
-                
                 <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
-                <br>
-                <br>
+                <br><br>
                 <router-view></router-view>
             </ul>
         </div>
@@ -66,19 +53,25 @@
 
 <script>
 
-import ExpenseForm from '../components/ExpenseForm.vue'
+import ExpenseForm from '@/components/ExpenseForm.vue'
+import activity from '@/components/Activity'
 import {mapGetters} from 'vuex'
 import {printResponse} from '@/utils/helper'
+import editable from '@/components/Editable.vue'
+
 export default {
 
   name: 'TravelView',
   data () {
     return {
-        expense_show: []
+        expense_show: [],
+        travel_submit_show: false,
     }
   },
   components: {
-      ExpenseForm
+      ExpenseForm,
+      activity,
+      editable,
   },
   methods:{
       toggleExpenseShow: function(idx, activity){
@@ -112,6 +105,17 @@ export default {
       expense_submit: function(idx){
         var value = !this.expense_show[idx]
         this.$set(this.expense_show, idx, value)
+      },
+      submit: function(){
+        var travelgroup = this.travelgroup
+        this.$store.dispatch('groupTravel/updateTravelGroup', travelgroup).then(()=>{
+          this.travel_submit_show = false;
+        }).catch(error => {
+          printResponse("update travelgroup failed", error)
+        })
+      },
+      show_submit: function(){
+        this.travel_submit_show = true
       }
   },
   mounted: function(){
