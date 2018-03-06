@@ -60,7 +60,7 @@ class Activity(models.Model):
     ## OPTIONAL RELY ON THE PLACE
     place = models.ForeignKey(Place, related_name='place', default=None, blank=True, null=True, on_delete=models.SET_DEFAULT)
     start_time = models.DateTimeField("start_time")
-    duration = models.DurationField("duration", null=True, blank=True)
+    duration = models.DurationField("duration", null=True, blank=True) # may remove from this table
     activity_choice = (
         ("Traffic", "Traffic"),
         ("Meal", "Meal"),

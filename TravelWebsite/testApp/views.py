@@ -130,6 +130,7 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     filter_mappings = {
         'travel': 'travel',
     }
+
     def create(self, request, *args, **kwargs):
         self.serializer_class = ActivityCreateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)

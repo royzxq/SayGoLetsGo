@@ -98,6 +98,9 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 
 class ActivityCreateSerializer(serializers.ModelSerializer):
+    # def create(self, validated_data):
+    #     print(validated_data)
+
     class Meta:
         model = Activity
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place')
+        fields = ('id', 'start_time', 'activity', 'note', 'travel', 'place')

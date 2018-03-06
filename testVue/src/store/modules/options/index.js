@@ -11,7 +11,10 @@ const getters = {
     getValues: (state) => state.values,
     getValue(state) {
       return (id) => {
-        return state.value[id]
+        if (id in state.value){
+          return state.value[id]
+        }
+        return null
       }
     },
 }
