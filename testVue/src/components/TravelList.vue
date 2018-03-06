@@ -1,8 +1,8 @@
 <template>
 	<div>
-    <input type="text" v-model="search" placeholder="search place" />
-    <div v-for="place in filteredList">
-      Place name: {{place.name}}
+    <input type="text" v-model="search" placeholder="search travel" />
+    <div v-for="travel in filteredList">
+      Username: {{travle.title}}
     </div>
 	
 	</div>
@@ -25,16 +25,13 @@ export default {
           this.$router.go(-1);
       }
   },
-  mounted: function (){
-    this.$store.dispatch('place/fetchPlaces')
-  },
   computed: {
     ...mapGetters({
-      places: 'place/getPlaces'
+      travles: 'groupTravel/getTravelGroups'
     }),
     filteredList(){
-      return this.places.filter(place => {
-        return place.name.toLowerCase().includes(this.search.toLowerCase())
+      return this.users.filter(travel => {
+        return user.title.toLowerCase().includes(this.search.toLowerCase())
       })
     }
   }

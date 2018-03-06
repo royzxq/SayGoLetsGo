@@ -55,7 +55,7 @@ export default {
 	},
 	mounted: function(){
     this.$store.dispatch('groupTravel/fetchTravelGroups')
-    this.$store.dispatch('user/fetchUsers')
+    // this.$store.dispatch('user/fetchUsers')
     },
     computed:{
         username: function(){
@@ -69,5 +69,4 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
-</style>
+

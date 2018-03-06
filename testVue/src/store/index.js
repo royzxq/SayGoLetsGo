@@ -5,6 +5,7 @@ import groupTravelModule from './modules/group_travel'
 import userModule from './modules/user'
 import acicityModule from './modules/activity'
 import expenseModule from './modules/expense'
+import optionModule from './modules/options'
 Vue.use(VueX)
 
 
@@ -15,5 +16,6 @@ export default new VueX.Store({
         user: userModule,
         activity: acicityModule,
         expense: expenseModule,
+        options: optionModule,
     },
 })

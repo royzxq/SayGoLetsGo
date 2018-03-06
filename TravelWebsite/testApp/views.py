@@ -114,6 +114,8 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
             queryset = Place.objects.filter(Q(user=self.request.user.id) | Q(is_public=True))
         else:
             queryset = Place.objects.all()
+        if('search' in query_params):
+            return queryset.filter(name__contains=query_params['search']).exclude(**db_excludes)
         return queryset.filter(**db_filters).exclude(**db_excludes)
 
 
@@ -123,7 +125,7 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     permissions_classes = (permissions.IsAuthenticatedOrReadOnly, IsGroupUser)
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ('start_time', 'travel', )
-    ordering = ('start_time','travel', )
+    ordering = ('start_time', 'travel', )
 
     filter_mappings = {
         'travel': 'travel',
@@ -170,11 +172,14 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
             queryset = User.objects.get(id=self.request.user.id).travelgroup_set.all()
         else:
             queryset = TravelGroup.objects.all()
+
+        if('search' in query_params):
+            return queryset.filter(title__contains=query_params['search']).exclude(**db_excludes)
         return queryset.filter(**db_filters).exclude(**db_excludes)
 
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
-    queryset = User.objects.all()
+
     serializer_class = UserSerializer
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ( 'username', 'email', )
@@ -185,6 +190,18 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'email': 'email',
     }
     permission_classes = (IsPost,)
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
+        queryset = User.objects.all()
+        if('search' in query_params):
+            return queryset.filter(username__contains=query_params['search']).exclude(**db_excludes)
+
+        return queryset.filter(**db_filters).exclude(**db_excludes)
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
