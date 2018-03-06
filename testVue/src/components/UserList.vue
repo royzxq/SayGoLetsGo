@@ -2,11 +2,11 @@
 	<div>
     
 
-    <myMultiselect v-bind:options="users" :label="'username'" />
+    <my-multiselect v-bind:options="users" :label="'username'" />
 
-    <mySingleselect v-bind:options="users" :label="'username'" :customlabel="nameUser" />
+    <my-singleselect v-bind:options="users" :label="'username'" :customlabel="nameUser" id="1"/>
 
-    <myAsyncsearch v-bind:options="users" :label="'username'" :asyncFunc="asyncFunc" />
+    <my-asyncsearch v-bind:options="users" :label="'username'" :asyncFunc="asyncFunc" />
 	</div>
 </template>
 

@@ -3,13 +3,17 @@
 import {printResponse, checkField} from '@/utils/helper'
 
 const state = {
-    values: [],
-    value: null,
+    values: [], // for multi select
+    value: {}, // to support multiple single select in one components
 }
 
 const getters = {
     getValues: (state) => state.values,
-    getValue: state => state.value,
+    getValue(state) {
+      return (id) => {
+        return state.value[id]
+      }
+    },
 }
 
 const mutations = {
@@ -26,8 +30,8 @@ const mutations = {
       state.value = null
       state.values = []
     },
-    setValue: (state, payload) => {
-      state.value = payload
+    setValue: (state, payload) => {      
+      state.value[payload.id] = payload.value
     }    
 }
 
