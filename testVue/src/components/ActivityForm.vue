@@ -1,16 +1,19 @@
 <template>
 	<div>
 	<input v-model="activity" placeholder="What is the activity">
+  <my-singleselect :options="activity_options" id="1" />
 	<input v-model="start_date" placeholder="start_date">
     <input v-model="start_time" placeholder="start_time">
 	<input v-model="duration" placeholder="duration">
-	<input v-model="note" placeholder="place description">
-	<input v-model="place_id" placeholder="place id"> <span> Will be replaced by the place view  </span>
+	<input v-model="note" placeholder="note">
+  <my-singleselect :options="places" :label="'name'" id="2" />
 	<button v-on:click="submit"> Submit</button>
 	</div>
 </template>
 
 <script>
+import mySingleselect from '@/components/singleselect'
+import {mapGetters} from 'vuex'
 export default {
   name: 'ActivityForm',
   data: function () {return {
@@ -19,9 +22,16 @@ export default {
 		  start_time: null,
 		  duration: null,
 		  note: null,
-      place_id: null
+      place_id: null,
+      activity_options: ["traffic", "meal", "sightseeing"]
         
   	}
+  },
+  components: {
+    mySingleselect
+  },
+  mounted() {
+    this.$store.dispatch('place/fetchPlaces')
   },
 //   props: ['travel_id'],
   methods:{
@@ -42,6 +52,12 @@ export default {
             console.log(error)
         })
   	}
+  },
+  computed: {
+    ...mapGetters({
+      places: 'place/getPlaces',
+      getValue: 'options/getValue'
+    }),
   }
 }
 </script>

@@ -23,7 +23,7 @@ router = routers.DefaultRouter()
 # router.register(r'users', UserSerializer)
 router.register(r'places', views.PlaceViewSet)
 router.register(r'activities', views.ActivityViewSet)
-router.register(r'users', views.UserViewSet)
+router.register(r'users', views.UserViewSet, base_name='users')
 router.register(r'expenses', views.ExpenseViewSet)
 router.register(r'travelgroups', views.TravelGroupViewSet, base_name='travelgroups')
 
