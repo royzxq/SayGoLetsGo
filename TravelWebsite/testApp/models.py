@@ -74,12 +74,14 @@ class Activity(models.Model):
 
 
 class Expense(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payer_id = models.IntegerField("payer_id", default=-1)
+    payee = models.ManyToManyField(User)
+    travel = models.ForeignKey(TravelGroup, on_delete=models.CASCADE, default=None)
     expense = models.FloatField("expense", default=0.0)
-    expense_activity = models.ForeignKey(Activity, related_name='expense_activity', on_delete=models.CASCADE)
+    note = models.CharField('note', max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return self.user.username + " paid " + str(self.expense)
+        return "USER " +  str(self.payer_id) + " paid " + str(self.expense)
 
 
 
