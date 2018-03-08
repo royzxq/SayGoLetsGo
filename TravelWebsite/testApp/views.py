@@ -181,7 +181,7 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
-    serializer_class = UserSerializer
+    serializer_class = UserListSerializer
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ( 'username', 'email', )
     ordering = ( 'username', 'email',)
@@ -189,8 +189,14 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         # 'user_id': 'user_id',
         'username': 'username',
         'email': 'email',
+        'travelgroup': 'travelgroup',
     }
     permission_classes = (IsPost,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserSerializer(instance)
+        return Response(serializer.data)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -203,6 +209,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
             return queryset.filter(username__contains=query_params['search']).exclude(**db_excludes)
 
         return queryset.filter(**db_filters).exclude(**db_excludes)
+    # permission_classes = (permissions.AllowAny, )
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):

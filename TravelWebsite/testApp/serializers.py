@@ -10,6 +10,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('birth', 'gender')
 
 
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
     class Meta:
@@ -75,10 +81,11 @@ class ExpenseCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         expense = Expense.objects.create(
             travel=validated_data['travel'],
-            payee=validated_data['payee'],
+            # payee=validated_data['payee'],
             payer_id=validated_data['payer'],
             expense=validated_data['expense'],
         )
+        expense.payee.set(validated_data['payee'])
         return expense
 
     class Meta:

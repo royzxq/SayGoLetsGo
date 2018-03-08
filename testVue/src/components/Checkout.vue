@@ -14,8 +14,6 @@ export default {
   name: 'Checkout',
   computed: {
     ...mapGetters({
-      activities: 'activity/getActivities',
-      group: 'groupTravel/getGroup',
       user_pay: 'expense/getUserpay',
     }),
    

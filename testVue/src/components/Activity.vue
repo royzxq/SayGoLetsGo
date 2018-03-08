@@ -10,14 +10,7 @@
           Place: {{ activity.place.name }}
       </span>
   </p>
-  <p v-if="activity.expense_activity.length !== 0">
-      <ul>
-          <li v-for="expense in activity.expense_activity">
-              User {{expense.user}} paid 
-              Expense: {{expense.expense}}
-          </li>
-      </ul>
-  </p>
+  
   <div v-if="showSubmit">
     <button type="submit" >Submit Change</button>
     <button @click="deleteactivity()">Delete</button>
