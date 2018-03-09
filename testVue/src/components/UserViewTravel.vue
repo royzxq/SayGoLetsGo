@@ -19,14 +19,29 @@
             <ul>
                 <li v-for="(activity,idx) in activities">
                     <activity v-bind:activity="activity" @checkPlace="checkPlace($event)" />
-                    <button v-on:click="toggleExpenseShow(idx, activity.id)" v-on:submit="expense_submit(idx)">Add Expense</button>
-                    <ExpenseForm v-if="expense_show[idx]" v-bind:activity_id="activity.id"/>
                 </li>
                 <br>  
                 <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
                 <br><br>
                 <router-view></router-view>
             </ul>
+
+            
+            <p v-if="travelgroup.expense_set.length !== 0">
+              <span>Expenses</span>
+            <ul>
+                <li v-for="expense in travelgroup.expense_set">
+                    User {{expense.payer_id}} paid 
+                    Expense: {{expense.expense}} to 
+                    <p v-for="payee in expense.payee">
+                      {{payee.username}} 
+                      <br>
+                    </p>
+                </li>
+                </ul>
+            </p>
+            <button v-on:click="toggleExpenseShow()" v-on:submit="expense_submit()">Add Expense</button>
+            <ExpenseForm v-if="expense_show" v-bind:travel="travelgroup.id"/>
         </div>
         <div v-else>
             No Travel found
@@ -64,7 +79,7 @@ export default {
   name: 'TravelView',
   data () {
     return {
-        expense_show: [],
+        expense_show: false,
         travel_submit_show: false,
     }
   },
@@ -74,11 +89,8 @@ export default {
       editable,
   },
   methods:{
-      toggleExpenseShow: function(idx, activity){
-          var value = !this.expense_show[idx]
-          this.$set(this.expense_show, idx, value)
-          console.log(this.expense_show)
-          this.$store.dispatch('expense/setActivity', activity)
+      toggleExpenseShow: function(){
+          this.expense_show = !this.expense_show
       },
       goBack: function(){
         //   alert("go back");
@@ -99,12 +111,11 @@ export default {
       calculateExpense: function(){
           var payload = {}
           payload.users = this.travelgroup.users
-          payload.activities = this.activities
+          payload.expenses = this.travelgroup.expense_set
           this.$store.dispatch('expense/calculateUserpay', payload)
       },
-      expense_submit: function(idx){
-        var value = !this.expense_show[idx]
-        this.$set(this.expense_show, idx, value)
+      expense_submit(){
+        this.expense_show = false;
       },
       submit: function(){
         var travelgroup = this.travelgroup

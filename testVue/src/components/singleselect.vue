@@ -28,9 +28,6 @@ export default {
         this.$store.dispatch('options/SetValue', obj)
       },
   },
-  mounted: function(){
-    console.log("hei")
-  },
   computed: {
     ...mapState('options', {
       value: state => {
@@ -40,10 +37,6 @@ export default {
     // ...mapGetters({
     //   getValue: 'options/getValue'
     //   }),
-
-    // search(){
-    //   return this.getValue(this.id)
-    // },
   }
 }
 </script>

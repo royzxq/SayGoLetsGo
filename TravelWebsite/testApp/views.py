@@ -6,6 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
+from rest_framework.decorators import list_route, detail_route
 from rest_framework import permissions, authentication
 from .permissions import IsOwnerOrReadOnly, IsGroupUser, IsPost
 from django.contrib.auth import authenticate, login
@@ -16,6 +17,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
+from rest_framework import status
 
 # Create your views here.
 
@@ -130,6 +132,7 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     filter_mappings = {
         'travel': 'travel',
     }
+
     def create(self, request, *args, **kwargs):
         self.serializer_class = ActivityCreateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
@@ -160,6 +163,24 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         if not self.request.user.is_anonymous:
             serializer.save(manager_id=self.request.user.id)
 
+    def partial_update(self, request, *args, **kwargs):
+        if 'users' in request.data:
+            serializer = TravelGroupUpdateSerializer(request.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return viewsets.ModelViewSet.partial_update(self, request, *args, **kwargs )
+
+    @detail_route(methods=['patch'])
+    def add_users(self, request, pk=None):
+        group = self.get_object()
+        if 'users' not in request.data:
+            return Response("need users in the request", status=status.HTTP_400_BAD_REQUEST)
+        users = request.data['users']
+
+        for user in users:
+            group.users.add(user)
+            group.save()
+        return Response({'status': 'add user successful'})
+
     def get_queryset(self):
         query_params = self.request.query_params
         url_params = self.kwargs
@@ -180,7 +201,7 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
-    serializer_class = UserSerializer
+    serializer_class = UserListSerializer
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ( 'username', 'email', )
     ordering = ( 'username', 'email',)
@@ -188,8 +209,14 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         # 'user_id': 'user_id',
         'username': 'username',
         'email': 'email',
+        'travelgroup': 'travelgroup',
     }
     permission_classes = (IsPost,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserSerializer(instance)
+        return Response(serializer.data)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -202,6 +229,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
             return queryset.filter(username__contains=query_params['search']).exclude(**db_excludes)
 
         return queryset.filter(**db_filters).exclude(**db_excludes)
+    # permission_classes = (permissions.AllowAny, )
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
@@ -210,10 +238,10 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(user=self.request.user)
+            serializer.save(payer=self.request.user.id)
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = ExpenseCreateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
-    permission_classes = (permissions.AllowAny, )
+    # permission_classes = (permissions.AllowAny, )

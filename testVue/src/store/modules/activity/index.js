@@ -49,13 +49,10 @@ const actions = {
         })
     },
     createActivity: (context, payload) => {
-        createActivity(payload).then(response => {
+        return createActivity(payload).then(response => {
             printResponse("create the activity", response.data)
             context.commit('setId', response.data.id)
             context.commit("setActivity", response.data)
-        }).catch(error => {
-            console.log("create the activity failed ")
-            context.commit("deleteActivity")
         })
     },
     updateActivity: (context, payload) =>{
