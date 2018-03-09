@@ -61,6 +61,12 @@ class TravelGroupCreateSerializer(serializers.ModelSerializer):
         fields = ('title', 'is_public', 'country', 'days')
 
 
+class TravelGroupUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fileds = ('title', 'is_public', 'country', 'days')
+
+
 class TravelGroupListSerializer(serializers.ModelSerializer):
     class Meta:
         model = TravelGroup

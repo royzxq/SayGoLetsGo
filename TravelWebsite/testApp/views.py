@@ -6,6 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
+from rest_framework.decorators import list_route, detail_route
 from rest_framework import permissions, authentication
 from .permissions import IsOwnerOrReadOnly, IsGroupUser, IsPost
 from django.contrib.auth import authenticate, login
@@ -16,6 +17,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
+from rest_framework import status
 
 # Create your views here.
 
@@ -160,6 +162,24 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
             serializer.save(manager_id=self.request.user.id)
+
+    def partial_update(self, request, *args, **kwargs):
+        if 'users' in request.data:
+            serializer = TravelGroupUpdateSerializer(request.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return viewsets.ModelViewSet.partial_update(self, request, *args, **kwargs )
+
+    @detail_route(methods=['patch'])
+    def add_users(self, request, pk=None):
+        group = self.get_object()
+        if 'users' not in request.data:
+            return Response("need users in the request", status=status.HTTP_400_BAD_REQUEST)
+        users = request.data['users']
+
+        for user in users:
+            group.users.add(user)
+            group.save()
+        return Response({'status': 'add user successful'})
 
     def get_queryset(self):
         query_params = self.request.query_params
