@@ -25,6 +25,7 @@ router.register(r'places', views.PlaceViewSet)
 router.register(r'activities', views.ActivityViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'expenses', views.ExpenseViewSet)
+router.register(r'memberships', views.MembershipViewSet)
 router.register(r'travelgroups', views.TravelGroupViewSet, base_name='travelgroups')
 
 urlpatterns = [

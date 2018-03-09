@@ -16,6 +16,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
+from .algorithm import compute_payment
 
 # Create your views here.
 
@@ -136,19 +137,25 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
 class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     serializer_class = TravelGroupListSerializer # default is to get the list
     filter_backends = (filters.OrderingFilter, )
-    ordering_fields = ('is_public', 'title', 'manager_id',)
-    ordering = ('is_public', 'title', 'manager_id', )
+    ordering_fields = ('is_public', 'title',)
+    ordering = ('is_public', 'title', )
 
     filter_mappings = {
         'title': 'title',
-        'manager_id': 'manager_id',
         'is_public': 'is_public',
     }
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = TravelGroupDetailSerializer(instance)
-        return Response(serializer.data)
+        data = serializer.data
+        if request.user.is_anonymous:
+            return Response(data)
+
+        membership = Membership.objects.get(user=request.user, travel_group=instance)
+        data['is_manage'] = membership.is_manager
+        return Response(data)
+
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = TravelGroupCreateSerializer
@@ -156,7 +163,7 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(manager_id=self.request.user.id)
+            serializer.save(manager=self.request.user)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -191,16 +198,27 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     permission_classes = (IsPost,)
 
 
+class MembershipViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+    #permission_classes = (permissions.AllowAny,)
+    queryset = Membership.objects.all()
+    serializer_class = MembershipSerializer
+
+
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(user=self.request.user)
+            travel_group_id = self.request.data['travel_group']
+            serializer.save(paid_user=self.request.user, travel_group_id=travel_group_id)
+            payments = compute_payment(travel_group_id)
 
     def create(self, request, *args, **kwargs):
-        self.serializer_class = ExpenseCreateSerializer
+        self.serializer_class = ExpenseCreateUpdateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
-    permission_classes = (permissions.AllowAny, )
+    #permission_classes = (permissions.AllowAny, )
+    permission_classes = (TravelGroupUserRW, )
+
