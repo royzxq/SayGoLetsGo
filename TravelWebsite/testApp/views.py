@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
 from rest_framework import permissions, authentication
-from .permissions import IsOwnerOrReadOnly, IsPost, IsOwnerOrReadOnly, TravelGroupUserReadOnly, TravelGroupUserRW, IsTravelGroupCreator
+from .permissions import IsPost, IsTravelGroupUser, IsTravelGroupCreator, IsTravelGroupManager, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate, IsManagerUpdate, IsCreatorUpdate
 from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 import datetime
@@ -19,7 +19,6 @@ from django.db.models import Q
 from .algorithm import compute_payment
 
 # Create your views here.
-
 
 EXPIRE_MINUTES = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_MINUTES', 1)
 
@@ -55,6 +54,7 @@ def register(request):
     # return render(request, 'views/users/register.html')
     return HttpResponseRedirect('/admin/testApp/abstractuser/add')
 
+
 class SessionLoginView(APIView):
     permission_classes = (permissions.AllowAny,)
     def post(self, request, format=None):
@@ -73,8 +73,10 @@ class SessionLoginView(APIView):
                 return Response('logged on')
         return Response('fail!')
 
+
 def update(request):
     return render(request, 'views/users/update.html')
+
 
 def show(request):
     # return render(request, 'views/users/show.html')
@@ -121,7 +123,7 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
 class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
-    permissions_classes = (permissions.IsAuthenticatedOrReadOnly, TravelGroupUserRW)
+    permissions_classes = (permissions.IsAuthenticatedOrReadOnly, )
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ('start_time', 'travel', )
     ordering = ('start_time','travel', )
@@ -129,6 +131,7 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     filter_mappings = {
         'travel': 'travel',
     }
+
     def create(self, request, *args, **kwargs):
         self.serializer_class = ActivityCreateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
@@ -148,14 +151,7 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = TravelGroupDetailSerializer(instance)
-        data = serializer.data
-        if request.user.is_anonymous:
-            return Response(data)
-
-        membership = Membership.objects.get(user=request.user, travel_group=instance)
-        data['is_manage'] = membership.is_manager
-        return Response(data)
-
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = TravelGroupCreateSerializer
@@ -163,7 +159,7 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
-            serializer.save(manager=self.request.user)
+            serializer.save(creator=self.request.user)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -177,12 +173,12 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         else:
             queryset = TravelGroup.objects.all()
         queryset = queryset.filter(**db_filters).exclude(**db_excludes)
-        for obj in queryset:
-            self.check_object_permissions(self.request, obj)
+
         return queryset
 
     #permission_classes = (permissions.AllowAny, )
-    permission_classes = (TravelGroupUserReadOnly, )
+    permission_classes = (IsTravelGroupUser, permissions.IsAuthenticatedOrReadOnly, )
+
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -199,7 +195,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsTravelGroupUser, IsOwnerOrManagerDelete, IsCreatorUpdate)
     #permission_classes = (permissions.AllowAny,)
     queryset = Membership.objects.all()
     serializer_class = MembershipSerializer
@@ -209,16 +205,13 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
-    def perform_create(self, serializer):
-        if not self.request.user.is_anonymous:
-            travel_group_id = self.request.data['travel_group']
-            serializer.save(paid_user=self.request.user, travel_group_id=travel_group_id)
-            payments = compute_payment(travel_group_id)
-
     def create(self, request, *args, **kwargs):
         self.serializer_class = ExpenseCreateUpdateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
+    def get_queryset(self):
+        return Expense.objects.filter(paid_membership__user=self.request.user)
+
     #permission_classes = (permissions.AllowAny, )
-    permission_classes = (TravelGroupUserRW, )
+    permission_classes = (permissions.IsAuthenticated, IsTravelGroupUser, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate)
 

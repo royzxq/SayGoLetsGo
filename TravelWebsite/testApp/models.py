@@ -36,16 +36,19 @@ class TravelGroup(models.Model):
     def __str__(self):
         return self.title
 
+
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     travel_group = models.ForeignKey(TravelGroup, on_delete=models.CASCADE)
     is_manager = models.BooleanField('is_manager', default=False)
+    is_creator = models.BooleanField('is_creator', default=False)
     #balance = models.FloatField("balance", default=0.0)
     class Meta:
         unique_together = (('user', 'travel_group'),)
 
     def __str__(self):
         return "membership: '" + self.user.__str__() + "' in '" + self.travel_group.__str__() + "'"
+
 
 class Place(models.Model):
     user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
@@ -84,10 +87,11 @@ class Activity(models.Model):
 
 
 class Expense(models.Model):
-    paid2users = models.ManyToManyField(User)
+    payees = models.ManyToManyField(User)
     expense = models.FloatField("expense", default=0.0)
     paid_member = models.ForeignKey(Membership, on_delete=models.CASCADE, null=True)
-    comment = models.CharField('location', max_length=128, null=True, blank=True)
+    comment = models.CharField('comment', max_length=128, null=True, blank=True)
+
     def __str__(self):
         return "Expense: " + str(self.expense)
 
@@ -99,3 +103,9 @@ def get_travel_group(obj):
 
     if obj_type is Expense:
         return obj.paid_member.travel_group
+
+    if obj_type is Membership:
+        return obj.travel_group
+
+    if obj_type is Activity:
+        return obj.travel_group

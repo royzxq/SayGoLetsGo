@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import *
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
     # user = UserSerializer(many=False, read_only=False)
@@ -12,15 +13,35 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
+
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'profile')
 
 
+class MembershipSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+    
+    def create(self, validated_data):
+        return Membership.objects.create(user=validated_data['user'], travel_group=validated_data['travel_group'])
+
+    def update(self, instance, validated_data):
+        instance.is_manager=validated_data['is_manager']
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Membership
+        fields = '__all__'
+        extra_kwargs = {'is_creator': {'read_only': True}}
+
+
 class TravelGroupDetailSerializer(serializers.ModelSerializer):
+    membership_set = MembershipSerializer(many=True, read_only=True)
+
     class Meta:
         model = TravelGroup
-        fields = ('id', 'title', 'users', 'is_public', 'country', 'days', 'modified_time')
+        fields = ('id', 'title', 'is_public', 'country', 'days', 'modified_time', 'membership_set')
 
 
 class TravelGroupCreateSerializer(serializers.ModelSerializer):
@@ -32,8 +53,8 @@ class TravelGroupCreateSerializer(serializers.ModelSerializer):
             country=validated_data['country'],
             days=validated_data['days']
         )
-        manager = validated_data['manager']
-        Membership.objects.create(user=manager, travel_group=travelgroup, is_manager=True)
+        creator = validated_data['creator']
+        Membership.objects.create(user=creator, travel_group=travelgroup, is_creator=True)
         return travelgroup
 
     class Meta:
@@ -47,12 +68,6 @@ class TravelGroupListSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'is_public', 'country', 'days')
 
 
-class MembershipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Membership
-        fields = '__all__'
-
-
 class PlaceSerializer(serializers.ModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
     # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')
@@ -64,7 +79,7 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
 
-    def validate_paid2users(self, users):
+    def validate_payees(self, users):
         print(self.initial_data)
         travel_group_id = self.initial_data['travel_group']
         travel_group = TravelGroup.objects.get(pk=travel_group_id)
@@ -75,31 +90,25 @@ class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
         return users
 
     def create(self, validated_data):
-        print('p1:' + str(validated_data))
-        paid_user = validated_data['paid_user']
-        print('p2:' + str(paid_user))
-        print('p3:'+ str(validated_data['travel_group_id']))
-        paid_member = paid_user.membership_set.get(travel_group__id=validated_data['travel_group_id'])
-        print(str(paid_member))
         expense = Expense.objects.create(
-            paid_member=paid_member,
+            paid_member=validated_data['paid_member'],
             expense=validated_data['expense'],
             comment=validated_data['comment'],
         )
-        expense.paid2users.set(validated_data['paid2users'])
+        expense.paid2users.set(validated_data['payees'])
+        expense.save()
         return expense
 
     def update(self, instance, validated_data):
-        if instance.paid_member.user == self.request.user:
-            instance.expense=validated_data['expense']
-            instance.comment=validated_data['comment']
-            instance.paid2users.set(validated_data['paid2users'])
-            instance.save()
+        instance.expense=validated_data['expense']
+        instance.comment=validated_data['comment']
+        instance.paid2users.set(validated_data['paid2users'])
+        instance.save()
         return instance
 
     class Meta:
         model = Expense
-        fields = ('expense', 'paid2users', 'comment', )
+        fields = ('expense', 'paid_member', 'payees', 'comment', )
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -107,17 +116,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Expense
-        fields = ('id', 'paid2users', 'expense', 'comment', 'paid_member')
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        paid_member = ret['paid_member']
-        if paid_member != None:
-            ret['paid_user'] = paid_member['user']
-        else:
-            ret['paid_user'] = None
-        ret.pop('paid_member')
-        return ret
+        fields = ('id', 'payees', 'expense', 'comment', 'paid_member')
 
 
 class ActivityPlaceSerializer(serializers.ModelSerializer):
@@ -134,6 +133,7 @@ class ActivitySerializer(serializers.ModelSerializer):
     place = ActivityPlaceSerializer(many=False, read_only=True)
     expense_activity = ExpenseSerializer(many=True, read_only=True)
     # expenses = serializers.SlugRelatedField(queryset=Expense.objects.all(), slug_field='expense')
+
     class Meta:
         model = Activity
         fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', 'expense_activity')
