@@ -49,10 +49,14 @@ export function logout(){
 
 export function is_logged_in(){
     let token = localStorage.getItem('tWeb_access_token')
-    // TODO
-    // CHECK EXPIRE
-    console.log("token is " + token)
-    return token !== null;
+    if (token !== null){
+      let expire = localStorage.getItem('tWeb_expired')
+      let now = new Date().getTime() / 1000
+      if (now < expire){
+        return true
+      }
+    }
+    return false;
 }
 
 export function requireAuth(to, from, next){

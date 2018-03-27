@@ -22,7 +22,7 @@
 		<button v-on:click="createTravel()"> Creat Travel and Group </button>
 		<button v-on:click="createPlace()"> Create Place </button>
 		<!-- <router-link :to="{name: 'TravelForm'}"> Create travels</router-link> -->
-		
+		<UserList />
 	</div>
 </template>
 
@@ -30,8 +30,12 @@
 
 
 import {mapGetters} from 'vuex'
+import UserList from '@/components/UserList'
 export default {
-	name: 'UserView',
+  name: 'UserView',
+  components: {
+    UserList
+  },
 	methods:{
 		createTravel: function(){
 			this.$router.push({name: 'TravelForm'})
@@ -50,7 +54,8 @@ export default {
 		}
 	},
 	mounted: function(){
-		this.$store.dispatch('groupTravel/fetchTravelGroups')
+    this.$store.dispatch('groupTravel/fetchTravelGroups')
+    // this.$store.dispatch('user/fetchUsers')
     },
     computed:{
         username: function(){
@@ -64,5 +69,4 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
-</style>
+

@@ -1,13 +1,13 @@
 <template>
 	<div>
-	<input v-model="name" placeholder="place name">
-	<input v-model="country" placeholder="country">
-	<input v-model="city" placeholder="city">
-	<input v-model="description" placeholder="place description">
-	<input v-model="location" placeholder="place location">
-	<input type="checkbox" id="is_public" v-model="is_public">
-	<label for="is_public">Is Public?</label>
-	<button v-on:click="submit"> Submit</button>
+    <input v-model="name"  placeholder="place name">
+    <input v-model="country" placeholder="country">
+    <input v-model="city" placeholder="city">
+    <input v-model="description" placeholder="place description">
+    <input v-model="location" placeholder="place location">
+    <input type="checkbox" id="is_public" v-model="is_public">
+    <label for="is_public">Is Public?</label>
+	  <button v-on:click="submit"> Submit</button>
 	</div>
 </template>
 
@@ -20,12 +20,13 @@ export default {
 		location: null,
 		country: null,
 		city: null,
-		is_public: true
+    is_public: true,
+    a: "a",
   	}
   },
   methods:{
   	submit: function(){
-		if (localStorage.getItem('tWeb_userId') !== null){
+		
 			var place = {}
 			place.name = this.name
 			place.description = this.description
@@ -39,7 +40,7 @@ export default {
       }).catch(error => {
         console.log(error)
       })
-		}
+		
   	}
   }
 }

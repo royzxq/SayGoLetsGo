@@ -11,6 +11,12 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('birth', 'gender')
 
 
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email')
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
 
@@ -62,6 +68,12 @@ class TravelGroupCreateSerializer(serializers.ModelSerializer):
         fields = ('title', 'is_public', 'country', 'days')
 
 
+class TravelGroupUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fileds = ('title', 'is_public', 'country', 'days')
+
+
 class TravelGroupListSerializer(serializers.ModelSerializer):
     class Meta:
         model = TravelGroup
@@ -95,14 +107,14 @@ class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
             expense=validated_data['expense'],
             comment=validated_data['comment'],
         )
-        expense.paid2users.set(validated_data['payees'])
+        expense.payees.set(validated_data['payees'])
         expense.save()
         return expense
 
     def update(self, instance, validated_data):
         instance.expense=validated_data['expense']
         instance.comment=validated_data['comment']
-        instance.paid2users.set(validated_data['paid2users'])
+        instance.payees.set(validated_data['payees'])
         instance.save()
         return instance
 
@@ -131,15 +143,17 @@ class ActivitySerializer(serializers.ModelSerializer):
     travel = serializers.SlugRelatedField(many=False, read_only=True, slug_field='title')
     # place = serializers.SlugRelatedField(many=False, read_only=True, slug_field='name')
     place = ActivityPlaceSerializer(many=False, read_only=True)
-    expense_activity = ExpenseSerializer(many=True, read_only=True)
     # expenses = serializers.SlugRelatedField(queryset=Expense.objects.all(), slug_field='expense')
 
     class Meta:
         model = Activity
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', 'expense_activity')
+        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place', )
 
 
 class ActivityCreateSerializer(serializers.ModelSerializer):
+    # def create(self, validated_data):
+    #     print(validated_data)
+
     class Meta:
         model = Activity
-        fields = ('id', 'start_time', 'duration', 'activity', 'note', 'travel', 'place')
+        fields = ('id', 'start_time', 'activity', 'note', 'travel', 'place')

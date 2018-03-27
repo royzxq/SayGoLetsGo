@@ -73,7 +73,7 @@ class Activity(models.Model):
     ## OPTIONAL RELY ON THE PLACE
     place = models.ForeignKey(Place, related_name='place', default=None, blank=True, null=True, on_delete=models.SET_DEFAULT)
     start_time = models.DateTimeField("start_time")
-    duration = models.DurationField("duration", null=True, blank=True)
+    duration = models.DurationField("duration", null=True, blank=True) # may remove from this table
     activity_choice = (
         ("Traffic", "Traffic"),
         ("Meal", "Meal"),
@@ -91,6 +91,7 @@ class Expense(models.Model):
     expense = models.FloatField("expense", default=0.0)
     paid_member = models.ForeignKey(Membership, on_delete=models.CASCADE, null=True)
     comment = models.CharField('comment', max_length=128, null=True, blank=True)
+    note = models.CharField('note', max_length=100, null=True, blank=True)
 
     def __str__(self):
         return "Expense: " + str(self.expense)
@@ -100,7 +101,6 @@ def get_travel_group(obj):
     obj_type = type(obj)
     if obj_type is TravelGroup:
         return obj
-
     if obj_type is Expense:
         return obj.paid_member.travel_group
 

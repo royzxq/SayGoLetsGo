@@ -57,6 +57,12 @@ export default {
           // ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
+          var expire = response.data.expires_in
+          var seconds = new Date().getTime() / 1000
+          console.log(seconds)
+          expire = seconds + expire
+          console.log(expire)
+          localStorage.setItem('tWeb_expired', expire)
           var user = {
             username: tokenRequester.username
           }

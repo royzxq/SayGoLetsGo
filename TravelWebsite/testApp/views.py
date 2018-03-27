@@ -6,6 +6,7 @@ from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from .serializers import *
 from rest_framework.response import Response
+from rest_framework.decorators import list_route, detail_route
 from rest_framework import permissions, authentication
 from .permissions import IsPost, IsTravelGroupUser, IsTravelGroupCreator, IsTravelGroupManager, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate, IsManagerUpdate, IsCreatorUpdate
 from django.contrib.auth import authenticate, login
@@ -16,7 +17,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
-from .algorithm import compute_payment
+from rest_framework import status
 
 # Create your views here.
 
@@ -117,6 +118,8 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
             queryset = Place.objects.filter(Q(user=self.request.user.id) | Q(is_public=True))
         else:
             queryset = Place.objects.all()
+        if('search' in query_params):
+            return queryset.filter(name__contains=query_params['search']).exclude(**db_excludes)
         return queryset.filter(**db_filters).exclude(**db_excludes)
 
 
@@ -126,7 +129,7 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
     permissions_classes = (permissions.IsAuthenticatedOrReadOnly, )
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ('start_time', 'travel', )
-    ordering = ('start_time','travel', )
+    ordering = ('start_time', 'travel', )
 
     filter_mappings = {
         'travel': 'travel',
@@ -161,6 +164,12 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
         if not self.request.user.is_anonymous:
             serializer.save(creator=self.request.user)
 
+    def partial_update(self, request, *args, **kwargs):
+        if 'users' in request.data:
+            serializer = TravelGroupUpdateSerializer(request.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return viewsets.ModelViewSet.partial_update(self, request, *args, **kwargs )
+
     def get_queryset(self):
         query_params = self.request.query_params
         url_params = self.kwargs
@@ -172,17 +181,17 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
             queryset = User.objects.get(id=self.request.user.id).travelgroup_set.all()
         else:
             queryset = TravelGroup.objects.all()
-        queryset = queryset.filter(**db_filters).exclude(**db_excludes)
-
-        return queryset
+        if ('search' in query_params):
+            return queryset.filter(title__contains=query_params['search']).exclude(**db_excludes)
+        return queryset.filter(**db_filters).exclude(**db_excludes)
 
     #permission_classes = (permissions.AllowAny, )
     permission_classes = (IsTravelGroupUser, permissions.IsAuthenticatedOrReadOnly, )
 
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+    serializer_class = UserListSerializer
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ( 'username', 'email', )
     ordering = ( 'username', 'email',)
@@ -190,8 +199,27 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         # 'user_id': 'user_id',
         'username': 'username',
         'email': 'email',
+        'travelgroup': 'travelgroup',
     }
     permission_classes = (IsPost,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserSerializer(instance)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
+        queryset = User.objects.all()
+        if('search' in query_params):
+            return queryset.filter(username__contains=query_params['search']).exclude(**db_excludes)
+
+        return queryset.filter(**db_filters).exclude(**db_excludes)
+    # permission_classes = (permissions.AllowAny, )
 
 
 class MembershipViewSet(viewsets.ModelViewSet):
@@ -214,4 +242,3 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     #permission_classes = (permissions.AllowAny, )
     permission_classes = (permissions.IsAuthenticated, IsTravelGroupUser, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate)
-
