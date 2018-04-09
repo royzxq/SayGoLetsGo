@@ -1,46 +1,43 @@
 <template>
 	<div>
-		<ul>
-			<li v-for="place in places">
-				<p>
-				<p>
-					Place Name:  {{place.name}}
-				</p>
-				<p> Description: {{place.description}} </p>
-				<p> Location: {{place.location}} </p>
-				</p>
-			</li>
-		</ul>
-		<router-link :to="{name: 'Place'}"> Create Places</router-link>
+    <input type="text" v-model="search" placeholder="search place" />
+    <div v-for="place in filteredList">
+      Place name: {{place.name}}
+    </div>
+	
 	</div>
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/test_app/places/';
+
+import {mapGetters} from 'vuex'
 export default {
 
-  name: 'PlaceList',
-
+  name: 'UserList',
   data () {
     return {
-    	places: null
+      // filter_list : [],
+      search: "",
     }
   },
-  	methods:{
-	    getPlaces: function () {
-	      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
-	      this.$http.get(link).then(function(response){
-	        this.places = response.data;
-	        console.log(response.data);
-	      }, function(err){
-	        this.places = null
-	        console.log(err.statusText);
-	      })
-	    }
-	},
-	mounted: function(){
-    	this.getPlaces();
-	}
+  methods:{      
+      goBack: function(){
+          this.$router.go(-1);
+      }
+  },
+  mounted: function (){
+    this.$store.dispatch('place/fetchPlaces')
+  },
+  computed: {
+    ...mapGetters({
+      places: 'place/getPlaces'
+    }),
+    filteredList(){
+      return this.places.filter(place => {
+        return place.name.toLowerCase().includes(this.search.toLowerCase())
+      })
+    }
+  }
 }
 </script>
 

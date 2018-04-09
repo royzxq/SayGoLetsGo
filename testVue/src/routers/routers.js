@@ -1,49 +1,67 @@
 import vue from 'vue'
 import Router from 'vue-router'
-import TravelList from '../components/TravelList.vue'
 import PlaceList from '../components/PlaceList.vue'
-import TimeSpanList from '../components/TimeSpanList.vue'
+import PlaceForm from '../components/PlaceForm.vue'
 import TravelForm from '../components/TravelForm.vue'
-import Travel from '../components/Travel.vue'
 import Place from '../components/Place.vue'
-import Timespan from '../components/Timespan.vue'
-import TimespanForm from '../components/TimespanForm.vue'
-import Login from '../components/login.vue'
-
+import Login from '../components/Login.vue'
+import UserForm from '../components/UserForm.vue'
+import UserView from '../components/UserView.vue'
+import TravelView from '../components/UserViewTravel.vue'
+import UserInfo from '../components/UserInfo.vue'
+import ActivityForm from '../components/ActivityForm.vue'
+import ExpenseForm from '../components/ExpenseForm.vue'
+import Checkout from '@/components/Checkout.vue'
 Vue.use(Router)
+
+
+import {requireAuth} from '../utils/auth'
 
 export default new Router({
     mode: 'history', 
     routes:[
         {
-            path:'/travels', name: 'Travels', component: TravelList,
-            children: [
-                {path: ':id', name: 'Travel', component: Travel}
-            ]
+            path:'/', redirect: "/index"
         },
         {
             path:'/travels/create', name:'TravelForm', component: TravelForm
         },
-        // {
-        //     path:'/travels/:id', name: 'Travel', component: Travel
-        // },
         {
             path:'/places', name: 'Places', component: PlaceList
         },
         {
-            path:'/places/:id', name: 'Place', component: Place
+            path:'/places/create', name: 'PlaceForm', component: PlaceForm
         },
         {
-            path:'/timespans', name: 'Timespans', component: TimeSpanList
+            path: '/login', name: 'login', component: Login
         },
         {
-            path:'/timespan', name: 'TimespanForm', component: TimespanForm
+            path: '/createuser', name: 'UserForm', component: UserForm
         },
         {
-            path:'/timespan/:id', name: 'Timespan', component: Timespan
+            path: '/index', name: 'UserView', component: UserView,
+            beforeEnter: requireAuth
         },
         {
-            path: 'login', name: 'login', component: Login
-        }
+            path: '/travel_view/:id', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
+            children: [
+                {
+                    path:'places', name: 'Place', component: Place
+                },
+                {
+                    path: 'expense', name: 'Expense', component: ExpenseForm
+                },
+                {
+                    path: 'checkout', name: 'Checkout', component: Checkout  
+                },
+                {
+                  path: '/activity/create', name:'ActivityForm', component: ActivityForm
+                }
+            ]
+        },
+        {
+            path: '/user_info', name: 'UserInfo', component: UserInfo, beforeEnter: requireAuth
+        },
+        
     ]
 })

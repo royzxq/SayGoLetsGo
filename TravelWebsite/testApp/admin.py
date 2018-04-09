@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from .models import Group, TravelPlan, Place, Activity, WebUser, Expense
+from .models import *
 
 # Register your models here.
 from django.conf import settings
@@ -28,20 +28,19 @@ from django.conf import settings
 #     filter_horizontal = ()
 #     ordering = ('username', 'email', )
 
-class WebUserInline(admin.StackedInline):
-    model = WebUser
+class ProfileInline(admin.StackedInline):
+    model = Profile
     can_delete = False
     verbose_name_plural = 'web_users'
 
 class CustomUserAdmin(UserAdmin):
-    inlines = (WebUserInline,)
+    inlines = (ProfileInline,)
 
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Group)
-admin.site.register(TravelPlan)
 admin.site.register(Place)
 admin.site.register(Activity)
 admin.site.register(Expense)
+admin.site.register(TravelGroup)
 # admin.site.register(AbstractUser, AbstractUserAdmin)

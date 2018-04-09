@@ -16,3 +16,11 @@ class IsGroupUser(permissions.BasePermission):
             if request.user in obj.traval.group.users:
                 return True
             return False
+
+
+class IsPost(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'POST':
+            return True
+        return not request.user.is_anonymous

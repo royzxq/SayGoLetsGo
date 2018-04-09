@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 # Create your models here.
 
-class WebUser(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth = models.DateField('birth', null=True)
     gender_choices = (
@@ -24,28 +24,11 @@ class WebUser(models.Model):
         return self.user.username
 
 
-# class UserGroup(models.Model):
-#     user = models.ForeignKey(AbstractUser)
-#     group = models.ForeignKey(Group)
-
-
-class Group(models.Model):
-    group_name = models.CharField("groupname", max_length=40)
-    # group_manager = models.ForeignKey(User, on_delete=models.SET_NULL)
+class TravelGroup(models.Model):
+    title = models.CharField("title", max_length=40, default="")
     users = models.ManyToManyField(User)
     manager_id = models.IntegerField("manager_id", default=-1)
     is_public = models.BooleanField('is_public', default=False)
-
-    def __str__(self):
-        return self.group_name
-
-    # def save(self, force_insert=False, force_update=False, using=None,
-    #          update_fields=None):
-
-
-class TravelPlan(models.Model):
-    group = models.OneToOneField(Group, on_delete=models.CASCADE,)
-    title = models.CharField("title", max_length=40, default="")
     country = models.CharField("country", max_length=20)
     days = models.IntegerField("days", default=1)
     modified_time = models.DateTimeField("modifiedtime", auto_now=True)
@@ -56,12 +39,14 @@ class TravelPlan(models.Model):
 
 class Place(models.Model):
     user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
+    travels = models.ManyToManyField(TravelGroup, blank=True)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     country = models.CharField('country', max_length=100, default="")
     city = models.CharField('city', max_length=100, default="")
-    location = models.CharField('location', max_length=100, null=True)
+    location = models.CharField('location', max_length=100, null=True, blank=True)
     picture = models.ImageField('picture', max_length=100, null=True, blank=True)
+    is_public = models.BooleanField('is_public', default=True)
 
     def __str__(self):
         return self.name
@@ -71,11 +56,11 @@ class Place(models.Model):
 
 
 class Activity(models.Model):
-    travel = models.ForeignKey(TravelPlan, on_delete=models.CASCADE)
+    travel = models.ForeignKey(TravelGroup, on_delete=models.CASCADE)
     ## OPTIONAL RELY ON THE PLACE
     place = models.ForeignKey(Place, related_name='place', default=None, blank=True, null=True, on_delete=models.SET_DEFAULT)
     start_time = models.DateTimeField("start_time")
-    duration = models.DurationField("duration", null=True, blank=True)
+    duration = models.DurationField("duration", null=True, blank=True) # may remove from this table
     activity_choice = (
         ("Traffic", "Traffic"),
         ("Meal", "Meal"),
@@ -83,38 +68,20 @@ class Activity(models.Model):
     )
     activity = models.CharField("activity", choices=activity_choice, max_length=30)
     note = models.CharField("note", max_length=200, null=True, blank=True)
-    expense = models.FloatField('expense', default=0.0)
 
     def __str__(self):
-        return self.start_time.isoformat() + " " + self.activity
+        return self.travel.title + " " + self.activity
 
 
 class Expense(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payer_id = models.IntegerField("payer_id", default=-1)
+    payee = models.ManyToManyField(User)
+    travel = models.ForeignKey(TravelGroup, on_delete=models.CASCADE, default=None)
     expense = models.FloatField("expense", default=0.0)
-    expense_activity = models.ForeignKey(Activity, related_name='expense_activity', on_delete=models.CASCADE)
+    note = models.CharField('note', max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return self.user.user.username + " paid " + str(self.expense)
+        return "USER " +  str(self.payer_id) + " paid " + str(self.expense)
 
-# class DayPlan(models.Model):
-#     travel_plan = models.ForeignKey(TravelPlan)
-#     date = models.DateField("date")
-#     modified_time = models.DateTimeField("modifiedtime", auto_now=True)
-#     city = models.CharField("city", max_length=20)
-#     breakfast = models.CharField("breakfast", max_length=100)
-#     lunch = models.CharField("lunch", max_length=100)
-#     dinner = models.CharField('dinner', max_length=100)
-#     places = models.CharField('locations', max_length=200, default="[]") # change this array to the JSonField
-#
-#     def addPlace(self, place):
-#         places = self.getPlaces()
-#         places.append(place.id)
-#         self.places = json.dumps(places)
-#
-#     def getPlaces(self):
-#         return json.loads(self.places)
-#
-#     def __str__(self):
-#         return self.city + " " + self.date.isoformat()
+
 

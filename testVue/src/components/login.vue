@@ -7,13 +7,18 @@
 		<input v-model="password" placeholder="Password">
     <br>
 		<button v-on:click="login"> Login</button>
+    <router-link :to="{name: 'UserForm'}"> Create User</router-link>
 	</div>
   <div v-else>
       <p> Already logged in </p>
-      <router-link :to="{name: '/'}"> Home</router-link>
+      <router-link :to="{name: 'UserView'}"> Home</router-link>
   </div>
   <button v-on:click="logout"> Logout</button>
+
+  
   </div>
+  
+
 </template>
 
 <script>
@@ -28,7 +33,9 @@ function ShowTheObject(obj){
      }
   alert(des)
 }
-import {generate_token_request, logout, is_logged_in} from '../utils/auth.js'
+import {generate_token_request, logout, is_logged_in, login_user} from '@/utils/auth.js'
+import {getUsers} from '@/utils/requests'
+
 export default {
 
   name: 'Login',
@@ -46,11 +53,20 @@ export default {
         'Content-Type': "application/x-www-form-urlencoded"
       }}).then(
         function (response) {
-          console.log(response.data)
-          ShowTheObject(response.data)
+          console.log(response)
+          // ShowTheObject(response.data)
           localStorage.setItem('tWeb_access_token', response.data.access_token)
           localStorage.setItem('tWeb_username', tokenRequester.username)
-          this.$router.push({name: 'Travels'})
+          var expire = response.data.expires_in
+          var seconds = new Date().getTime() / 1000
+          console.log(seconds)
+          expire = seconds + expire
+          console.log(expire)
+          localStorage.setItem('tWeb_expired', expire)
+          var user = {
+            username: tokenRequester.username
+          }
+          this.$router.push({name: 'UserView'})
         },
         function (err) {
           console.log(err.statusText)
@@ -61,7 +77,7 @@ export default {
       //   ShowTheObject(response.data);
       //   localStorage.setItem('tWeb_access_token', response.data.access_token)
       //   localStorage.setItem('tWeb_username', tokenRequester.username)
-      //   this.$router.push({name: 'Travels'})
+      //   this.$router.push('/index')
       // }).catch(error => {
       //     console.log(error)
       //     alert('err: ' + error)
@@ -69,7 +85,8 @@ export default {
     },
     logout: function () {
       logout()
-      this.$router.push({name: 'Travels'})
+      this.$store.dispatch('user/deleteUser')
+      this.$router.push('/index')
     }
     
   },

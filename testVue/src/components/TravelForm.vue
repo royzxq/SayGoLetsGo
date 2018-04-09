@@ -1,50 +1,52 @@
 <template>
 	<div>
+	<h3> Travel Info </h3>
 	<input v-model="title" placeholder="travel title">
 	<input v-model="days" placeholder="travel days">
 	<input v-model="country" placeholder="travel country">
-	<input v-model="group" placeholder="travel group">
+	<br>
+	<input type="checkbox" id="is_public" v-model="is_public">
+	<label for="is_public">Is Public?</label>
+
 	<button v-on:click="submit"> Submit</button>
 	</div>
 </template>
 
 <script>
-var link = 'http://127.0.0.1:8000/test_app/travels/'
-var Travel = {
-	title: null,
-	days: null,
-	country: null,
-	group: null
-}
-
 export default {
 
   name: 'TravelForm',
 
-  data: function () {return {
-	    title: null,
-		days: null,
-		country: null,
-		group: null
+  data: function () {
+	  return {
+			title: null,
+			days: null,
+			country: null,
+			is_public: false
   	}
   },
   methods:{
   	submit: function(){
-  		var travel = {}
-  		travel.title = this.title
-  		travel.days = this.days
-  		travel.country = this.country
-  		travel.group = this.group
-  		Vue.http.headers.common['Content-Type'] = "application/json"
-      Vue.http.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('tWeb_access_token')
-
-  		this.$http.post(link, travel).then(function(response){
-	        console.log(response.data);
-	        this.$router.push('travels')
-	      }, function(err){
-	        console.log(err.statusText)
-	    })
-  	}
+			this.createTravelsImpl()
+		},
+	createTravelsImpl: function(){
+    var travelgroup = {
+      title: this.title,
+			days: this.days,
+      country: this.country,
+      is_public: this.is_public,
+    }
+		
+		var vue_instance = this
+		this.$store.dispatch('groupTravel/createTravelGroup', travelgroup).then(
+			function(){
+				vue_instance.$router.push('/index')
+			}
+		).catch(error => {
+			alert("Info Error")
+			console.log(error)
+		})	
+	}
   }
 }
 </script>

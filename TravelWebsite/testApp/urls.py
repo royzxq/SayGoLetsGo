@@ -23,9 +23,9 @@ router = routers.DefaultRouter()
 # router.register(r'users', UserSerializer)
 router.register(r'places', views.PlaceViewSet)
 router.register(r'activities', views.ActivityViewSet)
-router.register(r'groups', views.GroupViewSet, base_name='groups')
-router.register(r'travels', views.TravelViewSet)
-router.register(r'users', views.UserViewSet)
+router.register(r'users', views.UserViewSet, base_name='users')
+router.register(r'expenses', views.ExpenseViewSet)
+router.register(r'travelgroups', views.TravelGroupViewSet, base_name='travelgroups')
 
 urlpatterns = [
     # path('user/register', views.register),
