@@ -17,6 +17,15 @@ class UserListSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email')
 
 
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+
+    def create(self, validated_data):
+        return User.objects.create_user(username=validated_data['username'], password=validated_data['password'], email=validated_data['email'])
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
 
@@ -25,76 +34,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'profile')
 
 
-class MembershipSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, read_only=True)
-    
-    def create(self, validated_data):
-        return Membership.objects.create(user=validated_data['user'], travel_group=validated_data['travel_group'])
-
-    def update(self, instance, validated_data):
-        instance.is_manager=validated_data['is_manager']
-        instance.save()
-        return instance
-
+class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Membership
-        fields = '__all__'
-        extra_kwargs = {'is_creator': {'read_only': True}}
-
-
-class TravelGroupDetailSerializer(serializers.ModelSerializer):
-    membership_set = MembershipSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = TravelGroup
-        fields = ('id', 'title', 'is_public', 'country', 'days', 'modified_time', 'membership_set')
-
-
-class TravelGroupCreateSerializer(serializers.ModelSerializer):
-
-    def create(self, validated_data):
-        travelgroup = TravelGroup.objects.create(
-            title=validated_data['title'],
-            is_public=validated_data['is_public'],
-            country=validated_data['country'],
-            days=validated_data['days']
-        )
-        creator = validated_data['creator']
-        Membership.objects.create(user=creator, travel_group=travelgroup, is_creator=True)
-        return travelgroup
-
-    class Meta:
-        model = TravelGroup
-        fields = ('title', 'is_public', 'country', 'days')
-
-
-class TravelGroupUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TravelGroup
-        fileds = ('title', 'is_public', 'country', 'days')
-
-
-class TravelGroupListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TravelGroup
-        fields = ('id', 'title', 'is_public', 'country', 'days')
-
-
-class PlaceSerializer(serializers.ModelSerializer):
-    # user = serializers.ReadOnlyField(source='user.username')
-    # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')
-    # user = UserSerializer(many=False, read_only=True)
-    class Meta:
-        model = Place
-        fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public')
-
+        model = User
+        fields = ('username', 'id')
 
 class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate_payees(self, users):
         print(self.initial_data)
-        travel_group_id = self.initial_data['travel_group']
-        travel_group = TravelGroup.objects.get(pk=travel_group_id)
+        paid_member_id = self.initial_data['paid_member']
+        paid_member = Membership.objects.get(pk=paid_member_id)
+        travel_group = paid_member.travel_group
         group_users = travel_group.users.all()
         for user in users:
             if user not in group_users:
@@ -124,11 +75,77 @@ class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
-    paid_member = MembershipSerializer(many=False, read_only=True)
+    payees = UserNameSerializer(many=True, read_only=True)
 
     class Meta:
         model = Expense
         fields = ('id', 'payees', 'expense', 'comment', 'paid_member')
+
+
+class MembershipSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=True)
+    expense_set = ExpenseSerializer(many=True, read_only=True)
+
+    def create(self, validated_data):
+        return Membership.objects.create(user=validated_data['user'], travel_group=validated_data['travel_group'])
+
+    def update(self, instance, validated_data):
+        instance.is_manager=validated_data['is_manager']
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Membership
+        #fields = '__all__'
+        fields = ('id', 'user', 'is_manager', 'is_creator', 'expense_set')
+        extra_kwargs = {'is_creator': {'read_only': True}}
+
+
+class TravelGroupDetailSerializer(serializers.ModelSerializer):
+    membership_set = MembershipSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = TravelGroup
+        fields = ('id', 'title', 'is_public', 'country', 'days', 'modified_time', 'membership_set', 'activity_set')
+
+
+class TravelGroupCreateSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        travelgroup = TravelGroup.objects.create(
+            title=validated_data['title'],
+            is_public=validated_data['is_public'],
+            country=validated_data['country'],
+            days=validated_data['days']
+        )
+        creator = validated_data['creator']
+        Membership.objects.create(user=creator, travel_group=travelgroup, is_creator=True)
+        return travelgroup
+
+    class Meta:
+        model = TravelGroup
+        fields = ('title', 'is_public', 'country', 'days')
+
+
+class TravelGroupUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fields = ('title', 'is_public', 'country', 'days')
+
+
+class TravelGroupListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TravelGroup
+        fields = ('id', 'title', 'is_public', 'country', 'days')
+
+
+class PlaceSerializer(serializers.ModelSerializer):
+    # user = serializers.ReadOnlyField(source='user.username')
+    # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')
+    # user = UserSerializer(many=False, read_only=True)
+    class Meta:
+        model = Place
+        fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public')
 
 
 class ActivityPlaceSerializer(serializers.ModelSerializer):

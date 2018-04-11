@@ -203,6 +203,10 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
     }
     permission_classes = (IsPost,)
 
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = UserCreateSerializer
+        return viewsets.ModelViewSet.create(self, request, *args, **kwargs)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = UserSerializer(instance)
@@ -238,7 +242,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
     def get_queryset(self):
-        return Expense.objects.filter(paid_membership__user=self.request.user)
+        return Expense.objects.filter(paid_member__user=self.request.user)
 
     #permission_classes = (permissions.AllowAny, )
     permission_classes = (permissions.IsAuthenticated, IsTravelGroupUser, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate)
