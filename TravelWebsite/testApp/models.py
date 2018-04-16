@@ -26,8 +26,8 @@ class Profile(models.Model):
 
 class TravelGroup(models.Model):
     title = models.CharField("title", max_length=40, default="")
-    users = models.ManyToManyField(User)
-    manager_id = models.IntegerField("manager_id", default=-1)
+    users = models.ManyToManyField(User, through='Membership')
+    #manager_id = models.IntegerField("manager_id", default=-1)
     is_public = models.BooleanField('is_public', default=False)
     country = models.CharField("country", max_length=20)
     days = models.IntegerField("days", default=1)
@@ -35,6 +35,19 @@ class TravelGroup(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Membership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    travel_group = models.ForeignKey(TravelGroup, on_delete=models.CASCADE)
+    is_manager = models.BooleanField('is_manager', default=False)
+    is_creator = models.BooleanField('is_creator', default=False)
+    #balance = models.FloatField("balance", default=0.0)
+    class Meta:
+        unique_together = (('user', 'travel_group'),)
+
+    def __str__(self):
+        return "membership: '" + self.user.__str__() + "' in '" + self.travel_group.__str__() + "'"
 
 
 class Place(models.Model):
@@ -74,14 +87,25 @@ class Activity(models.Model):
 
 
 class Expense(models.Model):
-    payer_id = models.IntegerField("payer_id", default=-1)
-    payee = models.ManyToManyField(User)
-    travel = models.ForeignKey(TravelGroup, on_delete=models.CASCADE, default=None)
+    payees = models.ManyToManyField(User)
     expense = models.FloatField("expense", default=0.0)
+    paid_member = models.ForeignKey(Membership, on_delete=models.CASCADE, null=True)
+    comment = models.CharField('comment', max_length=128, null=True, blank=True)
     note = models.CharField('note', max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return "USER " +  str(self.payer_id) + " paid " + str(self.expense)
+        return "Expense: " + str(self.expense)
 
 
+def get_travel_group(obj):
+    obj_type = type(obj)
+    if obj_type is TravelGroup:
+        return obj
+    if obj_type is Expense:
+        return obj.paid_member.travel_group
 
+    if obj_type is Membership:
+        return obj.travel_group
+
+    if obj_type is Activity:
+        return obj.travel_group
