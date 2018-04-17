@@ -1,6 +1,6 @@
 
 
-import {createUser, getUserId, getUsers, updateUser, partialUpdateUser, deleteUser} from '@/utils/requests'
+import {createUser, getUserId, getUsers, updateUser, partialUpdateUser, deleteUser, createFriendship, deleteFriendship} from '@/utils/requests'
 import {printResponse, checkField} from '@/utils/helper'
 const state = {
     user: null,
@@ -134,6 +134,16 @@ const actions = {
         })
       }
     },
+    createFriendship: (context, payload) => {
+      var target = ['user']
+      if(checkField(target, payload)){
+        return createFriendship(payload)
+      }
+    },
+    deleteFriendship: (context, id) => {
+      return deleteFriendship(id)
+    },
+
 }
 
 export default {

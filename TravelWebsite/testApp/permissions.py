@@ -110,3 +110,15 @@ class IsCreatorUpdate(permissions.BasePermission):
         return membership.is_creator
 
 
+class FriendshipPermission(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'POST':
+            if request.user.is_anonymous:
+                return False
+            else:
+                return True
+        elif request.method == 'DELETE':
+            if request.user == obj.user1 or request.user == obj.user2:
+                return True
+            return False
+        return False

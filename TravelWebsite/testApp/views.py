@@ -17,7 +17,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
-from rest_framework import status
+from rest_framework import status, generics
 
 # Create your views here.
 
@@ -140,6 +140,23 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
 
 
+class FriendshipViewSet(viewsets.ModelViewSet):
+    queryset = Friendship.objects.all()
+    serializer_class = FriendSerializer
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = FriendCreateSerializer
+        return viewsets.ModelViewSet.create(self, request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        if not self.request.user.is_anonymous:
+            serializer.save(me=self.request.user)
+        else:
+            serializer.save(me=None)
+
+
+
+
+
 class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
     serializer_class = TravelGroupListSerializer # default is to get the list
     filter_backends = (filters.OrderingFilter, )
@@ -185,8 +202,11 @@ class TravelGroupViewSet(FiltersMixin, viewsets.ModelViewSet):
             return queryset.filter(title__contains=query_params['search']).exclude(**db_excludes)
         return queryset.filter(**db_filters).exclude(**db_excludes)
 
-    #permission_classes = (permissions.AllowAny, )
-    permission_classes = (IsTravelGroupUser, permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (permissions.AllowAny, )
+    # permission_classes = (IsTravelGroupUser, permissions.IsAuthenticatedOrReadOnly, )
+
+
+
 
 
 class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
@@ -201,7 +221,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
         'email': 'email',
         'travelgroup': 'travelgroup',
     }
-    permission_classes = (IsPost,)
+    # permission_classes = (IsPost,)
 
     def create(self, request, *args, **kwargs):
         self.serializer_class = UserCreateSerializer
@@ -223,7 +243,7 @@ class UserViewSet(FiltersMixin, viewsets.ModelViewSet):
             return queryset.filter(username__contains=query_params['search']).exclude(**db_excludes)
 
         return queryset.filter(**db_filters).exclude(**db_excludes)
-    # permission_classes = (permissions.AllowAny, )
+    permission_classes = (permissions.AllowAny, )
 
 
 class MembershipViewSet(viewsets.ModelViewSet):

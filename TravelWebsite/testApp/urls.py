@@ -27,7 +27,7 @@ router.register(r'users', views.UserViewSet, base_name='users')
 router.register(r'expenses', views.ExpenseViewSet)
 router.register(r'memberships', views.MembershipViewSet)
 router.register(r'travelgroups', views.TravelGroupViewSet, base_name='travelgroups')
-
+router.register(r'friends', views.FriendshipViewSet)
 urlpatterns = [
     # path('user/register', views.register),
     # path('user/show', views.show),

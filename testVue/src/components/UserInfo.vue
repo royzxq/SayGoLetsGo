@@ -6,6 +6,11 @@
 	</p>
 	<p> Email: {{user.email}} </p>
 	<p> Id: {{user.id}} </p>
+  <h3> Friends </h3>
+  <div v-for="friend in user.friend">
+    {{friend.user.username}}
+  </div>
+  <button v-on:click="make_friend">Send friend request</button>
 	</div>
 </template>
 
@@ -18,6 +23,16 @@ export default {
   methods:{      
       goBack: function(){
           this.$router.go(-1);
+      },
+      make_friend(){
+        var payload = {
+          user: this.user.id
+        }
+        this.$store.dispatch('user/createFriendship', payload).then(response => {
+
+        }).catch(error => {
+
+        })
       }
   },
   mounted: function(){

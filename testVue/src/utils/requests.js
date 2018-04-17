@@ -203,3 +203,15 @@ export function deleteExpense(id){
   const url = BASE_URL + 'expenses/' + id + '/'
   return deleteRequest(url)
 }
+
+
+// friendship request
+export function createFriendship(data){
+  let url = BASE_URL + 'friends/'
+  return postRequest(url, data)
+}
+
+export function deleteFriendship(id){
+  const url = BASE_URL + 'friends/' + id + '/'
+  return deleteRequest(url)
+}
