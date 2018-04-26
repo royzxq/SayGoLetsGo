@@ -3,6 +3,7 @@
     <label >how much did you pay?</label>
 	<input v-model.number="expense"  type="number" placeholder="how much did you pay?" />
   <myMultiselect :options="users" :label="'username'" />
+    <input v-model="comment" type="text" placeholder="What's this paid for?"/>
 	<button v-on:click="submit"> Submit</button>
 	</div>
 </template>
@@ -17,6 +18,7 @@ export default {
   data: function () {return {
         expense: 0.0,
         show: true,
+        comment: '',
   	}
   },
   props: [
@@ -28,15 +30,16 @@ export default {
   methods:{
   	submit: function(){
         var obj = {}
+        obj.paid_member = localStorage.getItem('tWeb_memberId')
         obj.expense = this.expense
-        obj.payee = []
+        obj.payees = []
         for(let user of this.values){
-          obj.payee.push(user.id)
+          obj.payees.push(user.id)
         }
-        obj.travel = this.travel
+        obj.comment = this.comment
         this.$store.dispatch('expense/createExpense', obj).then(()=>{
           this.$emit('submit')
-          this.$router.go(-1)
+          this.$router.go(0)
         }).catch(error => {
           printResponse("create expense failed", error)
         })
@@ -46,11 +49,11 @@ export default {
     var obj = {
       travelgroup: this.travel
     }
-    this.$store.dispatch('user/fetchUsers', obj)
+    this.$store.dispatch('user/fetchGroupUsers', obj)
   },
   computed: {
     ...mapGetters({
-      users: 'user/getUsers',
+      users: 'user/getGroupUsers',
       values: 'options/getValues'
     })
   }

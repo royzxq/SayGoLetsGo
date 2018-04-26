@@ -15,9 +15,9 @@
   </div>
   <button v-on:click="logout"> Logout</button>
 
-  
+
   </div>
-  
+
 
 </template>
 
@@ -88,7 +88,7 @@ export default {
       this.$store.dispatch('user/deleteUser')
       this.$router.push('/index')
     }
-    
+
   },
   computed: {
     is_logged: function(){

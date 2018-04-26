@@ -20,23 +20,20 @@ export default {
   components: {
     Multiselect
   },
-  methods:{      
+  methods:{
       update: function(payload){
-        var obj = {}
-        obj.id = this.id
-        obj.value = payload
-        this.$store.dispatch('options/SetValue', obj)
+        this.$store.dispatch('options/SetValue', payload)
       },
   },
   computed: {
     ...mapState('options', {
-      value: state => {
-        state.value[this.id]
-      }
+      //value: state => {
+        //state.value[this.id]
+      //}
     }),
-    // ...mapGetters({
-    //   getValue: 'options/getValue'
-    //   }),
+     ...mapGetters({
+       value: 'options/getValue'
+     }),
   }
 }
 </script>
