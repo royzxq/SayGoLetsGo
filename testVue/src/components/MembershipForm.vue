@@ -29,12 +29,11 @@ export default {
         obj.travel_group = this.travel
         obj.user = this.user.id
         this.$store.dispatch('membership/createMembership', obj).then(()=>{
-            //this.$emit('submit')
+          this.$emit('submit')
+          this.$router.go(0)
         }).catch(error => {
             printResponse("create membership failed", error)
         })
-
-        this.$router.go(0)
   	}
   },
   mounted() {

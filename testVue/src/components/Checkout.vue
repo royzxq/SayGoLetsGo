@@ -1,7 +1,7 @@
 <template>
 <div>
-<div v-for="(value, key) in this.user_pay">
-  User {{key}} should pay {{value}}
+<div v-for="payment in this.user_pay">
+  {{payment[0]}} should pay {{payment[1]}} {{payment[2]}}
 </div>
 </div>
 </template>
@@ -16,7 +16,7 @@ export default {
     ...mapGetters({
       user_pay: 'expense/getUserpay',
     }),
-   
+
   },
 
 }
