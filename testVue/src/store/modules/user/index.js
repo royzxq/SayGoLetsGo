@@ -5,6 +5,7 @@ import {printResponse, checkField} from '@/utils/helper'
 const state = {
     user: null,
     users: [],
+    groupUsers: [],
     id: null,
     local_user: null,
     local_id: null,
@@ -14,6 +15,7 @@ const getters = {
     getUser: (state) => state.user,
     getId: state => state.id,
     getUsers: state => state.users,
+    getGroupUsers: state => state.groupUsers,
     getLocalUser: state => state.local_user,
     getLocalId: state => state.local_id,
 }
@@ -36,15 +38,19 @@ const mutations = {
     setUsers: (state, playload) => {
         state.users = playload
     },
+    setGroupUsers: (state, playload) => {
+        state.groupUsers = playload
+    },
     setLocalUser: (state, payload) => {
         printResponse('set local user', payload)
         state.local_user = payload
         state.local_id = payload.id
+        localStorage.setItem('tWeb_userId', payload.id)
     },
     setLocalId: (state, id) => {
         state.local_id = id
     }
-    
+
 }
 
 const actions = {
@@ -88,6 +94,15 @@ const actions = {
             // console.log("fetch users")
             printResponse("fetch users", response.data.results)
             context.commit('setUsers', response.data.results)
+        }).catch(error => {
+            console.log("fetch users failed")
+        })
+    },
+    fetchGroupUsers: (context, travelgroupId) => {
+        getUsers(travelgroupId).then(response => {
+            // console.log("fetch users")
+            printResponse("fetch group users", response.data.results)
+            context.commit('setGroupUsers', response.data.results)
         }).catch(error => {
             console.log("fetch users failed")
         })

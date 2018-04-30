@@ -28,11 +28,11 @@ export default {
 		  note: null,
       place_id: null,
       activity_options: ["Traffic", "Meal", "Sight seeing"],
-      
+
       start_time: '',
-      
+
     }
-  	
+
   },
   components: {
     mySingleselect,
@@ -59,7 +59,7 @@ export default {
         console.log(obj)
         var vue_instance = this
         this.$store.dispatch('activity/createActivity', obj).then(()=>{
-          this.$router.go(-1)
+          this.$router.go(0)
         }).catch(error => {
             console.log('created activity failed')
             console.log(error)
