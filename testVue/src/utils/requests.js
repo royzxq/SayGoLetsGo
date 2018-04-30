@@ -99,7 +99,31 @@ export function deleteTravelGroup(id){
   return deleteRequest(url)
 }
 
-// user request 
+// Membership requests
+export function getMemberships(opts=null){
+  return getAppRequest('memberships/', opts)
+}
+
+export function getMembership(id){
+  const url = BASE_URL + 'memberships/' + id + '/'
+    return getRequest(url)
+}
+
+export function createMembership(data){
+  const url = BASE_URL + 'memberships/'
+  return postRequest(url, data)
+}
+
+export function updateMembership(data){
+  const url = BASE_URL + 'memberships/'
+  return putRequest(url, data);
+}
+
+export function deleteMembership(id){
+  const url = BASE_URL + 'memberships/' + id + '/'
+  return deleteRequest(url)
+}
+// user request
 function createUser(data){
     let url = BASE_URL + 'users/'
     return postRequest(url, data)
@@ -154,7 +178,7 @@ export function deleteActivity(id){
   return deleteRequest(url)
 }
 
-// place request 
+// place request
 export function getPlace(id){
     let url = BASE_URL + 'places/' + id + '/'
     return getRequest(url)

@@ -1,8 +1,8 @@
 <template>
 	<div>
         <h2>Your groups</h2>
-        <h3>Username: 
-			<div v-on:click="checkUser(username)">
+        <h3>Username:
+			<div>
 			<router-link :to="{name: 'UserInfo' }">
 			{{username}}
 			</router-link>
@@ -56,6 +56,8 @@ export default {
 	mounted: function(){
     this.$store.dispatch('groupTravel/fetchTravelGroups')
     // this.$store.dispatch('user/fetchUsers')
+    // this.$store.dispatch('user/fetchUsers')
+    this.checkUser(this.username)
     },
     computed:{
         username: function(){

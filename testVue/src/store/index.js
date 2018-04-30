@@ -6,6 +6,7 @@ import userModule from './modules/user'
 import acicityModule from './modules/activity'
 import expenseModule from './modules/expense'
 import optionModule from './modules/options'
+import membershipModule from './modules/membership'
 Vue.use(VueX)
 
 
@@ -17,5 +18,6 @@ export default new VueX.Store({
         activity: acicityModule,
         expense: expenseModule,
         options: optionModule,
+        membership: membershipModule,
     },
 })

@@ -232,6 +232,10 @@ class MembershipViewSet(viewsets.ModelViewSet):
     queryset = Membership.objects.all()
     serializer_class = MembershipSerializer
 
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = MembershipCreateSerializer
+        return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
+
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
@@ -240,6 +244,10 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         self.serializer_class = ExpenseCreateUpdateSerializer
         return viewsets.ModelViewSet.create(self, request,  *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        self.serializer_class = ExpenseCreateUpdateSerializer
+        return viewsets.ModelViewSet.update(self, request, *args, **kwargs)
 
     def get_queryset(self):
         return Expense.objects.filter(paid_member__user=self.request.user)

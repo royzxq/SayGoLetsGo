@@ -80,24 +80,27 @@ class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
         fields = ('id', 'payees', 'expense', 'comment', 'paid_member')
-
+        extra_kwargs = {'paid_member': {'read_only': True}}
 
 class MembershipSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False, read_only=True)
     expense_set = ExpenseSerializer(many=True, read_only=True)
+    class Meta:
+        model = Membership
+        #fields = '__all__'
+        fields = ('id', 'user', 'travel_group', 'is_manager', 'is_creator', 'expense_set')
+        extra_kwargs = {'is_creator': {'read_only': True}, 'user': {'read_only': True}, 'travel_group': {'read_only': True}}
 
+
+class MembershipCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
+        print(validated_data)
         return Membership.objects.create(user=validated_data['user'], travel_group=validated_data['travel_group'])
-
-    def update(self, instance, validated_data):
-        instance.is_manager=validated_data['is_manager']
-        instance.save()
-        return instance
 
     class Meta:
         model = Membership
         #fields = '__all__'
-        fields = ('id', 'user', 'is_manager', 'is_creator', 'expense_set')
+        fields = ('user', 'travel_group', 'is_manager', 'is_creator')
         extra_kwargs = {'is_creator': {'read_only': True}}
 
 

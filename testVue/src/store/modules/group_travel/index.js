@@ -15,7 +15,7 @@ const getters = {
 }
 
 const mutations = {
-    
+
     deleteTravelGroup: (state) => {
         state.travel_group = null
         state.id = null
