@@ -51,7 +51,7 @@
     <div>
       <ul>
         <li v-for="member in travelgroup.membership_set">
-          <span v-on:click="checkUser(member.user)" >
+          <span v-on:click="checkUser(member.user.id)" >
             <router-link :to="{name: 'UserInfo'}" >
               User:  {{member.user.username}}
             </router-link>
@@ -64,6 +64,9 @@
       </div>
       <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
     </div>
+    <div>
+      <group-chat :group="travelgroup.id" />
+    </div>
 	</div>
 </template>
 
@@ -75,6 +78,7 @@ import activity from '@/components/Activity'
 import {mapGetters} from 'vuex'
 import {printResponse} from '@/utils/helper'
 import editable from '@/components/Editable.vue'
+import GroupChat from '@/components/GroupChat.vue'
 
 
 export default {
@@ -91,6 +95,7 @@ export default {
       ExpenseForm,
       activity,
       editable,
+      GroupChat,
   },
   methods:{
       toggleExpenseShow: function(){
@@ -161,11 +166,10 @@ export default {
     ).catch(error => {
       printResponse("fetch the travel failed", error);
     })
-
+    
     this.$store.dispatch('activity/fetchActivities', {travel: this.$route.params.id})
-    this.expense_show = Array(100).fill(false)
-
-
+    
+      this.expense_show = Array(100).fill(false)
   },
   computed: {
     empty: function(){
