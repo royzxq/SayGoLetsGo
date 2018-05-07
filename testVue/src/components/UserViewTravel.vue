@@ -112,16 +112,53 @@ export default {
           }
           this.$store.dispatch('activity/fetchActivities', travel_info)
       },
+      getBalance: function(expenses){
+        var debts = {}
+        var payer
+        var payees=[]
+        var paid2users
+        var paid2user
+        var value
+        for (let expense of expenses) {
+          payer = expense.paid_member
+          paid2users = expense.payees
+          payees=[]
+          for (let paid2user of paid2users) {
+            payees.push(paid2user.username)
+          }
+          var size = payees.length
+          var exp = expense.expense
+          if (size !== 0 && exp !== 0) {
+            value = exp / size
+            if (!debts[payer]) {
+              debts[payer] = 0
+            }
+            debts[payer] -= exp
+            for (let payee of payees) {
+              if (!debts[payee])
+                debts[payee] = 0
+              debts[payee] += value
+            }
+          }
+        }
+        var balance = []
+        for(var i in debts){
+          //alert(i+ ':' + debts[i])
+          if (debts[i] !== 0)
+            balance.push([i, debts[i]])
+        }
+        return balance
+      },
       calculateExpense: function(){
-          var payload = {}
-          payload.users = this.travelgroup.users
-       // alert(this.travelgroup.users)
-          payload.expenses = []
-          var member
-          for (let member of this.travelgroup.membership_set)
-          alert(member.id)
-            //this.travelgroup.expense_set
-          this.$store.dispatch('expense/calculateUserpay', payload)
+          var expenses = []
+          for (let member of this.travelgroup.membership_set) {
+            for (let expense of member.expense_set) {
+              expense.paid_member = member.user.username
+            }
+            expenses = expenses.concat(member.expense_set)
+          }
+          var balance = this.getBalance(expenses)
+          this.$store.dispatch('expense/calculateUserpay', balance)
       },
       expense_submit(){
         this.expense_show = false;
