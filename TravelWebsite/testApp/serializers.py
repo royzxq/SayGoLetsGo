@@ -3,18 +3,43 @@ from rest_framework import serializers
 from .models import *
 
 
+class FriendCreateSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        me = validated_data['me']
+        friendship = Friendship.objects.create(user1=me,
+                                               user2=validated_data['user2'])
+        friendship.save()
+        return friendship
+
+    class Meta:
+        model = Friendship
+        fields = ('user2', )
+
+
+class UserFriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', )
+
+
+class FriendSerializer(serializers.ModelSerializer):
+    user = UserFriendSerializer(many=False, read_only=True, source='user1')
+    class Meta:
+        model = Friendship
+        fields = ('created_time', 'user', )
+
+
 class ProfileSerializer(serializers.ModelSerializer):
-    # user = serializers.SlugRelatedField(slug_field="username", queryset=User.objects.all())
-    # user = UserSerializer(many=False, read_only=False)
+
     class Meta:
         model = Profile
-        fields = ('birth', 'gender')
+        fields = ('birth', 'gender', )
 
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ('id', 'username', 'email', )
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -26,18 +51,26 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return User.objects.create_user(username=validated_data['username'], password=validated_data['password'], email=validated_data['email'])
 
 
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ('source', 'content', 'subject', 'created_time', 'is_read')
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
-
+    friend = FriendSerializer(many=True, read_only=True, )
+    # received_notification = NotificationSerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'profile')
+        fields = ('id', 'username', 'email', 'profile', 'friend', )
 
 
 class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'id')
+
 
 class ExpenseCreateUpdateSerializer(serializers.ModelSerializer):
 
@@ -83,7 +116,7 @@ class ExpenseSerializer(serializers.ModelSerializer):
         extra_kwargs = {'paid_member': {'read_only': True}}
 
 class MembershipSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False, read_only=True)
+    user = UserNameSerializer(many=False, read_only=True)
     expense_set = ExpenseSerializer(many=True, read_only=True)
     class Meta:
         model = Membership
@@ -104,12 +137,21 @@ class MembershipCreateSerializer(serializers.ModelSerializer):
         extra_kwargs = {'is_creator': {'read_only': True}}
 
 
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('username', 'message', 'created_time', )
+
+
+
+
+
 class TravelGroupDetailSerializer(serializers.ModelSerializer):
     membership_set = MembershipSerializer(many=True, read_only=True)
-
+    message_set = MessageSerializer(many=True, read_only=True)
     class Meta:
         model = TravelGroup
-        fields = ('id', 'title', 'is_public', 'country', 'days', 'modified_time', 'membership_set', 'activity_set')
+        fields = ('id', 'title', 'is_public', 'country', 'days', 'modified_time', 'membership_set', 'message_set', )
 
 
 class TravelGroupCreateSerializer(serializers.ModelSerializer):

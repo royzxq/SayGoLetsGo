@@ -1,8 +1,8 @@
 import axios from 'axios'
 // import Router from 'vue-router'
 
-const clientID = 'L1KWHKPZtp91Yl33Zrhcb2iYHi6ql5jZgtQbbhRx'
-const clientSec = 'ipD7CW7hMMeTeTNKCCgNOU2UiqZdji4TceCVisEyiJpQFn0QcwjK99dygDvUvI9HR10Aq74HcqvWSKtR0Pq83NmvAIBBCgE364q7IFJZUEY0bztrv07VS0D0ObkFWkTU'
+const clientID = 'UmON6RgDt59R9rkZM0gwk2FhAN1XTLtywAYBfspX'
+const clientSec = 'i4FQLXAmqC4NfUDHk2OyyOiaM9FhQQMoqKtMvJUO8oFyw1VgiRN6fvG1EWyhlEGyZGIrVPWhRsbiDCzyFCtUibXQ3uAOGQRdcnvzcMfiyZ8m5KVmaSAlgRE12wNnk2Ww'
 const AUTH_URL = 'http://127.0.0.1:8000/o/token/'
 
 // export {login_user}
@@ -27,10 +27,15 @@ export function login_user(username, password){
 
 export function generate_token_request(username, password){
     var tokenRequester = {}
-    tokenRequester.username = username
-    tokenRequester.password = password
-    //tokenRequester.username = 'testUser2'
-    //tokenRequester.password = 'k4H33TMgyeCMXk3q'
+    
+    if(username){
+      tokenRequester.username = username;
+      tokenRequester.password = password;
+    }
+    else{
+      tokenRequester.username = 'testUser2'
+      tokenRequester.password = 'k4H33TMgyeCMXk3q'
+    }
     tokenRequester.grant_type = 'password'
     tokenRequester.client_id = clientID
     tokenRequester.client_secret = clientSec

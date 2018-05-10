@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 
 from rest_framework import routers
 from testApp.views import index
+# from chat.views import index
 
 
 # router = routers.DefaultRouter()
@@ -30,6 +31,7 @@ from testApp.views import index
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^test_app/', include('testApp.urls')),
+    url(r'^chat/', include('chat.urls')),
     url(r'^$', index, name='index'),
     # url(r'^group/$', views.group_list),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

@@ -11,27 +11,39 @@ from rest_framework.authtoken.models import Token
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth = models.DateField('birth', null=True)
+    birth = models.DateField('birth', null=True, blank=True)
     gender_choices = (
             ("Male", "Male"),
             ("Female", "Female"),
             ("Dont want to tell", "Dont want to tell")
     )
-    gender = models.CharField("gender", choices=gender_choices, max_length=30, null=True)
+    gender = models.CharField("gender", choices=gender_choices, max_length=30, null=True, blank=True)
     photo = models.ImageField('photo', max_length=100, null=True, blank=True)
 
     def __str__(self):
         return self.user.username
 
 
+class Friendship(models.Model):
+    user1 = models.ForeignKey(User, related_name='self', on_delete=models.CASCADE)
+    user2 = models.ForeignKey(User, related_name='friend', on_delete=models.CASCADE)
+    created_time = models.DateTimeField("created_time", auto_now=True)
+    friendness = models.IntegerField("friendness", null=True, blank=True)
+
+    class Meta:
+        unique_together = (('user1', 'user2'), )
+
+    def __str__(self):
+        return self.user1.username + ' and ' + self.user2.username + ' are friends'
+
+
 class TravelGroup(models.Model):
     title = models.CharField("title", max_length=40, default="")
     users = models.ManyToManyField(User, through='Membership')
-    #manager_id = models.IntegerField("manager_id", default=-1)
     is_public = models.BooleanField('is_public', default=False)
     country = models.CharField("country", max_length=20)
     days = models.IntegerField("days", default=1)
-    modified_time = models.DateTimeField("modifiedtime", auto_now=True)
+    modified_time = models.DateTimeField("modified_time", auto_now=True)
 
     def __str__(self):
         return self.title
@@ -50,9 +62,22 @@ class Membership(models.Model):
         return "membership: '" + self.user.__str__() + "' in '" + self.travel_group.__str__() + "'"
 
 
+class Message(models.Model):
+    username = models.CharField('username', max_length=100)
+    message = models.CharField('message', max_length=500)
+    travel_group = models.ForeignKey(TravelGroup, on_delete=models.CASCADE)
+    created_time = models.DateTimeField("created_time", auto_now=True)
+
+    class Meta:
+        ordering = ['created_time', ]
+
+    def __str__(self):
+        return self.username + ' said: ' + self.message
+
+
 class Place(models.Model):
     user = models.ForeignKey(User, related_name='places', on_delete=models.CASCADE)
-    travels = models.ManyToManyField(TravelGroup, blank=True)
+    travels = models.ManyToManyField(TravelGroup, related_name='messages', blank=True)
     name = models.CharField('name', max_length=100)
     description = models.CharField('description', max_length=200, default="")
     country = models.CharField('country', max_length=100, default="")
@@ -95,6 +120,18 @@ class Expense(models.Model):
 
     def __str__(self):
         return "Expense: " + str(self.expense)
+
+
+class Notification(models.Model):
+    source = models.ForeignKey(User, related_name='sent_notification', on_delete=models.CASCADE)
+    target = models.ForeignKey(User, related_name='received_notification', on_delete=models.CASCADE)
+    content = models.TextField("content", null=True, blank=True)
+    subject = models.CharField("subject", max_length=256)
+    created_time = models.DateTimeField("created_time", auto_now=True)
+    is_read = models.BooleanField('is_read', default=False)
+
+    def __str__(self):
+        return self.source.username + ' send a message to ' + self.target.username
 
 
 def get_travel_group(obj):

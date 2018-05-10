@@ -21,6 +21,7 @@
 		</ul>
 		<button v-on:click="createTravel()"> Creat Travel and Group </button>
 		<button v-on:click="createPlace()"> Create Place </button>
+    
 		<!-- <router-link :to="{name: 'TravelForm'}"> Create travels</router-link> -->
 		<UserList />
 	</div>
@@ -31,10 +32,19 @@
 
 import {mapGetters} from 'vuex'
 import UserList from '@/components/UserList'
+
+// import createWebsocket from '@/utils/websocket'
+import ReconnectingWebSocket from 'reconnecting-websocket'
+import {joinInGroupChatUrl} from '../utils/requests'
 export default {
   name: 'UserView',
+  data(){
+    return {
+      rws: null
+    }
+  },
   components: {
-    UserList
+    UserList,
   },
 	methods:{
 		createTravel: function(){
@@ -51,13 +61,16 @@ export default {
 		},
 		checkGroupTravel: function(group_id) {
 			// this.$store.dispatch('groupTravel/setId', group_id)
-		}
+    }
 	},
 	mounted: function(){
     this.$store.dispatch('groupTravel/fetchTravelGroups')
     // this.$store.dispatch('user/fetchUsers')
-    // this.$store.dispatch('user/fetchUsers')
     this.checkUser(this.username)
+    // var url = "ws://127.0.0.1:8000/ws/chat/test/"
+    // this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
+    // var url = joinInGroupChatUrl('10');
+    // this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});;
     },
     computed:{
         username: function(){

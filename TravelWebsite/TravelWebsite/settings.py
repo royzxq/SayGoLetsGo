@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'oauth2_provider',
     'filters',
+    'channels',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +81,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'TravelWebsite.wsgi.application'
-
+ASGI_APPLICATION = 'TravelWebsite.routing.application'
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_HTTPONLY = False
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -89,6 +93,15 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6666)],
+        },
+    },
 }
 
 
@@ -131,8 +144,8 @@ REST_FRAMEWORK = {
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ],
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
 
 }
 

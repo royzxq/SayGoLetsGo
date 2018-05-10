@@ -1,6 +1,8 @@
 import axios from 'axios'
+import ReconnectingWebSocket from 'reconnecting-websocket'
 
 const BASE_URL = 'http://127.0.0.1:8000/test_app/'
+const WEBSOCKET_URL = 'ws://127.0.0.1:8000/ws/'
 // const TEST_APP_URL= 'test_app/'
 
 export {getTravel, getGroups, createUser}
@@ -123,6 +125,7 @@ export function deleteMembership(id){
   const url = BASE_URL + 'memberships/' + id + '/'
   return deleteRequest(url)
 }
+
 // user request
 function createUser(data){
     let url = BASE_URL + 'users/'
@@ -226,4 +229,42 @@ export function partialUpdateExpense(data){
 export function deleteExpense(id){
   const url = BASE_URL + 'expenses/' + id + '/'
   return deleteRequest(url)
+}
+
+
+// friendship request
+export function createFriendship(data){
+  let url = BASE_URL + 'friends/'
+  return postRequest(url, data)
+}
+
+export function deleteFriendship(id){
+  const url = BASE_URL + 'friends/' + id + '/'
+  return deleteRequest(url)
+}
+
+
+// websocket request
+export function joinInGroupChatUrl(group_id){
+  let url = WEBSOCKET_URL + 'chat/' + group_id + '/';
+  console.log('url is');
+  console.log(url);
+  return url; 
+}
+
+export function joinInUserNotificationUrl(user_id){
+  let url = WEBSOCKET_URL + 'user/' + user_id + '/';
+  return url;
+}
+
+// message request
+export function loadMessage(data){
+  // let url = BASE_URL + 'messages/';
+  return getAppRequest('messages/', data)
+}
+
+
+// notification request
+export function loadNotification(data=null){
+  return getAppRequest('notifications/', data)
 }

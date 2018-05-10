@@ -63,6 +63,7 @@ export default {
           expire = seconds + expire
           console.log(expire)
           localStorage.setItem('tWeb_expired', expire)
+          // document.cookie = "sessionid=" + response.data.access_token + ";"
           var user = {
             username: tokenRequester.username
           }
