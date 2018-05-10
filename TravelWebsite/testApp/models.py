@@ -122,12 +122,13 @@ class Expense(models.Model):
         return "Expense: " + str(self.expense)
 
 
-class Notifications(models.Model):
-    source = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
-    target = models.ForeignKey(User, related_name='received_notifications', on_delete=models.CASCADE)
+class Notification(models.Model):
+    source = models.ForeignKey(User, related_name='sent_notification', on_delete=models.CASCADE)
+    target = models.ForeignKey(User, related_name='received_notification', on_delete=models.CASCADE)
     content = models.TextField("content", null=True, blank=True)
     subject = models.CharField("subject", max_length=256)
     created_time = models.DateTimeField("created_time", auto_now=True)
+    is_read = models.BooleanField('is_read', default=False)
 
     def __str__(self):
         return self.source.username + ' send a message to ' + self.target.username

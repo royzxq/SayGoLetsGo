@@ -251,3 +251,20 @@ export function joinInGroupChatUrl(group_id){
   console.log(url);
   return url; 
 }
+
+export function joinInUserNotificationUrl(user_id){
+  let url = WEBSOCKET_URL + 'user/' + user_id + '/';
+  return url;
+}
+
+// message request
+export function loadMessage(data){
+  // let url = BASE_URL + 'messages/';
+  return getAppRequest('messages/', data)
+}
+
+
+// notification request
+export function loadNotification(data=null){
+  return getAppRequest('notifications/', data)
+}

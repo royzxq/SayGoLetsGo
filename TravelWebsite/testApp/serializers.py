@@ -7,13 +7,13 @@ class FriendCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         me = validated_data['me']
         friendship = Friendship.objects.create(user1=me,
-                                               user=validated_data['user'])
+                                               user2=validated_data['user2'])
         friendship.save()
         return friendship
 
     class Meta:
         model = Friendship
-        fields = ('user', )
+        fields = ('user2', )
 
 
 class UserFriendSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class UserFriendSerializer(serializers.ModelSerializer):
 
 
 class FriendSerializer(serializers.ModelSerializer):
-    user = UserFriendSerializer(many=False, read_only=True, source='user2')
+    user = UserFriendSerializer(many=False, read_only=True, source='user1')
     class Meta:
         model = Friendship
         fields = ('created_time', 'user', )
@@ -51,17 +51,19 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return User.objects.create_user(username=validated_data['username'], password=validated_data['password'], email=validated_data['email'])
 
 
-# class UFS(serializers.RelatedField):
-#     def to_representation(self, value):
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ('source', 'content', 'subject', 'created_time', 'is_read')
 
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(many=False, read_only=True)
     friend = FriendSerializer(many=True, read_only=True, )
-
+    # received_notification = NotificationSerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'profile', 'friend')
+        fields = ('id', 'username', 'email', 'profile', 'friend', )
 
 
 class UserNameSerializer(serializers.ModelSerializer):
@@ -139,6 +141,9 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ('username', 'message', 'created_time', )
+
+
+
 
 
 class TravelGroupDetailSerializer(serializers.ModelSerializer):

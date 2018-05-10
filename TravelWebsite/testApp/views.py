@@ -15,9 +15,13 @@ import datetime
 from django.conf import settings
 from rest_framework.authtoken.views import ObtainAuthToken
 from filters.mixins import FiltersMixin
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+
 from django.db.models import Q
 from rest_framework import status, generics
+import datetime
+
+# from rest_framework.decorators import action
 
 # Create your views here.
 
@@ -143,12 +147,14 @@ class ActivityViewSet(FiltersMixin, viewsets.ModelViewSet):
 class FriendshipViewSet(viewsets.ModelViewSet):
     queryset = Friendship.objects.all()
     serializer_class = FriendSerializer
+
     def create(self, request, *args, **kwargs):
         self.serializer_class = FriendCreateSerializer
         return viewsets.ModelViewSet.create(self, request, *args, **kwargs)
 
     def perform_create(self, serializer):
         if not self.request.user.is_anonymous:
+
             serializer.save(me=self.request.user)
         else:
             serializer.save(me=None)
@@ -274,3 +280,41 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     #permission_classes = (permissions.AllowAny, )
     permission_classes = (permissions.IsAuthenticated, IsTravelGroupUser, IsOwnerOrManagerDelete, IsOwnerOrManagerUpdate)
+
+
+class MessageViewset(FiltersMixin, viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.OrderingFilter, )
+    ordering = ( '-created_time',)
+    filter_mappings = {
+        'travel_group': 'travel_group',
+    }
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        url_params = self.kwargs
+        queryset_filters = self.get_db_filters(url_params=url_params, query_params=query_params)
+        db_filters = queryset_filters['db_filters']
+        db_excludes = queryset_filters['db_excludes']
+        queryset = Message.objects.all()
+        if('travel_group' in query_params):
+            if 'created_time' in query_params:
+                s = query_params['created_time']
+                return Message.objects.filter(travel_group=query_params['travel_group'], created_time__lt=s).exclude(**db_excludes)
+            return queryset.filter(travel_group=query_params['travel_group']).exclude(**db_excludes)
+
+
+class NotificationViewset(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    pagination_class = LimitOffsetPagination
+
+    def get_queryset(self):
+        query_params = self.request.query_params
+        queryset = Notification.objects.all()
+        if 'created_time' in query_params:
+            return queryset.filter(target=self.request.user, created_time__lt=query_params['created_time']).order_by('-created_time')
+        queryset = Notification.objects.filter(target=self.request.user).order_by('-created_time')
+        return queryset
+
+

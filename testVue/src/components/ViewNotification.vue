@@ -1,44 +1,29 @@
 <template>
 <div>
-  <h1> Chat</h1>
+  <h1> Notifications</h1>
 	<ul class="messages" v-chat-scroll>
-  <li class="message" v-for="message in messages"> At time: {{message.created_time}} <br> {{message.username}} said : {{ message.message }}</li>
+  <li class="message" v-for="notification in notifications"> At time: {{notification.created_time}} <br> {{notification.source}} sent you a notification:  {{ notification.subject }}</li>
   </ul>
-  <button v-on:click="loadHistoryMessage()">Load History Message</button>
-  <input v-model="input_message">
-  <button v-on:click="sendMessage(input_message)">Send</button> 
 </div>
 </template>
 
 <script>
 import ReconnectingWebSocket from 'reconnecting-websocket'
-import {joinInGroupChatUrl} from '../utils/requests'
+import {joinInUserNotificationUrl} from '../utils/requests'
 import {mapGetters} from 'vuex'
 
 
 export default {
-
-  name: 'GroupChat',
+  name: 'ViewNotification',
   props: [
-    'group',
+    'userid',
   ],
   data () {
     return {
       rws : null,
-      // messages: [],
-      input_message: "",
     }
   },
   methods:{      
-      sendMessage: function(message){
-        var m = {}
-        m['message'] = message;
-        m['username'] = this.user.username;
-        if (this.rws !== null){
-          this.rws.send(JSON.stringify(m));
-          this.$store.dispatch('message/addMessage', m);
-        }
-      },
       loadHistoryMessage: function(){
         var payload = {}
         payload['travel_group'] = this.group;
@@ -47,15 +32,16 @@ export default {
 
   },
   mounted: function(){
-     let url = joinInGroupChatUrl(this.group);
+    this.$store.dispatch('message/loadHistoryNotification');
+     let url = joinInUserNotificationUrl(this.userid);
      this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     var message = null;
+     var notification = null;
      this.rws.addEventListener('message', function(event){
        var data = JSON.parse(event.data);
         console.log(data);
-        message = data;
+        notification = data;
      })
-     this.$store.dispatch('message/addMessage', message)
+     this.$store.dispatch('message/addNotification', notification)
     //  this.rws.onmessage = function(message){
     //     var data = JSON.parse(message.data);
     //     console.log(data);
@@ -65,8 +51,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      user: 'user/getLocalUser',
-      messages: 'message/getMessages',
+      notifications: 'message/getNotifications',
     })
   }
 }
