@@ -13,9 +13,9 @@
 <script>
 import Multiselect from 'vue-multiselect'
 import {mapGetters} from 'vuex'
-import myMultiselect from '@/components/multiselect'
-import mySingleselect from '@/components/singleselect'
-import myAsyncsearch from '@/components/asyncSearch'
+import myMultiselect from '@/components/UIcomponents/multiselect'
+import mySingleselect from '@/components/UIcomponents/singleselect'
+import myAsyncsearch from '@/components/UIcomponents/asyncSearch'
 export default {
 
   name: 'UserList',

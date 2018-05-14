@@ -53,7 +53,7 @@ const actions = {
     }
   },
   addNotification: (context, notification) => {
-    var target = ['source', 'subject', 'content', 'created_time']
+    var target = ['source', 'subject', 'content',]
     if(checkField(target, notification)){
       context.commit('addNotification', notification)
     }

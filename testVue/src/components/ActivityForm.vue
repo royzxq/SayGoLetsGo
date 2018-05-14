@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import mySingleselect from '@/components/singleselect'
+import mySingleselect from '@/components/UIcomponents/singleselect'
 import DatePicker from 'vue2-datepicker'
 import {mapGetters} from 'vuex'
 export default {

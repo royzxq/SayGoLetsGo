@@ -29,6 +29,9 @@ export default {
   methods:{   
     asyncFind: function(query){
       console.log(query)
+      if(query.length < 3){
+        return
+      }
       this.is_loading = true
       // this.users = []
       var payload = {

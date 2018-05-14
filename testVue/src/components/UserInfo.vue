@@ -10,8 +10,12 @@
   <div v-for="friend in user.friend">
     {{friend.user.username}}
   </div>
-  <div v-if="!is_self">
+  <div v-if="!is_self && !is_friend">
   <button v-on:click="make_friend">Send friend request</button>
+  </div>
+  <div v-else-if="is_friend">
+    You are friends
+    <send-notification v-bind:userid="user.id"/>
   </div>
   <div v-else>
     <ViewNotification v-bind:userid="user.id"/>
@@ -22,13 +26,14 @@
 <script>
 
 import {mapGetters} from 'vuex'
-import ViewNotification from '@/components/ViewNotification'
-
+import ViewNotification from '@/components/UIcomponents/ViewNotification'
+import sendNotification from '@/components/UIcomponents/sendNotification'
 export default {
 
   name: 'UserInfo',
   components: {
     ViewNotification,
+    sendNotification,
   },
   methods:{      
       goBack: function(){
@@ -61,6 +66,16 @@ export default {
     is_self: function(){
       var res = this.user.username === this.local_user.username;
       return res;
+    },
+    is_friend: function(){
+      if(! this.is_self){
+        for(var i in this.user.friend){
+          if(this.user.friend[i].user.username == this.local_user.username){
+            return true;
+          }
+        }
+      }
+      return false;
     }
   }
 }

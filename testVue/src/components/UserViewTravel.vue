@@ -72,13 +72,13 @@
 
 <script>
 
-import ExpenseForm from '@/components/ExpenseForm.vue'
-import MembershipForm from '@/components/MembershipForm.vue'
+import ExpenseForm from '@/components/UIcomponents/ExpenseForm.vue'
+import MembershipForm from '@/components/UIcomponents/MembershipForm.vue'
 import activity from '@/components/Activity'
 import {mapGetters} from 'vuex'
 import {printResponse} from '@/utils/helper'
-import editable from '@/components/Editable.vue'
-import GroupChat from '@/components/GroupChat.vue'
+import editable from '@/components/UIcomponents/Editable.vue'
+import GroupChat from '@/components/UIcomponents/GroupChat.vue'
 
 
 export default {
