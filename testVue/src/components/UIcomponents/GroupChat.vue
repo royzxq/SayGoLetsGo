@@ -38,7 +38,7 @@ export default {
         m['username'] = this.user.username;
         if (this.rws !== null){
           this.rws.send(JSON.stringify(m));
-          this.$store.dispatch('message/addMessage', m);
+          // this.$store.dispatch('message/addMessage', m);
         }
       },
       loadHistoryMessage: function(){

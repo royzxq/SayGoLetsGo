@@ -138,6 +138,7 @@ class MembershipCreateSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Message
         fields = ('username', 'message', 'created_time', )

@@ -42,7 +42,7 @@ class ChatConsumer(WebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'username': username,
-                'created_time': str(m.created_time),
+                'created_time': m.created_time.strftime('%Y-%m-%d %H:%M:%S'),
             }
         )
 
