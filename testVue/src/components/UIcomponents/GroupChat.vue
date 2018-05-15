@@ -12,9 +12,10 @@
 
 <script>
 import ReconnectingWebSocket from 'reconnecting-websocket'
-import {joinInGroupChatUrl} from '../utils/requests'
+import {joinInGroupChatUrl} from '@/utils/requests'
 import {mapGetters} from 'vuex'
-
+import vue from 'vue'
+import store from '@/store'
 
 export default {
 
@@ -27,6 +28,7 @@ export default {
       rws : null,
       // messages: [],
       input_message: "",
+      test_message: null,
     }
   },
   methods:{      
@@ -36,7 +38,7 @@ export default {
         m['username'] = this.user.username;
         if (this.rws !== null){
           this.rws.send(JSON.stringify(m));
-          this.$store.dispatch('message/addMessage', m);
+          // this.$store.dispatch('message/addMessage', m);
         }
       },
       loadHistoryMessage: function(){
@@ -49,25 +51,24 @@ export default {
   mounted: function(){
      let url = joinInGroupChatUrl(this.group);
      this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     var message = null;
+     let vm = this;
      this.rws.addEventListener('message', function(event){
        var data = JSON.parse(event.data);
         console.log(data);
-        message = data;
+        // if(data.username !== vm.user.username){
+          vm.$store.dispatch('message/addMessage', data);
+        // }
+        
      })
-     this.$store.dispatch('message/addMessage', message)
-    //  this.rws.onmessage = function(message){
-    //     var data = JSON.parse(message.data);
-    //     console.log(data);
-    //     console.log(this.messages);
-    //     this.messages.push(data);
-    //   }
   },
   computed: {
     ...mapGetters({
       user: 'user/getLocalUser',
       messages: 'message/getMessages',
     })
+  },
+  beforeDestroy: function(){
+    this.rws = null;
   }
 }
 </script>

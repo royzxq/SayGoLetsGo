@@ -10,7 +10,7 @@ import UserView from '../components/UserView.vue'
 import TravelView from '../components/UserViewTravel.vue'
 import UserInfo from '../components/UserInfo.vue'
 import ActivityForm from '../components/ActivityForm.vue'
-import ExpenseForm from '../components/ExpenseForm.vue'
+import ExpenseForm from '../components/UIcomponents/ExpenseForm.vue'
 import Checkout from '@/components/Checkout.vue'
 Vue.use(Router)
 

@@ -52,6 +52,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    source = serializers.SlugRelatedField(slug_field="username", many=False, read_only=True)
     class Meta:
         model = Notification
         fields = ('source', 'content', 'subject', 'created_time', 'is_read')
@@ -138,6 +139,7 @@ class MembershipCreateSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Message
         fields = ('username', 'message', 'created_time', )

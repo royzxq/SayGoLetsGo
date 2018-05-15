@@ -10,7 +10,7 @@
 
 <script>
 import {printResponse} from "@/utils/helper"
-import myMultiselect from '@/components/multiselect'
+import myMultiselect from '@/components/UIcomponents/multiselect'
 import {mapGetters} from 'vuex'
 
 export default {

@@ -9,7 +9,7 @@
 
 <script>
 import ReconnectingWebSocket from 'reconnecting-websocket'
-import {joinInUserNotificationUrl} from '../utils/requests'
+import {joinInUserNotificationUrl} from '@/utils/requests'
 import {mapGetters} from 'vuex'
 
 
@@ -24,10 +24,10 @@ export default {
     }
   },
   methods:{      
-      loadHistoryMessage: function(){
+      loadHistoryNotification: function(){
         var payload = {}
         payload['travel_group'] = this.group;
-        this.$store.dispatch('message/loadHistoryMessage', payload);
+        this.$store.dispatch('message/loadHistoryNotification', payload);
       }
 
   },
@@ -35,24 +35,22 @@ export default {
     this.$store.dispatch('message/loadHistoryNotification');
      let url = joinInUserNotificationUrl(this.userid);
      this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     var notification = null;
+     
+     let vm = this;
      this.rws.addEventListener('message', function(event){
        var data = JSON.parse(event.data);
         console.log(data);
-        notification = data;
+        console.log("receiving notification");
+        vm.$store.dispatch('message/addNotification', data)
      })
-     this.$store.dispatch('message/addNotification', notification)
-    //  this.rws.onmessage = function(message){
-    //     var data = JSON.parse(message.data);
-    //     console.log(data);
-    //     console.log(this.messages);
-    //     this.messages.push(data);
-    //   }
   },
   computed: {
     ...mapGetters({
       notifications: 'message/getNotifications',
     })
+  },
+  beforeDestroy: function(){
+    this.rws = null;
   }
 }
 </script>

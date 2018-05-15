@@ -8,7 +8,7 @@
 
 <script>
 import {printResponse} from "@/utils/helper"
-import mySingleselect from '@/components/singleselect'
+import mySingleselect from '@/components/UIcomponents/singleselect'
 import {mapGetters} from 'vuex'
 
 export default {

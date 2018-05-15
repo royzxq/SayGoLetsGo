@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import editable from '@/components/Editable.vue'
+import editable from '@/components/UIcomponents/Editable.vue'
 import {printResponse} from '@/utils/helper'
 export default {
 
