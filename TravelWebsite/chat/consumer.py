@@ -61,18 +61,18 @@ class ChatConsumer(WebsocketConsumer):
 class NotificationConsumer(WebsocketConsumer):
     def connect(self):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
-        self.room_user_id = 'user_%s' % self.user_id
+        self.room_group_name = 'user_%s' % self.user_id
         self.target_user = User.objects.get(pk=self.user_id)
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
-            self.room_user_id,
+            self.room_group_name,
             self.channel_name
         )
         self.accept()
 
     def disconnect(self, code):
         self.channel_layer.group_discard(
-            self.room_user_id,
+            self.room_group_name,
             self.channel_name
         )
 
@@ -86,13 +86,14 @@ class NotificationConsumer(WebsocketConsumer):
         n = Notification(source=source, content=content, target=self.target_user, subject=subject)
         n.save()
         # Send message to room group
-        self.channel_layer.group_send(
-            self.room_user_id,
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
             {
                 'type': 'user_notification',
                 'content': content,
                 'subject': subject,
                 'source': source.username,
+                'created_time': n.created_time.strftime('%Y-%m-%d %H:%M:%S'),
             }
         )
 
@@ -104,5 +105,6 @@ class NotificationConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'content': content,
             'subject': subject,
-            'source': event['source']
+            'source': event['source'],
+            'created_time': event['created_time'],
         }))

@@ -24,10 +24,10 @@ export default {
     }
   },
   methods:{      
-      loadHistoryMessage: function(){
+      loadHistoryNotification: function(){
         var payload = {}
         payload['travel_group'] = this.group;
-        this.$store.dispatch('message/loadHistoryMessage', payload);
+        this.$store.dispatch('message/loadHistoryNotification', payload);
       }
 
   },
@@ -40,6 +40,7 @@ export default {
      this.rws.addEventListener('message', function(event){
        var data = JSON.parse(event.data);
         console.log(data);
+        console.log("receiving notification");
         vm.$store.dispatch('message/addNotification', data)
      })
   },
