@@ -14,7 +14,8 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
 import {joinInGroupChatUrl} from '@/utils/requests'
 import {mapGetters} from 'vuex'
-
+import vue from 'vue'
+import store from '@/store'
 
 export default {
 
@@ -50,28 +51,15 @@ export default {
   mounted: function(){
      let url = joinInGroupChatUrl(this.group);
      this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     var message = null;
-     let cb = function(message, obj=this){
-       obj.message = message;
-     }
+     let vm = this;
      this.rws.addEventListener('message', function(event){
        var data = JSON.parse(event.data);
         console.log(data);
-        message = data;
-        cb(message);
+        // if(data.username !== vm.user.username){
+          vm.$store.dispatch('message/addMessage', data);
+        // }
+        
      })
-     this.$store.dispatch('message/addMessage', message)
-    //  this.rws.onmessage = function(message){
-    //     var data = JSON.parse(message.data);
-    //     console.log(data);
-    //     console.log(this.messages);
-    //     this.messages.push(data);
-    //   }
-  },
-  watch: {
-    message: function(){
-      console.log("message is changed");
-    }
   },
   computed: {
     ...mapGetters({

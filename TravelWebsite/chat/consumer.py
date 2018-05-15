@@ -42,6 +42,7 @@ class ChatConsumer(WebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'username': username,
+                'created_time': str(m.created_time),
             }
         )
 
@@ -52,7 +53,8 @@ class ChatConsumer(WebsocketConsumer):
         # Send message to WebSocket
         self.send(text_data=json.dumps({
             'message': message,
-            'username': event['username']
+            'username': event['username'],
+            'created_time': event['created_time'],
         }))
 
 
@@ -76,6 +78,7 @@ class NotificationConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        print(text_data_json)
         content = text_data_json['content']
         source = text_data_json['source']
         subject = text_data_json['subject']
@@ -89,7 +92,7 @@ class NotificationConsumer(WebsocketConsumer):
                 'type': 'user_notification',
                 'content': content,
                 'subject': subject,
-                'source': source,
+                'source': source.username,
             }
         )
 

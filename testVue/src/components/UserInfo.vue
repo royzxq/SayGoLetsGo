@@ -18,7 +18,7 @@
     <send-notification v-bind:userid="user.id"/>
   </div>
   <div v-else>
-    <ViewNotification v-bind:userid="user.id"/>
+    <ViewNotification v-bind:userid="local_user.id"/>
   </div>
 	</div>
 </template>
