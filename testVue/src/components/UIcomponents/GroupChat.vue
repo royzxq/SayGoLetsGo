@@ -68,6 +68,7 @@ export default {
     })
   },
   beforeDestroy: function(){
+    this.rws.close();
     this.rws = null;
   }
 }

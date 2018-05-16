@@ -18,7 +18,7 @@
     <send-notification v-bind:userid="user.id"/>
   </div>
   <div v-else>
-    <ViewNotification v-bind:userid="local_user.id"/>
+    <ViewNotification v-bind:userid="user.id"/>
   </div>
 	</div>
 </template>
@@ -28,12 +28,19 @@
 import {mapGetters} from 'vuex'
 import ViewNotification from '@/components/UIcomponents/ViewNotification'
 import sendNotification from '@/components/UIcomponents/sendNotification'
+import {getLocalUsername} from '@/utils/helper'
 export default {
 
   name: 'UserInfo',
   components: {
     ViewNotification,
     sendNotification,
+  },
+  data (){
+    return {
+      is_self: false,
+      is_friend: false, 
+    }
   },
   methods:{      
       goBack: function(){
@@ -52,31 +59,25 @@ export default {
   },
   mounted: function(){
       // this.getUser();
-      var res = this.user.username === this.local_user.username;
-      if(res){
-        this.$store.dispatch('message/loadHistoryNotification');
-      }
+      this.$store.dispatch('user/setId', this.$route.params.id).then( () => {
+        this.is_self = this.user.username === getLocalUsername();
+        for(var i in this.user.friend){
+          if(this.user.friend[i].user.username == getLocalUsername()){
+            this.is_friend = true;
+          }
+        }
+        if(this.is_self){
+          this.$store.dispatch('message/loadHistoryNotification');
+        }
+      }).catch(error => {
+        console.log("fetch user failed");
+      })
   },
   computed: {
     ...mapGetters({
       user: 'user/getUser',
-      local_user: 'user/getLocalUser',
       notifications: 'message/getNotifications',
     }),
-    is_self: function(){
-      var res = this.user.username === this.local_user.username;
-      return res;
-    },
-    is_friend: function(){
-      if(! this.is_self){
-        for(var i in this.user.friend){
-          if(this.user.friend[i].user.username == this.local_user.username){
-            return true;
-          }
-        }
-      }
-      return false;
-    }
   }
 }
 </script>

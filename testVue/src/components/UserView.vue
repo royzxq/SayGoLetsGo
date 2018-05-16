@@ -3,7 +3,7 @@
         <h2>Your groups</h2>
         <h3>Username:
 			<div>
-			<router-link :to="{name: 'UserInfo' }">
+			<router-link :to="{name: 'UserInfo', params:{id : user_id} }">
 			{{username}}
 			</router-link>
 			</div>

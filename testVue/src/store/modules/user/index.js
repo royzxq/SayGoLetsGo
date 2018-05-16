@@ -80,13 +80,11 @@ const actions = {
     },
     setId: (context, id) => {
         context.commit('setId', id)
-        getUserId(state.id).then(response => {
+        return getUserId(state.id).then(response => {
             // console.log("fetch the user");
             // console.log(response.data)
             printResponse("fetch the user", response.data)
             context.commit("setUser", response.data)
-        }).catch(error => {
-            console.log("fetch the user failed " + state.id)
         })
     },
     fetchUsers: (context, payload) => {

@@ -60,7 +60,7 @@ export default new Router({
             ]
         },
         {
-            path: '/user_info', name: 'UserInfo', component: UserInfo, beforeEnter: requireAuth
+            path: '/user_info/:id', name: 'UserInfo', component: UserInfo, beforeEnter: requireAuth
         },
         
     ]

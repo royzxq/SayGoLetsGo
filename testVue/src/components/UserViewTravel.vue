@@ -52,7 +52,7 @@
       <ul>
         <li v-for="member in travelgroup.membership_set">
           <span v-on:click="checkUser(member.user.id)" >
-            <router-link :to="{name: 'UserInfo'}" >
+            <router-link :to="{name: 'UserInfo', params:{id: member.user.id}}" >
               User:  {{member.user.username}}
             </router-link>
           </span>

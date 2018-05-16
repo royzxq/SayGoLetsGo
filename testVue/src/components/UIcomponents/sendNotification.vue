@@ -34,7 +34,6 @@ export default {
         if (this.rws !== null){
           console.log("sending notification");
           this.rws.send(JSON.stringify(m));
-          
         }
       }
 
@@ -42,7 +41,6 @@ export default {
   mounted: function(){
      let url = joinInUserNotificationUrl(this.userid);
      this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     var notification = null;
   },
   computed: {
     ...mapGetters({
@@ -50,6 +48,7 @@ export default {
     })
   },
   beforeDestroy: function(){
+    this.rws.close();
     this.rws = null;
   }
 }

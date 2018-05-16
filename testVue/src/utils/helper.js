@@ -12,3 +12,7 @@ export function checkField(target, data){
   }
   return true;
 }
+
+export function getLocalUsername(){
+  return localStorage.getItem('tWeb_username')
+}
