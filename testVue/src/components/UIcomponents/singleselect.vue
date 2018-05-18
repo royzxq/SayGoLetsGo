@@ -22,7 +22,17 @@ export default {
   },
   methods:{
       update: function(payload){
-        this.$store.dispatch('options/SetValue', payload)
+        console.log("set option");
+        console.log(payload)
+        let option = {}
+        if (this.id != null){
+          option.id = this.id;
+          option.value = payload
+        }
+        else{
+          option = payload;
+        }
+        this.$store.dispatch('options/SetValue', option)
       },
   },
   computed: {

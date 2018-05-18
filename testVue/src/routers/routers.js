@@ -43,6 +43,9 @@ export default new Router({
             beforeEnter: requireAuth
         },
         {
+          path: '/activity/create', name:'ActivityForm', component: ActivityForm,
+        },
+        {
             path: '/travel_view/:id', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
             children: [
                 {
@@ -54,9 +57,6 @@ export default new Router({
                 {
                     path: 'checkout', name: 'Checkout', component: Checkout  
                 },
-                {
-                  path: '/activity/create', name:'ActivityForm', component: ActivityForm
-                }
             ]
         },
         {
