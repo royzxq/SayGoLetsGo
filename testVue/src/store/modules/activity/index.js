@@ -55,9 +55,9 @@ const mutations = {
 
 const actions = {
     fetchActivities: (context, payload=null) => {
-        if ( state.activity !== null && state.activity.travel === payload.travel){
-            return ;
-        }
+        // if ( state.activity !== null && state.activity.travel === payload.travel){
+        //     return ;
+        // }
         getActivities(payload).then(response => {
             printResponse("fetch the acitivities", response.data.results)
             context.commit("setActivities", response.data.results)

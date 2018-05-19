@@ -107,8 +107,15 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
         'travels': 'travels',
     }
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if self.request.user == instance.user:
+            instance.editable = True
+        serializer = PlaceDetailSerializer(instance)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user.id)
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         query_params = self.request.query_params

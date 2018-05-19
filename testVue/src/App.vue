@@ -2,6 +2,7 @@
   <div id="app">
     <div v-if="is_logged()">
       <button v-on:click="logout">Log out</button>
+      <button v-on:click="home">Home</button>
     </div>
     <div v-else>
       <router-link :to="{name: 'UserForm'}">Sign on</router-link>
@@ -31,7 +32,10 @@ export default {
     logout: function(){
       logout();
       this.$router.push('/login')
-    }
+    },
+    home: function(){
+      this.$router.push('/index')
+    },
   }
 }
 </script>

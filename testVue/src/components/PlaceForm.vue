@@ -15,7 +15,7 @@
 export default {
   name: 'PlaceForm',
   data: function () {return {
-	    name: null,
+	  name: null,
 		description: null,
 		location: null,
 		country: null,
@@ -26,7 +26,6 @@ export default {
   },
   methods:{
   	submit: function(){
-		
 			var place = {}
 			place.name = this.name
 			place.description = this.description
@@ -35,8 +34,8 @@ export default {
 			place.city = this.city
       place.is_public = this.is_public
       var vue_instance = this
-      this.$store.dispatch('createPlace', place).then(() => {
-        vue_instance.$router.push('/index')
+      this.$store.dispatch('place/createPlace', place).then(() => {
+        this.$router.push('/index')
       }).catch(error => {
         console.log(error)
       })

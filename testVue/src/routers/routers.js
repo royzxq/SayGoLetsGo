@@ -30,6 +30,9 @@ export default new Router({
             path:'/places', name: 'Places', component: PlaceList
         },
         {
+            path:'/places/:id', name: 'Place', component: Place
+        },
+        {
             path:'/places/create', name: 'PlaceForm', component: PlaceForm
         },
         {
@@ -48,9 +51,6 @@ export default new Router({
         {
             path: '/travel_view/:id', name: 'TravelView', component: TravelView, beforeEnter: requireAuth,
             children: [
-                {
-                    path:'places', name: 'Place', component: Place
-                },
                 {
                     path: 'expense', name: 'Expense', component: ExpenseForm
                 },

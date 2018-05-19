@@ -62,6 +62,7 @@ export default {
     }),
   },
   mounted: function(){
+    this.$store.dispatch('place/setId', this.$route.params.id);
   }
 }
 </script>

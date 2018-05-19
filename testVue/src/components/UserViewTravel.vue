@@ -24,7 +24,7 @@
           <br>
           <router-link :to="{name:'ActivityForm', params: {travel: travelgroup.id}}">Add Activity</router-link>
           <br><br>
-          <router-view></router-view>
+          
         </ul>
       </div>
 
@@ -106,7 +106,7 @@ export default {
           this.$router.go(-1);
       },
       checkPlace: function(id) {
-          this.$store.dispatch('place/setId', id)
+          
       },
       checkUser: function(id){
           this.$store.dispatch('user/setId', id)
@@ -206,7 +206,7 @@ export default {
     
     this.$store.dispatch('activity/fetchActivities', {travel: this.$route.params.id})
     
-      this.expense_show = Array(100).fill(false)
+    this.expense_show = Array(100).fill(false)
   },
   computed: {
     empty: function(){

@@ -16,7 +16,6 @@ const getters = {
 
 const mutations = {
     setPlace: (state, payload) => {
-        printResponse("add place", payload)
         state.id = payload.id
         state.place = payload
     },
@@ -50,7 +49,8 @@ const actions = {
         })
     },
     createPlace: (context, payload) => {
-        return createPlace(payload.place).then(response => {
+      console.log(payload);
+        return createPlace(payload).then(response => {
             printResponse("createPlace", response.data)
             context.commit("setPlace", response.data)
         })
@@ -58,7 +58,7 @@ const actions = {
     setId: (context, id) => {
         context.commit('setId', id)
         getPlace(state.id).then(response => {            
-            printResponse("getPlace", response.data)
+            printResponse("setPlace", response.data)
             context.commit("setPlace", response.data)
         }).catch(error => {
             console.log("fetch the place failed " + state.id)
