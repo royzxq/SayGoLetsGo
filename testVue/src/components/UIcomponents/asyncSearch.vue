@@ -7,55 +7,48 @@
 </template>
 
 <script>
-
-import Multiselect from 'vue-multiselect'
-import {mapState} from 'vuex'
+import Multiselect from "vue-multiselect";
+import { mapState } from "vuex";
 export default {
-
-  name: 'myAsyncesearch',
-  props:[
-    "options",
-    "label",
-    "asyncFunc",
-  ],
+  name: "myAsyncesearch",
+  props: ["options", "label", "asyncFunc"],
   data() {
     return {
-      is_loading : false,
-    }
+      is_loading: false
+    };
   },
   components: {
     Multiselect
   },
-  methods:{   
-    asyncFind: function(query){
-      console.log(query)
-      if(query.length < 3){
-        return
+  methods: {
+    asyncFind: function(query) {
+      console.log(query);
+      if (query.length < 3) {
+        return;
       }
-      this.is_loading = true
+      this.is_loading = true;
       // this.users = []
       var payload = {
         search: query
-      }
-      this.asyncFunc(payload).then( () => {
-        this.is_loading = false
-      }) 
-    },   
-      update: function(payload){
-        this.$store.dispatch('options/SetValues', payload)
-      },
-      limitText (count) {
-        return `and ${count} other choices`
-      },
+      };
+      this.asyncFunc(payload).then(() => {
+        this.is_loading = false;
+      });
+    },
+    update: function(payload) {
+      this.$store.dispatch("options/SetValues", payload);
+    },
+    limitText(count) {
+      return `and ${count} other choices`;
+    }
   },
-  mounted: function(){
-  },
+  mounted: function() {},
   computed: {
     ...mapState({
-      values: ['options', 'values']
+      values: ["options", "values"]
     })
   }
-}
+};
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

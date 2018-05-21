@@ -17,54 +17,58 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-import editable from '@/components/UIcomponents/Editable.vue'
-import {printResponse} from '@/utils/helper'
+import { mapGetters } from "vuex";
+import editable from "@/components/UIcomponents/Editable.vue";
+import { printResponse } from "@/utils/helper";
 export default {
-
-  name: 'Place',
-  data () {
+  name: "Place",
+  data() {
     return {
       showSubmit: {
         showing: false
       }
-    }
+    };
   },
   components: {
     editable
   },
   methods: {
-    submit: function(){
-      
-      var place = this.place 
-      this.$store.dispatch('place/updatePlace', place).then(()=>{
-        this.showSubmit.showing = false
-      }).catch(error => {
-        printResponse("update place failed", error)
-      })
+    submit: function() {
+      var place = this.place;
+      this.$store
+        .dispatch("place/updatePlace", place)
+        .then(() => {
+          this.showSubmit.showing = false;
+        })
+        .catch(error => {
+          printResponse("update place failed", error);
+        });
     },
-    show_submit: function(){
-      this.showSubmit.showing = true
+    show_submit: function() {
+      this.showSubmit.showing = true;
     },
-    deleteplace: function(){
-      var vue_instance = this
-      this.$store.dispatch('place/deletePlace', this.place.id).then(() => {
-        this.showSubmit.showing = false
-        vue_instance.$router.go(-1)
-      }).catch(error => {
-        printResponse("delete place failed", error)
-      })
+    deleteplace: function() {
+      var vue_instance = this;
+      this.$store
+        .dispatch("place/deletePlace", this.place.id)
+        .then(() => {
+          this.showSubmit.showing = false;
+          vue_instance.$router.go(-1);
+        })
+        .catch(error => {
+          printResponse("delete place failed", error);
+        });
     }
   },
   computed: {
     ...mapGetters({
-      place: 'place/getPlace'
-    }),
+      place: "place/getPlace"
+    })
   },
-  mounted: function(){
-    this.$store.dispatch('place/setId', this.$route.params.id);
+  mounted: function() {
+    this.$store.dispatch("place/setId", this.$route.params.id);
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

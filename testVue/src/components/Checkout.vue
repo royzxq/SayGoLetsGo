@@ -7,19 +7,16 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from "vuex";
 
 export default {
-
-  name: 'Checkout',
+  name: "Checkout",
   computed: {
     ...mapGetters({
-      user_pay: 'expense/getUserpay',
-    }),
-
-  },
-
-}
+      user_pay: "expense/getUserpay"
+    })
+  }
+};
 </script>
 
 <style lang="css" scoped>

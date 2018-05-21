@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {is_logged_in, logout} from './utils/auth'
+import { is_logged_in, logout } from "./utils/auth";
 // import VueResources from 'vue-resource'
 // import TravelList from './components/TravelList.vue'
 // import PlaceList from './components/PlaceList.vue'
@@ -23,21 +23,21 @@ import {is_logged_in, logout} from './utils/auth'
 // import login from './components/login.vue'
 
 export default {
-  name: 'App',
+  name: "App",
   // router,
-  methods:{
-    is_logged: function(){
+  methods: {
+    is_logged: function() {
       return is_logged_in();
     },
-    logout: function(){
+    logout: function() {
       logout();
-      this.$router.push('/login')
+      this.$router.push("/login");
     },
-    home: function(){
-      this.$router.push('/index')
-    },
+    home: function() {
+      this.$router.push("/index");
+    }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>
@@ -45,7 +45,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -53,7 +53,8 @@ export default {
   margin-top: 60px;
 }
 
-h1, h2 {
+h1,
+h2 {
   font-weight: normal;
 }
 

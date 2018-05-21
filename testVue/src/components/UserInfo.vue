@@ -24,62 +24,62 @@
 </template>
 
 <script>
-
-import {mapGetters} from 'vuex'
-import ViewNotification from '@/components/UIcomponents/ViewNotification'
-import sendNotification from '@/components/UIcomponents/sendNotification'
-import {getLocalUsername} from '@/utils/helper'
+import { mapGetters } from "vuex";
+import ViewNotification from "@/components/UIcomponents/ViewNotification";
+import sendNotification from "@/components/UIcomponents/sendNotification";
+import { getLocalUsername } from "@/utils/helper";
 export default {
-
-  name: 'UserInfo',
+  name: "UserInfo",
   components: {
     ViewNotification,
-    sendNotification,
+    sendNotification
   },
-  data (){
+  data() {
     return {
       is_self: false,
-      is_friend: false, 
+      is_friend: false
+    };
+  },
+  methods: {
+    goBack: function() {
+      this.$router.go(-1);
+    },
+    make_friend() {
+      var payload = {
+        user2: this.user.id
+      };
+      this.$store
+        .dispatch("user/createFriendship", payload)
+        .then(response => {})
+        .catch(error => {});
     }
   },
-  methods:{      
-      goBack: function(){
-          this.$router.go(-1);
-      },
-      make_friend(){
-        var payload = {
-          user2: this.user.id
-        }
-        this.$store.dispatch('user/createFriendship', payload).then(response => {
-
-        }).catch(error => {
-
-        })
-      }
-  },
-  mounted: function(){
-      // this.getUser();
-      this.$store.dispatch('user/setId', this.$route.params.id).then( () => {
+  mounted: function() {
+    // this.getUser();
+    this.$store
+      .dispatch("user/setId", this.$route.params.id)
+      .then(() => {
         this.is_self = this.user.username === getLocalUsername();
-        for(var i in this.user.friend){
-          if(this.user.friend[i].user.username == getLocalUsername()){
+        for (var i in this.user.friend) {
+          if (this.user.friend[i].user.username == getLocalUsername()) {
             this.is_friend = true;
           }
         }
-        if(this.is_self){
-          this.$store.dispatch('message/loadHistoryNotification');
+        if (this.is_self) {
+          this.$store.dispatch("message/loadHistoryNotification");
         }
-      }).catch(error => {
-        console.log("fetch user failed");
       })
+      .catch(error => {
+        console.log("fetch user failed");
+      });
   },
   computed: {
     ...mapGetters({
-      user: 'user/getUser',
-      notifications: 'message/getNotifications',
-    }),
+      user: "user/getUser",
+      notifications: "message/getNotifications"
+    })
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

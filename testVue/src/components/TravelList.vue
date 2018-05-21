@@ -9,33 +9,31 @@
 </template>
 
 <script>
-
-import {mapGetters} from 'vuex'
+import { mapGetters } from "vuex";
 export default {
-
-  name: 'UserList',
-  data () {
+  name: "UserList",
+  data() {
     return {
       // filter_list : [],
-      search: "",
-    }
+      search: ""
+    };
   },
-  methods:{      
-      goBack: function(){
-          this.$router.go(-1);
-      }
+  methods: {
+    goBack: function() {
+      this.$router.go(-1);
+    }
   },
   computed: {
     ...mapGetters({
-      travles: 'groupTravel/getTravelGroups'
+      travles: "groupTravel/getTravelGroups"
     }),
-    filteredList(){
+    filteredList() {
       return this.users.filter(travel => {
-        return user.title.toLowerCase().includes(this.search.toLowerCase())
-      })
+        return user.title.toLowerCase().includes(this.search.toLowerCase());
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

@@ -9,36 +9,34 @@
 </template>
 
 <script>
-
-import {mapGetters} from 'vuex'
+import { mapGetters } from "vuex";
 export default {
-
-  name: 'UserList',
-  data () {
+  name: "UserList",
+  data() {
     return {
       // filter_list : [],
-      search: "",
+      search: ""
+    };
+  },
+  methods: {
+    goBack: function() {
+      this.$router.go(-1);
     }
   },
-  methods:{      
-      goBack: function(){
-          this.$router.go(-1);
-      }
-  },
-  mounted: function (){
-    this.$store.dispatch('place/fetchPlaces')
+  mounted: function() {
+    this.$store.dispatch("place/fetchPlaces");
   },
   computed: {
     ...mapGetters({
-      places: 'place/getPlaces'
+      places: "place/getPlaces"
     }),
-    filteredList(){
+    filteredList() {
       return this.places.filter(place => {
-        return place.name.toLowerCase().includes(this.search.toLowerCase())
-      })
+        return place.name.toLowerCase().includes(this.search.toLowerCase());
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

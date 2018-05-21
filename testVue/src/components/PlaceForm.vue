@@ -13,36 +13,39 @@
 
 <script>
 export default {
-  name: 'PlaceForm',
-  data: function () {return {
-	  name: null,
-		description: null,
-		location: null,
-		country: null,
-		city: null,
-    is_public: true,
-    a: "a",
-  	}
+  name: "PlaceForm",
+  data: function() {
+    return {
+      name: null,
+      description: null,
+      location: null,
+      country: null,
+      city: null,
+      is_public: true,
+      a: "a"
+    };
   },
-  methods:{
-  	submit: function(){
-			var place = {}
-			place.name = this.name
-			place.description = this.description
-			place.location = this.location
-			place.country = this.country
-			place.city = this.city
-      place.is_public = this.is_public
-      var vue_instance = this
-      this.$store.dispatch('place/createPlace', place).then(() => {
-        this.$router.push('/index')
-      }).catch(error => {
-        console.log(error)
-      })
-		
-  	}
+  methods: {
+    submit: function() {
+      var place = {};
+      place.name = this.name;
+      place.description = this.description;
+      place.location = this.location;
+      place.country = this.country;
+      place.city = this.city;
+      place.is_public = this.is_public;
+      var vue_instance = this;
+      this.$store
+        .dispatch("place/createPlace", place)
+        .then(() => {
+          this.$router.push("/index");
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

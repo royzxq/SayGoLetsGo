@@ -8,52 +8,48 @@
 </template>
 
 <script>
-import ReconnectingWebSocket from 'reconnecting-websocket'
-import {joinInUserNotificationUrl} from '@/utils/requests'
-import {mapGetters} from 'vuex'
-
+import ReconnectingWebSocket from "reconnecting-websocket";
+import { joinInUserNotificationUrl } from "@/utils/requests";
+import { mapGetters } from "vuex";
 
 export default {
-  name: 'ViewNotification',
-  props: [
-    'userid',
-  ],
-  data () {
+  name: "ViewNotification",
+  props: ["userid"],
+  data() {
     return {
-      rws : null,
+      rws: null
+    };
+  },
+  methods: {
+    loadHistoryNotification: function() {
+      var payload = {};
+      payload["travel_group"] = this.group;
+      this.$store.dispatch("message/loadHistoryNotification", payload);
     }
   },
-  methods:{      
-      loadHistoryNotification: function(){
-        var payload = {}
-        payload['travel_group'] = this.group;
-        this.$store.dispatch('message/loadHistoryNotification', payload);
-      }
+  mounted: function() {
+    this.$store.dispatch("message/loadHistoryNotification");
+    let url = joinInUserNotificationUrl(this.userid);
+    this.rws = new ReconnectingWebSocket(url, undefined, { maxRetries: 3 });
 
-  },
-  mounted: function(){
-    this.$store.dispatch('message/loadHistoryNotification');
-     let url = joinInUserNotificationUrl(this.userid);
-     this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
-     
-     let vm = this;
-     this.rws.addEventListener('message', function(event){
-       var data = JSON.parse(event.data);
-        console.log(data);
-        console.log("receiving notification");
-        vm.$store.dispatch('message/addNotification', data)
-     })
+    let vm = this;
+    this.rws.addEventListener("message", function(event) {
+      var data = JSON.parse(event.data);
+      console.log(data);
+      console.log("receiving notification");
+      vm.$store.dispatch("message/addNotification", data);
+    });
   },
   computed: {
     ...mapGetters({
-      notifications: 'message/getNotifications',
+      notifications: "message/getNotifications"
     })
   },
-  beforeDestroy: function(){
+  beforeDestroy: function() {
     this.rws.close();
     this.rws = null;
   }
-}
+};
 </script>
 
 <style lang="css" scoped>
