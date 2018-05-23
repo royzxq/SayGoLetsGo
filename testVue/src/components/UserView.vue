@@ -3,7 +3,7 @@
         <h2>Your groups</h2>
         <h3>Username:
 			<div>
-			<router-link :to="{name: 'UserInfo' }">
+			<router-link :to="{name: 'UserInfo', params:{id : user_id} }">
 			{{username}}
 			</router-link>
 			</div>
@@ -28,60 +28,58 @@
 </template>
 
 <script>
-
-
-import {mapGetters} from 'vuex'
-import UserList from '@/components/UserList'
+import { mapGetters } from "vuex";
+import UserList from "@/components/UserList";
 
 // import createWebsocket from '@/utils/websocket'
-import ReconnectingWebSocket from 'reconnecting-websocket'
-import {joinInGroupChatUrl} from '../utils/requests'
+import ReconnectingWebSocket from "reconnecting-websocket";
+import { joinInGroupChatUrl } from "../utils/requests";
 export default {
-  name: 'UserView',
-  data(){
+  name: "UserView",
+  data() {
     return {
       rws: null
-    }
+    };
   },
   components: {
-    UserList,
+    UserList
   },
-	methods:{
-		createTravel: function(){
-			this.$router.push({name: 'TravelForm'})
-		},
-		createPlace: function(){
-			this.$router.push({name: 'PlaceForm'})
-		},
-		checkUser: function(username){
-			var user = {
-				username: username
-			}
-			this.$store.dispatch('user/fetchLocalUser', user);
-		},
-		checkGroupTravel: function(group_id) {
-			// this.$store.dispatch('groupTravel/setId', group_id)
+  methods: {
+    createTravel: function() {
+      this.$router.push({ name: "TravelForm" });
+    },
+    createPlace: function() {
+      this.$router.push({ name: "PlaceForm" });
+    },
+    checkUser: function(username) {
+      var user = {
+        username: username
+      };
+      this.$store.dispatch("user/fetchLocalUser", user);
+    },
+    checkGroupTravel: function(group_id) {
+      // this.$store.dispatch('groupTravel/setId', group_id)
     }
-	},
-	mounted: function(){
-    this.$store.dispatch('groupTravel/fetchTravelGroups')
+  },
+  mounted: function() {
+    this.$store.dispatch("groupTravel/fetchTravelGroups");
     // this.$store.dispatch('user/fetchUsers')
-    this.checkUser(this.username)
+    this.checkUser(this.username);
     // var url = "ws://127.0.0.1:8000/ws/chat/test/"
     // this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});
     // var url = joinInGroupChatUrl('10');
     // this.rws = new ReconnectingWebSocket(url, undefined, {maxRetries: 3});;
+  },
+  computed: {
+    username: function() {
+      return localStorage.getItem("tWeb_username");
     },
-    computed:{
-        username: function(){
-            return localStorage.getItem('tWeb_username')
-		},
-		...mapGetters({
-			travelGroups: 'groupTravel/getTravelGroups',
-			user_id: 'user/getId'
-		}),
-    }
-}
+    ...mapGetters({
+      travelGroups: "groupTravel/getTravelGroups",
+      user_id: "user/getId"
+    })
+  }
+};
 </script>
 
 

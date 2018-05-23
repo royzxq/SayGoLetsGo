@@ -1,16 +1,18 @@
 import {printResponse, checkField} from '@/utils/helper'
-import {loadMessage, loadNotification} from '@/utils/requests'
+import {loadMessage, loadNotification, readNotification} from '@/utils/requests'
 // import { stat } from 'fs';
 
 
 const state = {
   messages: [],
   notifications: [],
+  notification: null,
 }
 
 const getters = {
   getMessages: (state) => state.messages,
   getNotifications: (state) => state.notifications,
+  getNotification: (state) => state.notification,
 }
 
 const mutations = {
@@ -25,6 +27,11 @@ const mutations = {
   },
   addNotification: (state, notification) => {
     state.notifications.push(notification);
+  },
+  readNotification: (state, id) => {
+    let notifiction = state.notifications.find(o => o.id === id);
+    notifiction.is_read = true;
+    state.notification = notifiction;
   }
 }
 
@@ -72,6 +79,11 @@ const actions = {
       context.commit('loadHistoryNotification', response.data.results.reverse());
     }).catch(error => {
       console.log("loadNotification failed")
+    })
+  },
+  readNotification: (context, id) => {
+    return readNotification(id).then(response => {
+      context.commit('readNotification', id);
     })
   }
 

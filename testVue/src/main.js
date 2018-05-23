@@ -19,7 +19,7 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: {App},
+  components: { App },
   data: {
     message: "default"
   }

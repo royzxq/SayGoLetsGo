@@ -107,8 +107,15 @@ class PlaceViewSet(FiltersMixin, viewsets.ModelViewSet):
         'travels': 'travels',
     }
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if self.request.user == instance.user:
+            instance.editable = True
+        serializer = PlaceDetailSerializer(instance)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user.id)
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         query_params = self.request.query_params
@@ -317,4 +324,11 @@ class NotificationViewset(viewsets.ModelViewSet):
         queryset = Notification.objects.filter(target=self.request.user).order_by('-created_time')
         return queryset
 
-
+    @detail_route(methods=['patch'])
+    def has_read(self, request, pk=None):
+        notification = self.get_object()
+        if self.request.user != notification.target:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        notification.is_read = True
+        notification.save()
+        return Response({'status': 'change is_read successfully'})

@@ -85,6 +85,7 @@ class Place(models.Model):
     location = models.CharField('location', max_length=100, null=True, blank=True)
     picture = models.ImageField('picture', max_length=100, null=True, blank=True)
     is_public = models.BooleanField('is_public', default=True)
+    editable = models.BooleanField('editable', default=False)
 
     def __str__(self):
         return self.name

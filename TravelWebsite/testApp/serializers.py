@@ -55,7 +55,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     source = serializers.SlugRelatedField(slug_field="username", many=False, read_only=True)
     class Meta:
         model = Notification
-        fields = ('source', 'content', 'subject', 'created_time', 'is_read')
+        fields = ('id', 'source', 'content', 'subject', 'created_time', 'is_read')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -186,13 +186,19 @@ class TravelGroupListSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'is_public', 'country', 'days')
 
 
+class PlaceDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Place
+        # fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public', 'editable')
+        fields = '__all__'
+
 class PlaceSerializer(serializers.ModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
     # user = serializers.SlugRelatedField(queryset=WebUser.objects.all(), slug_field='username')
     # user = UserSerializer(many=False, read_only=True)
     class Meta:
         model = Place
-        fields = ('id', 'name', 'description', 'location', 'country', 'city', 'user', 'is_public')
+        fields = ('id', 'name', 'description', 'location', 'country', 'city', 'is_public')
 
 
 class ActivityPlaceSerializer(serializers.ModelSerializer):

@@ -9,55 +9,57 @@
 </template>
 
 <script>
-import {printResponse} from "@/utils/helper"
-import myMultiselect from '@/components/UIcomponents/multiselect'
-import {mapGetters} from 'vuex'
+import { printResponse } from "@/utils/helper";
+import myMultiselect from "@/components/UIcomponents/multiselect";
+import { mapGetters } from "vuex";
 
 export default {
-  name: 'ExpenseForm',
-  data: function () {return {
-        expense: 0.0,
-        show: true,
-        comment: '',
-  	}
+  name: "ExpenseForm",
+  data: function() {
+    return {
+      expense: 0.0,
+      show: true,
+      comment: ""
+    };
   },
-  props: [
-    'travel',
-  ],
+  props: ["travel"],
   components: {
     myMultiselect
   },
-  methods:{
-  	submit: function(){
-        var obj = {}
-        obj.paid_member = localStorage.getItem('tWeb_memberId')
-        obj.expense = this.expense
-        obj.payees = []
-        for(let user of this.values){
-          obj.payees.push(user.id)
-        }
-        obj.comment = this.comment
-        this.$store.dispatch('expense/createExpense', obj).then(()=>{
-          this.$emit('submit')
-          this.$router.go(0)
-        }).catch(error => {
-          printResponse("create expense failed", error)
+  methods: {
+    submit: function() {
+      var obj = {};
+      obj.paid_member = localStorage.getItem("tWeb_memberId");
+      obj.expense = this.expense;
+      obj.payees = [];
+      for (let user of this.values) {
+        obj.payees.push(user.id);
+      }
+      obj.comment = this.comment;
+      this.$store
+        .dispatch("expense/createExpense", obj)
+        .then(() => {
+          this.$emit("submit");
+          this.$router.go(0);
         })
-  	}
+        .catch(error => {
+          printResponse("create expense failed", error);
+        });
+    }
   },
   mounted() {
     var obj = {
       travelgroup: this.travel
-    }
-    this.$store.dispatch('user/fetchGroupUsers', obj)
+    };
+    this.$store.dispatch("user/fetchGroupUsers", obj);
   },
   computed: {
     ...mapGetters({
-      users: 'user/getGroupUsers',
-      values: 'options/getValues'
+      users: "user/getGroupUsers",
+      values: "options/getValues"
     })
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

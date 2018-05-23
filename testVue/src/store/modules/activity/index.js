@@ -3,6 +3,16 @@
 import {getActivities, createActivity, updateActivity, partialUpdateActivity, deleteActivity} from '@/utils/requests'
 import {printResponse, checkField} from '@/utils/helper'
 
+function compare_time(a, b){
+  if(Date.parse(a.start_time) > Date.parse(b.start_time)){
+    return 1;
+  }
+  if(Date.parse(a.start_time) < Date.parse(b.start_time)){
+    return -1;
+  }
+  return 0;
+}
+
 const state = {
     activity: null,
     id: null,
@@ -21,24 +31,33 @@ const mutations = {
         state.id = payload.id
         state.activity = payload
     },
-    deleteActivity: (state) => {
+    deleteActivity: (state, id) => {
         state.activity = null
         state.id = null
+        for (var i = state.activities.length - 1; i >= 0; i--){
+          if(state.activities[i].id === id){
+            state.activities.splice(i, 1);
+          }
+        }
     },
     setId: (state, id) => {
         state.id = id
     },
     setActivities: (state, payload) => {
         state.activities = payload
+    },
+    addActivity: (state, payload) => {
+      state.activities.push(payload);
+      state.activities.sort(compare_time);
     }
     
 }
 
 const actions = {
     fetchActivities: (context, payload=null) => {
-        if ( state.activity !== null && state.activity.travel === payload.travel){
-            return ;
-        }
+        // if ( state.activity !== null && state.activity.travel === payload.travel){
+        //     return ;
+        // }
         getActivities(payload).then(response => {
             printResponse("fetch the acitivities", response.data.results)
             context.commit("setActivities", response.data.results)
@@ -51,8 +70,9 @@ const actions = {
     createActivity: (context, payload) => {
         return createActivity(payload).then(response => {
             printResponse("create the activity", response.data)
-            context.commit('setId', response.data.id)
-            context.commit("setActivity", response.data)
+            context.commit('setId', response.data.id);
+            context.commit("setActivity", response.data);
+            context.commit('addActivity', response.data);
         })
     },
     updateActivity: (context, payload) =>{
@@ -70,7 +90,7 @@ const actions = {
     },
     deleteActivity: (context, id) => {
       return deleteActivity(id).then(response => {
-        context.commit('deleleActivity')
+        context.commit('deleteActivity', id);
       })
     }
 }

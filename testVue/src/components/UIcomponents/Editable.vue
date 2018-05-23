@@ -3,21 +3,18 @@
 </template>
 
 <script>
-
-
 export default {
-
-  name: 'editable',
-  props: ['content'],
-  mounted:function(){
+  name: "editable",
+  props: ["content"],
+  mounted: function() {
     this.$el.innerText = this.content;
   },
-  methods:{
-    update:function(event){
-      this.$emit('update',event.target.innerText);
+  methods: {
+    update: function(event) {
+      this.$emit("update", event.target.innerText);
     }
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

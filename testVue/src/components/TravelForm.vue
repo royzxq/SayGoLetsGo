@@ -14,41 +14,41 @@
 
 <script>
 export default {
+  name: "TravelForm",
 
-  name: 'TravelForm',
-
-  data: function () {
-	  return {
-			title: null,
-			days: null,
-			country: null,
-			is_public: false
-  	}
+  data: function() {
+    return {
+      title: null,
+      days: null,
+      country: null,
+      is_public: false
+    };
   },
-  methods:{
-  	submit: function(){
-			this.createTravelsImpl()
-		},
-	createTravelsImpl: function(){
-    var travelgroup = {
-      title: this.title,
-			days: this.days,
-      country: this.country,
-      is_public: this.is_public,
+  methods: {
+    submit: function() {
+      this.createTravelsImpl();
+    },
+    createTravelsImpl: function() {
+      var travelgroup = {
+        title: this.title,
+        days: this.days,
+        country: this.country,
+        is_public: this.is_public
+      };
+
+      var vue_instance = this;
+      this.$store
+        .dispatch("groupTravel/createTravelGroup", travelgroup)
+        .then(function() {
+          vue_instance.$router.push("/index");
+        })
+        .catch(error => {
+          alert("Info Error");
+          console.log(error);
+        });
     }
-		
-		var vue_instance = this
-		this.$store.dispatch('groupTravel/createTravelGroup', travelgroup).then(
-			function(){
-				vue_instance.$router.push('/index')
-			}
-		).catch(error => {
-			alert("Info Error")
-			console.log(error)
-		})	
-	}
   }
-}
+};
 </script>
 
 <style lang="css" scoped>

@@ -7,32 +7,26 @@
 </template>
 
 <script>
-
-import Multiselect from 'vue-multiselect'
-import {mapState} from 'vuex'
+import Multiselect from "vue-multiselect";
+import { mapState } from "vuex";
 export default {
-
-  name: 'myMultiselect',
-  props:[
-    "options",
-    "label",
-  ],
+  name: "myMultiselect",
+  props: ["options", "label"],
   components: {
     Multiselect
   },
-  methods:{      
-      update: function(payload){
-        this.$store.dispatch('options/SetValues', payload)
-      },
+  methods: {
+    update: function(payload) {
+      this.$store.dispatch("options/SetValues", payload);
+    }
   },
-  mounted: function(){
-  },
+  mounted: function() {},
   computed: {
     ...mapState({
-      values: ['options', 'values']
+      values: ["options", "values"]
     })
   }
-}
+};
 </script>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
