@@ -1,7 +1,7 @@
 <template>
 	<div>
     <label >Add a friend to your plan</label>
-    <my-singleselect v-bind:options="users" :label="'username'"/>
+    <my-singleselect v-bind:options="users" :label="'username'" id="1" />
 	<button v-on:click="submit"> Add Users</button>
 	</div>
 </template>
@@ -24,7 +24,11 @@ export default {
     submit: function() {
       var obj = {};
       obj.travel_group = this.travel;
+      this.$store.dispatch("options/SetSelectId", "1");
+
+      // console.log("this user is", this.user);
       obj.user = this.user.id;
+      console.log("obj is", obj);
       this.$store
         .dispatch("membership/createMembership", obj)
         .then(() => {

@@ -324,4 +324,11 @@ class NotificationViewset(viewsets.ModelViewSet):
         queryset = Notification.objects.filter(target=self.request.user).order_by('-created_time')
         return queryset
 
-
+    @detail_route(methods=['patch'])
+    def has_read(self, request, pk=None):
+        notification = self.get_object()
+        if self.request.user != notification.target:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        notification.is_read = True
+        notification.save()
+        return Response({'status': 'change is_read successfully'})

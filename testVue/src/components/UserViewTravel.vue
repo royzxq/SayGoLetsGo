@@ -35,7 +35,7 @@
             <table v-for="member in travelgroup.membership_set">
               <tr v-if="member.expense_set.length>0">  {{member.user.username}} piad: </tr>
               <tr v-for="expense in member.expense_set">
-                <td>{{expense.expense}} to: </td>
+                <td>{{expense.expense}} to </td>
                 <td v-for="payee in expense.payees">{{payee.username}}</td>
                 <td>for {{expense.comment}}</td>
               </tr>
@@ -62,6 +62,7 @@
       <div v-on:click="calculateExpense">
         <router-link :to="{name:'Checkout'}">Calculate Overall Expense</router-link>
       </div>
+      <router-view />
       <!-- <button v-on:click="calculateExpense">Calculate Overall Expense</button> -->
     </div>
     <div>

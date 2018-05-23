@@ -25,7 +25,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import ViewNotification from "@/components/UIcomponents/ViewNotification";
+import ViewNotification from "@/components/UIcomponents/ViewNotifications";
 import sendNotification from "@/components/UIcomponents/sendNotification";
 import { getLocalUsername } from "@/utils/helper";
 export default {

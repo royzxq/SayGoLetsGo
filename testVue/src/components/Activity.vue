@@ -5,8 +5,8 @@
   <label >Start time:</label>
   <editable :content="activity.start_time" @update="activity.start_time=$event" />
   <p v-if="activity.place!==null">
-      <span v-on:click="checkPlace(activity.place.id)"> 
-      <!-- <router-link :to="{name:'Place'}" >Check Place</router-link> -->
+      <span > 
+      <router-link :to="{name:'Place', params:{id: activity.place.id}}" >Check Place</router-link>
           Place: {{ activity.place.name }}
       </span>
   </p>
@@ -59,7 +59,7 @@ export default {
       this.$router.push({ name: "Place", params: { id: id } });
       // this.$emit('checkPlace', id)
     },
-    deßleteactivity: function() {
+    deleteactivity: function() {
       this.$store
         .dispatch("activity/deleteActivity", this.activity.id)
         .then(() => {

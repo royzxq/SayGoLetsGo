@@ -268,3 +268,11 @@ export function loadMessage(data) {
 export function loadNotification(data = null) {
   return getAppRequest('notifications/', data)
 }
+
+export function readNotification(id) {
+  const url = BASE_URL + 'notifications/' + id + '/has_read/';
+  var header = {
+    'Authorization': 'Bearer ' + localStorage.getItem('tWeb_access_token')
+  }
+  return axios.patch(url, {}, { headers: header });
+}
